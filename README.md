@@ -1,2 +1,2 @@
-# api-server-fastify-ts
-## 基于fastify + typescript实现的RESTful API服务
+# api-server-fastify
+## 基于fastify实现的RESTful API服务
