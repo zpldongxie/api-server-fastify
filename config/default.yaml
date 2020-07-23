@@ -1,0 +1,2 @@
+db:
+  uri: "mongodb://49.234.158.74:27017/api_server_waxh"
