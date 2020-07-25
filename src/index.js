@@ -20,12 +20,14 @@ server.register(fastifyBlipp);
 
 // 连接数据库
 server.register(db, config.get('db'));
-server.register(mysql, config.get('mysql'));
+server.register(mysql);
 
 // 挂载路由
+const Ajv = require('ajv');
+const ajv = new Ajv({allErrors: true});
 server.register(usersRoutes);
 server.register(contentRoutes, config.get('oldManager'));
-server.register(trainingRoutes);
+server.register(trainingRoutes, {ajv});
 server.register(trainingRegRoutes);
 server.register(statusRoutes);
 server.register(errorThrowerRoutes);
@@ -42,9 +44,11 @@ const start = async () => {
 };
 
 process.on('uncaughtException', (error) => {
+  console.log('----uncaughtException----');
   console.error(error);
 });
 process.on('unhandledRejection', (error) => {
+  console.log('----unhandledRejection----');
   console.error(error);
 });
 

@@ -2,25 +2,25 @@
  * @description: mySql
  * @author: zpl
  * @Date: 2020-07-25 14:47:25
- * @LastEditTime: 2020-07-25 16:44:13
+ * @LastEditTime: 2020-07-25 20:57:58
  * @LastEditors: zpl
  */
-const {Sequelize} = require('sequelize');
+
 const fp = require('fastify-plugin');
+const sequelize = require('./connect');
+const UserModel = require('./models/user');
+const ChannelModel = require('./models/channel');
+const TrainingModel = require('./models/training');
 
 module.exports = fp(async (fastify, opts, next) => {
-  const {database, user, password} = opts;
-  const sequelize = new Sequelize(database, user, password, {
-    host: 'www.snains.cn',
-    dialect: 'mysql',
-  });
   try {
     await sequelize.authenticate();
     console.log('Connection has been established successfully.');
-    const UserModel = require('./models/user')(sequelize, database);
 
     const models = {
-      Users: UserModel,
+      UserModel,
+      ChannelModel,
+      TrainingModel,
     };
 
     fastify.decorate('mysql', {models});

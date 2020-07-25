@@ -4,9 +4,8 @@
   "description": "基于fastify + typescript实现的RESTful API服务",
   "main": "index.js",
   "scripts": {
-    "start": "node ./dist/index.js",
+    "start": "node ./src/index.js",
     "test": "cross-env NODE_ENV=test npx jest --verbose --runInBand",
-    "build": "rm -rf dist && tsc --sourceMap -p ./",
     "dev": "nodemon ./src/index.js"
   },
   "keywords": [],
@@ -22,6 +21,7 @@
     "source-map-support": "^0.5.19"
   },
   "dependencies": {
+    "ajv": "^6.12.3",
     "config": "^3.3.1",
     "fastify": "^3.1.1",
     "fastify-blipp": "^3.0.0",
