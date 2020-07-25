@@ -1,2 +1,12 @@
 db:
   uri: "mongodb://49.234.158.74:27017/api_server_waxh"
+  user: "waxh"
+  pass: "ysp@1234"
+
+mysql:
+  host: "www.snains.cn"
+  database: "websiteManager"
+  user: "root"
+  password: "10isp.com!a"
+
+oldManager: "http://www.snains.cn:9001"

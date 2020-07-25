@@ -1,2 +1,12 @@
 db:
-  uri: "mongodb://mongodb:27017/vehicles"
+  uri: "mongodb://localhost:27017/api_server_waxh"
+  user: "waxh"
+  pass: "ysp@1234"
+
+mysql:
+  host: "localhost"
+  database: "websiteManager"
+  user: "root"
+  password: "10isp.com!a"
+
+oldManager: "http://localhost:9001"

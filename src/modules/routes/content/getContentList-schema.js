@@ -1,0 +1,29 @@
+/*
+ * @description: 获取文章列表接口参数定义
+ * @author: zpl
+ * @Date: 2020-07-23 23:15:23
+ * @LastEditTime: 2020-07-24 00:23:40
+ * @LastEditors: zpl
+ */
+const S = require('fluent-schema');
+
+const bodyJsonSchema = S.object()
+    .prop('channelId', S.string().required().description('栏目ID，传-1时查询全部'))
+    .prop('pageSize', S.number().description('分页大小，默认为10'))
+    .prop('current', S.number().description('当前页码，默认为1'))
+    .prop('title', S.string().description('模糊查询条件'));
+
+module.exports = {
+  body: bodyJsonSchema,
+  response: {
+    '2xx': {
+      type: 'object',
+      properties: {
+        status: {type: 'string', enum: ['ok', 'error']},
+        total: {type: 'number'},
+        currentTotal: {type: 'number'},
+        list: {type: 'array'},
+      },
+    },
+  },
+};

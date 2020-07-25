@@ -2,12 +2,12 @@
  * @description: 安全培训管理
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2020-07-23 11:38:09
+ * @LastEditTime: 2020-07-23 18:38:18
  * @LastEditors: zpl
  */
 const {Schema, model} = require('mongoose');
 
-exports = TrainingSchema = new Schema(
+TrainingSchema = new Schema(
     {
       title: String, // 培训标题
       subTitle: String, // 培训副标题
