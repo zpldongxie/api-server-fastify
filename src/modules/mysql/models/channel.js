@@ -2,7 +2,7 @@
  * @description: 栏目
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2020-07-26 23:34:50
+ * @LastEditTime: 2020-07-27 18:14:51
  * @LastEditors: zpl
  */
 const {Model, DataTypes} = require('sequelize');
@@ -20,12 +20,14 @@ exports.Channel = Channel;
 module.exports = (sequelize) => {
   Channel.init({
     id: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
+      allowNull: false,
     },
     name: {
-      type: DataTypes.STRING,
+      // eslint-disable-next-line new-cap
+      type: DataTypes.STRING(64),
       allowNull: false,
       comment: '栏目标题',
     },
@@ -42,7 +44,7 @@ module.exports = (sequelize) => {
       field: 'channel_type',
     },
     parentId: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       field: 'parent_id',
       comment: '父栏目ID',
       references: {
@@ -61,18 +63,20 @@ module.exports = (sequelize) => {
       comment: '描述',
     },
     isShow: {
-      type: DataTypes.TINYINT,
+      // eslint-disable-next-line new-cap
+      type: DataTypes.TINYINT(1),
+      defaultValue: 0,
       allowNull: false,
       field: 'is_show',
       comment: '是否显示',
     },
     url: {
       type: DataTypes.STRING,
-      allowNull: false,
       comment: '链接',
     },
     orderIndex: {
       type: DataTypes.INTEGER,
+      allowNull: true,
       defaultValue: 0,
       field: 'order_index',
       comment: '排序值',
@@ -83,14 +87,20 @@ module.exports = (sequelize) => {
       field: 'setting_extend',
       comment: '是否继承设置',
     },
+    // TODO: 等完全从java后台切换过来后，这个属性要移除
+    createTime: {
+      type: DataTypes.STRING,
+      field: 'create_time',
+      comment: '创建时间',
+    },
   }, {
     sequelize,
     modelName: 'Channel',
     tableName: 'channel',
-    createdAt: 'create_time',
+    // TODO: 等完全从java后台切换过来后，这个属性要移除
+    timestamps: false,
     indexes: [{unique: true, fields: ['id']}],
   });
 
-  // Channel.sync({match: new RegExp('^' + sequelize.getDatabaseName() + '$')});
   return Channel;
 };
