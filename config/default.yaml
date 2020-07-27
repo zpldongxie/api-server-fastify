@@ -8,5 +8,12 @@ mysql:
   database: "websiteManager"
   user: "root"
   password: "10isp.com!a"
+  dialect: 'mysql'
+  pool:
+    max: 5
+    min: 0
+    acquie: 30000
+    idle: 10000
+  
 
 oldManager: "http://www.snains.cn:9001"

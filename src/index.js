@@ -14,18 +14,18 @@ const errorThrowerRoutes = require('./modules/routes/error-thrower');
 const db = require('./modules/db');
 const mysql = require('./modules/mysql');
 
-const server = fastify({logger: true});
+const server = fastify();
 
 server.register(fastifyBlipp);
 
 // 连接数据库
 server.register(db, config.get('db'));
-server.register(mysql);
+server.register(mysql, config.get('mysql'));
 
 // 挂载路由
 const Ajv = require('ajv');
 const ajv = new Ajv({allErrors: true});
-server.register(usersRoutes);
+server.register(usersRoutes, {ajv});
 server.register(contentRoutes, config.get('oldManager'));
 server.register(trainingRoutes, {ajv});
 server.register(trainingRegRoutes);
