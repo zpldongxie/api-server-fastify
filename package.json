@@ -1,7 +1,7 @@
 {
-  "name": "api-server-fastify-ts",
+  "name": "api-server-fastify",
   "version": "1.0.0",
-  "description": "基于fastify + typescript实现的RESTful API服务",
+  "description": "基于fastify实现的RESTful API服务",
   "main": "index.js",
   "scripts": {
     "start": "node ./src/index.js",

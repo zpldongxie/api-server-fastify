@@ -14,5 +14,6 @@ mysql:
     min: 0
     acquie: 30000
     idle: 10000
+  needCreatTable: false
 
 oldManager: "http://localhost:9001"

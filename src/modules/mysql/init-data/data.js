@@ -2,13 +2,18 @@
  * @description: 数据库初始数据
  * @author: zpl
  * @Date: 2020-07-26 22:19:42
- * @LastEditTime: 2020-07-27 13:52:53
+ * @LastEditTime: 2020-07-28 08:50:55
  * @LastEditors: zpl
  */
 exports.userGroupList = [{
   name: '管理员',
+  tag: 'admin',
 }, {
   name: '用户',
+  tag: 'user',
+}, {
+  name: '访客',
+  tag: 'guest',
 }];
 
 exports.userList = [{

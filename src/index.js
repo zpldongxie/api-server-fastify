@@ -14,7 +14,7 @@ const errorThrowerRoutes = require('./modules/routes/error-thrower');
 const db = require('./modules/db');
 const mysql = require('./modules/mysql');
 
-const server = fastify();
+const server = fastify({logger: true});
 
 server.register(fastifyBlipp);
 

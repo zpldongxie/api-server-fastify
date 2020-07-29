@@ -2,13 +2,14 @@
  * @description: 用户相关路由
  * @author: zpl
  * @Date: 2020-07-25 16:36:13
- * @LastEditTime: 2020-07-27 15:05:27
+ * @LastEditTime: 2020-07-29 14:05:19
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
+const {onRouteError} = require('../util');
 
 module.exports = fp(async (server, opts, next) => {
-  const {UserModel, UserGroupMode} = server.mysql.models;
+  const {User, UserGroup} = server.mysql.models;
   const {ajv} = opts;
 
   // 登录
@@ -22,27 +23,21 @@ module.exports = fp(async (server, opts, next) => {
 
     const {userName, pwd} = request.body;
     try {
-      const user = await UserModel.findOne({
+      const user = await User.findOne({
         where: {loginName: userName, password: pwd},
-        include: UserGroupMode,
+        include: UserGroup,
       });
       if (user) {
-        const groups = await user.getGroups();
-        const authors = groups ? groups.map((g) => g.name) : [];
+        const authors = user.groups.map((g) => g.tag);
         return reply.code(200).send({
           status: 'ok',
           user: user,
           currentAuthority: authors,
         });
       }
-      return reply.code(201).send(training);
+      return reply.code(200).send({status: 'error'});
     } catch (error) {
-      const {errors} = error;
-      if (errors && errors.length) {
-        const {message} = errors[0];
-        return reply.code(406).send(message);
-      }
-      return reply.code(500).send(error);
+      return onRouteError(error, reply);
     }
   });
 
@@ -50,21 +45,28 @@ module.exports = fp(async (server, opts, next) => {
   // GET http://49.234.158.74:3000/users
   server.get('/users', {}, async (request, reply) => {
     try {
-      const userList = await UserModel.findAll();
+      const userList = await User.findAll({
+        include: [{
+          model: UserGroup,
+          through: {
+            attributes: [],
+          },
+        }],
+      });
 
       if (!userList) {
         return reply.send(404);
       }
-
       return reply.code(200).send(userList);
     } catch (error) {
-      request.log.error(error);
-      return reply.send(400);
+      return onRouteError(error, reply);
     }
   });
 
   // 获取当前用户，暂时返回固定内容
   server.get('/currentUser', {}, async (request, reply) => {
+    // TODO: 后台验证
+    // return reply.code(200).send();
     return reply.code(200).send({
       name: '管理员',
       avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
@@ -117,7 +119,7 @@ module.exports = fp(async (server, opts, next) => {
     });
   });
 
-  server.post('/user', {}, async (request, reply) => {
+  server.put('/user', {}, async (request, reply) => {
 
   });
 
