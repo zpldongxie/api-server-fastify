@@ -2,82 +2,107 @@
  * @description: 安全培训管理相关路由
  * @author: zpl
  * @Date: 2020-07-23 11:41:05
- * @LastEditTime: 2020-07-26 00:45:44
+ * @LastEditTime: 2020-07-29 14:10:49
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
+const {onRouteError} = require('../util');
 
 module.exports = fp(async (server, opts, next) => {
-  const {TrainingModel} = server.mysql.models;
+  const {Training, Channel} = server.mysql.models;
   const {ajv} = opts;
-  // TODO: 根据ID获取培训信息
   server.get('/training/:id', {}, async (request, reply) => {
     try {
-      const _id = request.params.id;
-
-      const training = await server.db.models.Training.findOne({
-        _id,
-      });
-
+      const id = request.params.id;
+      const training = await Training.findOne({where: {id}});
       if (!training) {
         return reply.send(404);
       }
-
       return reply.code(200).send(training);
     } catch (error) {
-      console.log('-------------error------------');
-      request.log.error(error);
-      console.log('-------------error------------');
-      return reply.send(400);
+      return onRouteError(error, reply);
     }
   });
 
   // 获取所有培训信息
   server.get('/trainings', {}, async (request, reply) => {
     try {
-      const trainingList = await TrainingModel.findAll();
-
+      const trainingList = await Training.findAll({include: Channel});
       if (!trainingList) {
         return reply.send(404);
       }
-
       return reply.code(200).send(trainingList);
     } catch (error) {
-      request.log.error(error);
-      return reply.send(400);
+      return onRouteError(error, reply);
     }
   });
 
   // 新增或更新培训
   const updateSchema = require('./update-schema');
-  server.post('/training', {updateSchema}, async (request, reply) => {
+  server.put('/training', {updateSchema}, async (request, reply) => {
     const validate = ajv.compile(updateSchema.body.valueOf());
     const valid = validate(request.body);
     // const data = {
     //   "title": "testTitle6",
     //   "subTitle": "",
-    //   "typeByChannel": "1",
     //   "registStartTime":"2020-01-01",
     //   "registEndTime": "2020-07-25",
     //   "trainingMethod": "线上公开",
     //   "startTime": "2020-07-25T16:34:06.157Z",
     //   "endTime": "2020-07-25T16:34:06.157Z",
     //   "desc": "好滴很！"
+    //   "ChannelId": "1",
     // };
     if (!valid) {
-      return reply.code(400).send(validate.errors);
+      return reply.code(200).send(validate.errors);
     }
     try {
-      const training = await TrainingModel.create(request.body);
-
-      return reply.code(201).send(training);
-    } catch (error) {
-      const {errors} = error;
-      if (errors && errors.length) {
-        const {message} = errors[0];
-        return reply.code(406).send(message);
+      const id = request.body.id;
+      const channel = await Channel.findOne({where: {id: request.body.ChannelId}});
+      if (id) {
+        // 更新
+        const training = await Training.findOne({id});
+        if (training && channel) {
+          if (channel) {
+            training.title = request.body.title;
+            training.subTitle = request.body.subTitle;
+            training.registStartTime = request.body.registStartTime;
+            training.registEndTime = request.body.registEndTime;
+            training.trainingMethod = request.body.trainingMethod;
+            training.startTime = request.body.startTime;
+            training.endTime = request.body.endTime;
+            training.desc = request.body.desc;
+            training.setChannel(channel);
+            await training.save();
+            return reply.code(201).send(training);
+          } else {
+            reply.code(200).send({
+              status: 'error',
+              message: '指定栏目不存在，无法更新。',
+            });
+          }
+        } else {
+          reply.code(200).send({
+            status: 'error',
+            message: '培训记录不存在，无法更新。',
+          });
+        }
+      } else {
+        // 新增
+        if (channel) {
+          const training = await Training.create(request.body);
+          if (training) {
+            return reply.code(201).send(training);
+          }
+        } else {
+          reply.code(200).send({
+            status: 'error',
+            message: '培训记录不存在，无法更新。',
+          });
+        }
       }
-      return reply.code(500);
+    } catch (error) {
+      return onRouteError(error, reply);
     }
   });
 
