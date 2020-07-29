@@ -2,7 +2,7 @@
  * @description: 用户相关路由
  * @author: zpl
  * @Date: 2020-07-25 16:36:13
- * @LastEditTime: 2020-07-29 14:05:19
+ * @LastEditTime: 2020-07-29 14:29:44
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -28,7 +28,7 @@ module.exports = fp(async (server, opts, next) => {
         include: UserGroup,
       });
       if (user) {
-        const authors = user.groups.map((g) => g.tag);
+        const authors = user.UserGroups.map((g) => g.tag);
         return reply.code(200).send({
           status: 'ok',
           user: user,
