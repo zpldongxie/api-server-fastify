@@ -185,7 +185,6 @@ class ContentDetail extends Model {
     // 栏目 - 文章， 多对多
     ContentDetail.belongsToMany(sequelize.models['Channel'], {
       through: 'content_detail_channel',
-      as: 'channels',
       foreignKey: 'content_detail_id',
     });
   }

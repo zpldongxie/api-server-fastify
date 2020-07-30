@@ -2,7 +2,7 @@
  * @description: 安全培训管理相关路由
  * @author: zpl
  * @Date: 2020-07-23 11:41:05
- * @LastEditTime: 2020-07-29 14:10:49
+ * @LastEditTime: 2020-07-30 14:46:20
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -11,7 +11,7 @@ const {onRouteError} = require('../util');
 module.exports = fp(async (server, opts, next) => {
   const {Training, Channel} = server.mysql.models;
   const {ajv} = opts;
-  server.get('/training/:id', {}, async (request, reply) => {
+  server.get('/api/training/:id', {}, async (request, reply) => {
     try {
       const id = request.params.id;
       const training = await Training.findOne({where: {id}});
@@ -25,7 +25,7 @@ module.exports = fp(async (server, opts, next) => {
   });
 
   // 获取所有培训信息
-  server.get('/trainings', {}, async (request, reply) => {
+  server.get('/api/trainings', {}, async (request, reply) => {
     try {
       const trainingList = await Training.findAll({include: Channel});
       if (!trainingList) {
@@ -39,7 +39,7 @@ module.exports = fp(async (server, opts, next) => {
 
   // 新增或更新培训
   const updateSchema = require('./update-schema');
-  server.put('/training', {updateSchema}, async (request, reply) => {
+  server.put('/api/training', {updateSchema}, async (request, reply) => {
     const validate = ajv.compile(updateSchema.body.valueOf());
     const valid = validate(request.body);
     // const data = {

@@ -8,9 +8,10 @@ const config = require('config');
 const usersRoutes = require('./modules/routes/users');
 const statusRoutes = require('./modules/routes/status');
 const contentRoutes = require('./modules/routes/content');
-const trainingRoutes = require('./modules/routes/training-management');
+const trainingRoutes = require('./modules/routes/training');
 const trainingRegRoutes = require('./modules/routes/training-registration');
 const errorThrowerRoutes = require('./modules/routes/error-thrower');
+const restRoutes = require('./modules/routes/rest');
 const db = require('./modules/db');
 const mysql = require('./modules/mysql');
 
@@ -31,6 +32,7 @@ server.register(trainingRoutes, {ajv});
 server.register(trainingRegRoutes);
 server.register(statusRoutes);
 server.register(errorThrowerRoutes);
+server.register(restRoutes, {ajv});
 
 const start = async () => {
   try {

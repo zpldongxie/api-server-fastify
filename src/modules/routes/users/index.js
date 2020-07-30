@@ -2,7 +2,7 @@
  * @description: 用户相关路由
  * @author: zpl
  * @Date: 2020-07-25 16:36:13
- * @LastEditTime: 2020-07-29 14:29:44
+ * @LastEditTime: 2020-07-30 14:46:57
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -14,7 +14,7 @@ module.exports = fp(async (server, opts, next) => {
 
   // 登录
   const loginSchema = require('./login-schema');
-  server.post('/doLogin', {loginSchema}, async (request, reply) => {
+  server.post('/api/doLogin', {loginSchema}, async (request, reply) => {
     const validate = ajv.compile(loginSchema.body.valueOf());
     const valid = validate(request.body);
     if (!valid) {
@@ -43,7 +43,7 @@ module.exports = fp(async (server, opts, next) => {
 
   // 获取所有用户信息
   // GET http://49.234.158.74:3000/users
-  server.get('/users', {}, async (request, reply) => {
+  server.get('/api/users', {}, async (request, reply) => {
     try {
       const userList = await User.findAll({
         include: [{
@@ -64,7 +64,7 @@ module.exports = fp(async (server, opts, next) => {
   });
 
   // 获取当前用户，暂时返回固定内容
-  server.get('/currentUser', {}, async (request, reply) => {
+  server.get('/api/currentUser', {}, async (request, reply) => {
     // TODO: 后台验证
     // return reply.code(200).send();
     return reply.code(200).send({
@@ -119,7 +119,7 @@ module.exports = fp(async (server, opts, next) => {
     });
   });
 
-  server.put('/user', {}, async (request, reply) => {
+  server.put('/api/user', {}, async (request, reply) => {
 
   });
 

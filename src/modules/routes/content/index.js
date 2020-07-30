@@ -2,7 +2,7 @@
  * @description: 文章管理相关路由
  * @author: zpl
  * @Date: 2020-07-23 11:41:05
- * @LastEditTime: 2020-07-25 10:57:02
+ * @LastEditTime: 2020-07-30 14:44:15
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -12,7 +12,7 @@ const getContentListSchema = require('./getContentList-schema');
 
 module.exports = fp(async (server, opts, next) => {
   // TODO: 根据ID获取文章信息
-  server.get('/content/:id', {}, async (req, reply) => {
+  server.get('/api/content/:id', {}, async (req, reply) => {
     try {
       const _id = req.params.id;
 
@@ -59,7 +59,7 @@ module.exports = fp(async (server, opts, next) => {
   };
 
   // 获取所有文章信息
-  server.post('/getContentList', {
+  server.post('/api/getContentList', {
     schema: getContentListSchema,
   }, async (req, reply) => {
     const queryContentListParams = convertGetContentListParam(req.body);
@@ -84,36 +84,8 @@ module.exports = fp(async (server, opts, next) => {
     }
   });
 
-  // 按条件获取发布的文章
-  server.post('/getPubList', {}, async (req, reply) => {
-    const param = {
-      'channelId': '48',
-      'start': '0',
-      'length': '4',
-      'search': '',
-      'orderName': 'conDate',
-      'orderValue': 'desc',
-      'contentType': 'content',
-    };
-    request({
-      url: `${opts}/rest/getPubList`,
-      method: 'POST',
-      json: true,
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify(param),
-    }, function(error, response, body) {
-      if (!error && response.statusCode == 200) {
-        return reply.code(200).send(body);
-      }
-      req.log.error(error);
-      return reply.send(500);
-    });
-  });
-
   // TODO: 新增或更新文章
-  server.post('/content', {}, async (req, reply) => {
+  server.post('/api/content', {}, async (req, reply) => {
     try {
       const {TrainingReg} = server.db.models;
 

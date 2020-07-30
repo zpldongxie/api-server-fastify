@@ -2,7 +2,7 @@
  * @description: 栏目
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2020-07-30 00:14:23
+ * @LastEditTime: 2020-07-30 12:27:36
  * @LastEditors: zpl
  */
 const {Model, DataTypes} = require('sequelize');
@@ -118,7 +118,6 @@ class Channel extends Model {
     // 栏目 - 文章， 多对多
     Channel.belongsToMany(sequelize.models['ContentDetail'], {
       through: 'content_detail_channel',
-      as: 'contents',
       foreignKey: 'channel_id',
     });
 

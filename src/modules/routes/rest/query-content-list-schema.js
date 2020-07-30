@@ -1,17 +1,16 @@
 /*
- * @description: 获取文章列表接口参数定义
+ * @description: 查询文章列表接口参数和返回值定义
  * @author: zpl
- * @Date: 2020-07-23 23:15:23
- * @LastEditTime: 2020-07-30 11:37:34
+ * @Date: 2020-07-30 11:31:20
+ * @LastEditTime: 2020-07-30 15:25:41
  * @LastEditors: zpl
  */
 const S = require('fluent-schema');
 
 const bodyJsonSchema = S.object()
-    .prop('channelId', S.string().required().description('栏目ID，传-1时查询全部'))
+    .prop('channelId', S.number().required().description('栏目ID，传入无效ID会返回所有栏目内容'))
     .prop('pageSize', S.number().default(10).description('分页大小，默认为10'))
-    .prop('current', S.number().default(1).description('当前页码，默认为1'))
-    .prop('title', S.string().description('模糊查询条件'));
+    .prop('current', S.number().default(1).description('当前页码，默认为1'));
 
 module.exports = {
   body: bodyJsonSchema,
