@@ -2,7 +2,7 @@
  * @description: 栏目
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2020-07-28 09:36:09
+ * @LastEditTime: 2020-07-30 00:14:23
  * @LastEditors: zpl
  */
 const {Model, DataTypes} = require('sequelize');
@@ -105,6 +105,27 @@ class Channel extends Model {
       timestamps: false,
       indexes: [{unique: true, fields: ['id']}],
     });
+  }
+
+  /**
+   * 与其他表创建关联
+   *
+   * @static
+   * @param {*} sequelize
+   * @memberof Channel
+   */
+  static reateAssociation(sequelize) {
+    // 栏目 - 文章， 多对多
+    Channel.belongsToMany(sequelize.models['ContentDetail'], {
+      through: 'content_detail_channel',
+      as: 'contents',
+      foreignKey: 'channel_id',
+    });
+
+    // 栏目 - 栏目配置， 一对多
+    Channel.hasMany(sequelize.models['ChannelSetting']);
+    // 栏目 - 培训， 一对多
+    Channel.hasMany(sequelize.models['Training']);
   }
 }
 

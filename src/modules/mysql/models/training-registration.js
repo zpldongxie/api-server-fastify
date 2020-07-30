@@ -2,7 +2,7 @@
  * @description: 安全培训报名
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2020-07-28 09:36:23
+ * @LastEditTime: 2020-07-30 00:19:43
  * @LastEditors: zpl
  */
 const {Model, DataTypes} = require('sequelize');
@@ -64,6 +64,18 @@ class TrainingReg extends Model {
       tableName: 'training_reg',
       indexes: [{unique: true, fields: ['mobile']}],
     });
+  }
+
+  /**
+   * 与其他表创建关联
+   *
+   * @static
+   * @param {*} sequelize
+   * @memberof TrainingReg
+   */
+  static reateAssociation(sequelize) {
+    // 培训 - 培训报名， 一对多
+    TrainingReg.belongsTo(sequelize.models['Training']);
   }
 }
 

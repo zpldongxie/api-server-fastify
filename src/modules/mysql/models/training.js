@@ -2,7 +2,7 @@
  * @description: 安全培训
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2020-07-29 10:23:22
+ * @LastEditTime: 2020-07-30 00:19:36
  * @LastEditors: zpl
  */
 const {Model, DataTypes} = require('sequelize');
@@ -72,6 +72,20 @@ class Training extends Model {
       tableName: 'training',
       indexes: [{unique: true, fields: ['title']}],
     });
+  }
+
+  /**
+   * 与其他表创建关联
+   *
+   * @static
+   * @param {*} sequelize
+   * @memberof Training
+   */
+  static reateAssociation(sequelize) {
+    // 栏目 - 培训， 一对多
+    Training.belongsTo(sequelize.models['Channel']);
+    // 培训 - 培训报名， 一对多
+    Training.hasMany(sequelize.models['TrainingReg']);
   }
 }
 

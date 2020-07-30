@@ -2,7 +2,7 @@
  * @description: 栏目配置
  * @author: zpl
  * @Date: 2020-07-28 10:42:50
- * @LastEditTime: 2020-07-28 12:12:23
+ * @LastEditTime: 2020-07-30 00:14:39
  * @LastEditors: zpl
  */
 const {Model, DataTypes} = require('sequelize');
@@ -75,6 +75,18 @@ class ChannelSetting extends Model {
       timestamps: false,
       indexes: [{unique: true, fields: ['id']}],
     });
+  }
+
+  /**
+   * 与其他表创建关联
+   *
+   * @static
+   * @param {*} sequelize
+   * @memberof ChannelSetting
+   */
+  static reateAssociation(sequelize) {
+    // 栏目 - 栏目配置， 一对多
+    ChannelSetting.belongsTo(sequelize.models['Channel'], {foreignKey: {name: 'channel_id'}});
   }
 }
 

@@ -2,7 +2,7 @@
  * @description: 用户
  * @author: zpl
  * @Date: 2020-07-25 15:10:09
- * @LastEditTime: 2020-07-29 13:58:54
+ * @LastEditTime: 2020-07-30 00:21:14
  * @LastEditors: zpl
  */
 const {Model, DataTypes} = require('sequelize');
@@ -81,6 +81,21 @@ class User extends Model {
       sequelize,
       modelName: 'User',
       tableName: 'user',
+    });
+  }
+
+  /**
+   * 与其他表创建关联
+   *
+   * @static
+   * @param {*} sequelize
+   * @memberof User
+   */
+  static reateAssociation(sequelize) {
+    // 用户 - 用户组， 多对多
+    User.belongsToMany(sequelize.models['UserGroup'], {
+      through: 'user-group-user',
+      foreignKey: 'user_id',
     });
   }
 }

@@ -2,7 +2,7 @@
  * @description: 初始化数据库
  * @author: zpl
  * @Date: 2020-07-27 12:40:11
- * @LastEditTime: 2020-07-28 14:01:38
+ * @LastEditTime: 2020-07-30 00:29:57
  * @LastEditors: zpl
  */
 
@@ -52,7 +52,7 @@ const initUser = async (UserGroupModel, UserModel, dataList) => {
       const groupList = await UserGroupModel.findAll({
         where: {name: user.group},
       });
-      await currentUser.setGroups(groupList);
+      await currentUser.setUserGroups(groupList);
       console.log(`user: ${user.name}，用户组关联成功。`);
       result.push(`user: ${user.name}，用户组关联成功。`);
     }

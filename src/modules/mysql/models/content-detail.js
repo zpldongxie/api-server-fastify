@@ -2,7 +2,7 @@
  * @description: 文章内容
  * @author: zpl
  * @Date: 2020-07-28 10:16:12
- * @LastEditTime: 2020-07-28 12:16:08
+ * @LastEditTime: 2020-07-30 00:25:47
  * @LastEditors: zpl
  */
 const {Model, DataTypes} = require('sequelize');
@@ -171,6 +171,22 @@ class ContentDetail extends Model {
       // TODO: 等完全从java后台切换过来后，这个属性要移除
       timestamps: false,
       indexes: [{unique: true, fields: ['id']}],
+    });
+  }
+
+  /**
+   * 与其他表创建关联
+   *
+   * @static
+   * @param {*} sequelize
+   * @memberof ContentDetail
+   */
+  static reateAssociation(sequelize) {
+    // 栏目 - 文章， 多对多
+    ContentDetail.belongsToMany(sequelize.models['Channel'], {
+      through: 'content_detail_channel',
+      as: 'channels',
+      foreignKey: 'content_detail_id',
     });
   }
 }
