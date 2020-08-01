@@ -2,11 +2,11 @@
  * @description rest接口，不做身份验证，其他系统使用的路由要加验证
  * @author: zpl
  * @Date: 2020-07-30 11:26:02
- * @LastEditTime: 2020-07-30 15:42:59
+ * @LastEditTime: 2020-07-31 21:43:57
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
-const {queryByCid, queryAll} = require('../content/query-content-method');
+const {queryByCid, queryAll} = require('../content/query-list-method');
 const {onRouteError} = require('../util');
 
 const querySchema = require('./query-content-list-schema');
@@ -26,7 +26,7 @@ module.exports = fp(async (server, opts, next) => {
       const {
         channelId,
         current = 1,
-        pageSize = 10,
+        pageSize = 20,
       } = req.body;
       const result = await queryByCid({
         mysqlModel,

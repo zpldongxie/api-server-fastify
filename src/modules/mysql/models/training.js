@@ -2,7 +2,7 @@
  * @description: 安全培训
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2020-07-30 00:19:36
+ * @LastEditTime: 2020-08-01 15:47:34
  * @LastEditors: zpl
  */
 const {Model, DataTypes} = require('sequelize');
@@ -35,15 +35,16 @@ class Training extends Model {
       },
       subTitle: {
         type: DataTypes.STRING,
+        defaultValue: '',
         comment: '培训副标题',
       },
       registStartTime: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.DATE,
         allowNull: false,
         comment: '报名开始时间',
       },
       registEndTime: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.DATE,
         allowNull: false,
         comment: '报名截止时间',
       },
@@ -64,6 +65,7 @@ class Training extends Model {
       },
       desc: {
         type: DataTypes.STRING,
+        defaultValue: '',
         comment: '培训介绍',
       },
     }, {

@@ -2,13 +2,13 @@
  * @description: 文章管理相关路由
  * @author: zpl
  * @Date: 2020-07-23 11:41:05
- * @LastEditTime: 2020-07-30 14:44:15
+ * @LastEditTime: 2020-07-31 21:49:48
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
 const request = require('request');
 
-const getContentListSchema = require('./getContentList-schema');
+const queryListSchema = require('./query-list-schema');
 
 module.exports = fp(async (server, opts, next) => {
   // TODO: 根据ID获取文章信息
@@ -60,7 +60,7 @@ module.exports = fp(async (server, opts, next) => {
 
   // 获取所有文章信息
   server.post('/api/getContentList', {
-    schema: getContentListSchema,
+    schema: queryListSchema,
   }, async (req, reply) => {
     const queryContentListParams = convertGetContentListParam(req.body);
     try {
