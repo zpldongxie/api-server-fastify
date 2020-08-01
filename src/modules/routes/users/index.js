@@ -2,7 +2,7 @@
  * @description: 用户相关路由
  * @author: zpl
  * @Date: 2020-07-25 16:36:13
- * @LastEditTime: 2020-07-30 14:46:57
+ * @LastEditTime: 2020-08-01 13:45:32
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -28,11 +28,12 @@ module.exports = fp(async (server, opts, next) => {
         include: UserGroup,
       });
       if (user) {
+        const token = server.jwt.sign({id: user.id});
         const authors = user.UserGroups.map((g) => g.tag);
         return reply.code(200).send({
           status: 'ok',
-          user: user,
           currentAuthority: authors,
+          token: token,
         });
       }
       return reply.code(200).send({status: 'error'});
@@ -64,60 +65,16 @@ module.exports = fp(async (server, opts, next) => {
   });
 
   // 获取当前用户，暂时返回固定内容
-  server.get('/api/currentUser', {}, async (request, reply) => {
-    // TODO: 后台验证
-    // return reply.code(200).send();
-    return reply.code(200).send({
-      name: '管理员',
-      avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
-      userid: '00000001',
-      email: 'jia.yang@clouddeep.cn',
-      signature: '海纳百川，有容乃大',
-      title: '交互专家',
-      group: '管理员',
-      tags: [
-        {
-          key: '0',
-          label: '很有想法的',
-        },
-        {
-          key: '1',
-          label: '专注设计',
-        },
-        {
-          key: '2',
-          label: '辣~',
-        },
-        {
-          key: '3',
-          label: '大长腿',
-        },
-        {
-          key: '4',
-          label: '川妹子',
-        },
-        {
-          key: '5',
-          label: '海纳百川',
-        },
-      ],
-      notifyCount: 12,
-      unreadCount: 11,
-      country: 'China',
-      geographic: {
-        province: {
-          label: '浙江省',
-          key: '330000',
-        },
-        city: {
-          label: '杭州市',
-          key: '330100',
-        },
-      },
-      address: '西湖区工专路 77 号',
-      phone: '0752-268888888',
-    });
-  });
+  server.get('/api/currentUser',
+      {preValidation: [server.authenticate]},
+      async (request, reply) => {
+        console.log(request.user);
+        const user = await User.findOne({
+          where: {id: request.user.id, status: 1},
+          exclude: ['password', 'verification_code', 'status'],
+        });
+        return reply.code(200).send(user);
+      });
 
   server.put('/api/user', {}, async (request, reply) => {
 

@@ -25,6 +25,8 @@
     "config": "^3.3.1",
     "fastify": "^3.1.1",
     "fastify-blipp": "^3.0.0",
+    "fastify-cors": "^4.1.0",
+    "fastify-jwt-with-verify-token": "^1.2.4",
     "fastify-plugin": "^2.0.1",
     "fluent-schema": "^1.0.4",
     "mongoose": "^5.9.25",
