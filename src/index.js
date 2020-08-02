@@ -8,6 +8,7 @@ const config = require('config');
 const auth = require('./authenticate');
 const usersRoutes = require('./modules/routes/users');
 const statusRoutes = require('./modules/routes/status');
+const channelRoutes = require('./modules/routes/channel');
 const contentRoutes = require('./modules/routes/content');
 const trainingRoutes = require('./modules/routes/training');
 const trainingRegRoutes = require('./modules/routes/training-registration');
@@ -46,6 +47,7 @@ server.register(require('fastify-cors'), {
 const Ajv = require('ajv');
 const ajv = new Ajv({allErrors: true});
 server.register(usersRoutes, {ajv});
+server.register(channelRoutes, {ajv});
 server.register(contentRoutes, config.get('oldManager'));
 server.register(trainingRoutes, {ajv});
 server.register(trainingRegRoutes);

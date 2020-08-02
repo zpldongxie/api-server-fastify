@@ -2,7 +2,7 @@
  * @description rest接口，不做身份验证，其他系统使用的路由要加验证
  * @author: zpl
  * @Date: 2020-07-30 11:26:02
- * @LastEditTime: 2020-07-31 21:43:57
+ * @LastEditTime: 2020-08-01 21:11:54
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -45,6 +45,32 @@ module.exports = fp(async (server, opts, next) => {
     try {
       const result = await queryAll({mysqlModel, search: {pubStatus: '已发布', isRecom: true}});
       return reply.code(200).send(result);
+    } catch (error) {
+      return onRouteError(error, reply);
+    }
+  });
+
+  server.get('/channelSingleContent/:id', {}, async (req, reply) => {
+    try {
+      const id = req.params.id;
+      const channel = await mysqlModel.Channel.findOne({
+        where: {
+          id,
+          channelType: '单篇文章',
+        },
+        include: {
+          model: mysqlModel.ContentDetail,
+          where: {
+            pubStatus: '已发布',
+          },
+        },
+      });
+      if (channel) {
+        const content = channel.ContentDetails.length ? channel.ContentDetails[0] : {};
+        reply.code(200).send(content);
+      } else {
+        reply.code(404);
+      }
     } catch (error) {
       return onRouteError(error, reply);
     }
