@@ -30,6 +30,7 @@ class Training extends Model {
       },
       title: {
         type: DataTypes.STRING,
+        unique: true,
         allowNull: false,
         comment: '培训标题',
       },
@@ -72,7 +73,6 @@ class Training extends Model {
       sequelize,
       modelName: 'Training',
       tableName: 'training',
-      indexes: [{unique: true, fields: ['title']}],
     });
   }
 

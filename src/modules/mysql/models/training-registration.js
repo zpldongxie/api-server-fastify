@@ -2,7 +2,7 @@
  * @description: 安全培训报名
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2020-07-30 00:19:43
+ * @LastEditTime: 2020-08-02 08:52:46
  * @LastEditors: zpl
  */
 const {Model, DataTypes} = require('sequelize');
@@ -62,7 +62,6 @@ class TrainingReg extends Model {
       sequelize,
       modelName: 'TrainingReg',
       tableName: 'training_reg',
-      indexes: [{unique: true, fields: ['mobile']}],
     });
   }
 

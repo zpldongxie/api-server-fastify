@@ -2,7 +2,7 @@
  * @description: 安全培训管理相关路由
  * @author: zpl
  * @Date: 2020-07-23 11:41:05
- * @LastEditTime: 2020-08-01 15:30:34
+ * @LastEditTime: 2020-08-02 11:01:16
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -33,7 +33,8 @@ module.exports = fp(async (server, opts, next) => {
         include: {
           model: Channel,
           attributes: ['id', 'name'],
-        }});
+        },
+      });
       if (!trainingList) {
         return reply.send(404);
       }
@@ -54,7 +55,7 @@ module.exports = fp(async (server, opts, next) => {
     try {
       const {
         channelId,
-        search={},
+        search = {},
         current = 1,
         pageSize = 20,
       } = request.body;
@@ -96,9 +97,10 @@ module.exports = fp(async (server, opts, next) => {
       if (id) {
         // 更新
         const training = await Training.findOne({id});
-        if (training && channel) {
+        if (training) {
           if (channel) {
-            training.title = request.body.title;
+            const titleChanged = training.title !== request.body.title;
+            training.title == request.body.title || (training.title = request.body.title);
             training.subTitle = request.body.subTitle || '';
             training.registStartTime = request.body.registStartTime;
             training.registEndTime = request.body.registEndTime;
@@ -107,7 +109,20 @@ module.exports = fp(async (server, opts, next) => {
             training.endTime = request.body.endTime;
             training.desc = request.body.desc || '';
             training.setChannel(channel);
-            await training.save();
+            titleChanged ?
+              await training.save() :
+              await training.save({
+                fields: [
+                  'subTitle',
+                  'registStartTime',
+                  'registEndTime',
+                  'trainingMethod',
+                  'startTime',
+                  'endTime',
+                  'desc',
+                  'ChannelId',
+                ],
+              });
             return reply.code(201).send(training);
           } else {
             reply.code(400).send({
