@@ -2,7 +2,7 @@
  * @description: 安全培训管理相关路由
  * @author: zpl
  * @Date: 2020-07-23 11:41:05
- * @LastEditTime: 2020-08-02 11:01:16
+ * @LastEditTime: 2020-08-02 15:48:35
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -55,7 +55,7 @@ module.exports = fp(async (server, opts, next) => {
     try {
       const {
         channelId,
-        search = {},
+        search,
         current = 1,
         pageSize = 20,
       } = request.body;
@@ -100,7 +100,7 @@ module.exports = fp(async (server, opts, next) => {
         if (training) {
           if (channel) {
             const titleChanged = training.title !== request.body.title;
-            training.title == request.body.title || (training.title = request.body.title);
+            training.title = request.body.title;
             training.subTitle = request.body.subTitle || '';
             training.registStartTime = request.body.registStartTime;
             training.registEndTime = request.body.registEndTime;
@@ -143,10 +143,11 @@ module.exports = fp(async (server, opts, next) => {
           if (training) {
             return reply.code(201).send(training);
           }
+          return reply.code(422).send('培训活动创建失败。');
         } else {
           reply.code(200).send({
             status: 'error',
-            message: '培训记录不存在，无法更新。',
+            message: '指定栏目不存在，无法创建培训。',
           });
         }
       }

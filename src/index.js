@@ -50,7 +50,7 @@ server.register(usersRoutes, {ajv});
 server.register(channelRoutes, {ajv});
 server.register(contentRoutes, config.get('oldManager'));
 server.register(trainingRoutes, {ajv});
-server.register(trainingRegRoutes);
+server.register(trainingRegRoutes, {ajv});
 server.register(statusRoutes);
 server.register(errorThrowerRoutes);
 server.register(restRoutes, {ajv});
