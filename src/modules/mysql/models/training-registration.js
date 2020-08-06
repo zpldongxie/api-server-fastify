@@ -2,7 +2,7 @@
  * @description: 安全培训报名
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2020-08-02 13:55:48
+ * @LastEditTime: 2020-08-05 11:09:43
  * @LastEditors: zpl
  */
 const {Model, DataTypes} = require('sequelize');
@@ -35,7 +35,7 @@ class TrainingReg extends Model {
       },
       mobile: {
         type: DataTypes.STRING,
-        primaryKey: true,
+        unique: true,
         comment: '手机',
       },
       email: {
@@ -47,6 +47,11 @@ class TrainingReg extends Model {
         type: DataTypes.STRING,
         allowNull: false,
         comment: '公司',
+      },
+      passed: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        comment: '是否审核通过',
       },
       signInTime: {
         type: DataTypes.DATEONLY,

@@ -2,7 +2,7 @@
  * @description: 文章列表统一查询方法
  * @author: zpl
  * @Date: 2020-07-30 14:49:39
- * @LastEditTime: 2020-07-30 15:40:37
+ * @LastEditTime: 2020-08-06 15:51:35
  * @LastEditors: zpl
  */
 const queryAll = async ({
@@ -69,10 +69,17 @@ const queryByCid = async ({
   if (channel) {
     const total = await channel.countContentDetails({where: queryOpt.where});
     const list = await channel.getContentDetails(queryOpt);
+    // FIXME: 新规则增加了培训类栏目和文章，鉴于新老后台同时运行的现状，先在新后台对数据进行二次加工，待老后台关闭后再统一维护类型
+    if (channel.keyWord.includes('培训')) {
+      list.forEach((content)=>{
+        content.contentType = '表单文章';
+      });
+    }
     return {
       status: 'ok',
       total,
       list,
+      channelName: channel.name,
     };
   }
   return {

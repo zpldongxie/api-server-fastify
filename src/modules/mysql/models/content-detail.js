@@ -2,7 +2,7 @@
  * @description: 文章内容
  * @author: zpl
  * @Date: 2020-07-28 10:16:12
- * @LastEditTime: 2020-07-30 00:25:47
+ * @LastEditTime: 2020-08-06 12:28:57
  * @LastEditors: zpl
  */
 const {Model, DataTypes} = require('sequelize');
@@ -34,7 +34,7 @@ class ContentDetail extends Model {
         allowNull: false,
         comment: '标题',
       },
-      content_type: {
+      contentType: {
         type: DataTypes.STRING,
         allowNull: false,
         field: 'content_type',

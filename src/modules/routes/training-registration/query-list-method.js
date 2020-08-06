@@ -2,7 +2,7 @@
  * @description: 报名列表统一查询方法
  * @author: zpl
  * @Date: 2020-08-02 15:03:30
- * @LastEditTime: 2020-08-02 15:52:10
+ * @LastEditTime: 2020-08-03 15:47:54
  * @LastEditors: zpl
  */
 const {Op} = require('sequelize');
@@ -15,7 +15,7 @@ const queryAll = async ({
   current = 1,
 }) => {
   console.log('Into queryAll');
-  const {TrainingReg, Training} = mysqlModel;
+  const {TrainingReg, Training, Channel} = mysqlModel;
 
   const filter = search ? {[Op.or]: [
     {name: {[Op.substring]: search}},
@@ -38,6 +38,10 @@ const queryAll = async ({
     include: {
       model: Training,
       attributes: ['id', 'title'],
+      include: {
+        model: Channel,
+        attributes: ['id', 'name'],
+      },
     },
   });
 

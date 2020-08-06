@@ -2,7 +2,7 @@
  * @description: 栏目
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2020-07-30 12:27:36
+ * @LastEditTime: 2020-08-06 12:26:39
  * @LastEditors: zpl
  */
 const {Model, DataTypes} = require('sequelize');
@@ -91,7 +91,7 @@ class Channel extends Model {
         field: 'setting_extend',
         comment: '是否继承设置',
       },
-      // TODO: 等完全从java后台切换过来后，这个属性要移除
+      // FIXME: 等完全从java后台切换过来后，这个属性要移除
       createTime: {
         type: DataTypes.STRING,
         field: 'create_time',
@@ -101,7 +101,7 @@ class Channel extends Model {
       sequelize,
       modelName: 'Channel',
       tableName: 'channel',
-      // TODO: 等完全从java后台切换过来后，这个属性要移除
+      // FIXME: 等完全从java后台切换过来后，这个属性要移除
       timestamps: false,
       indexes: [{unique: true, fields: ['id']}],
     });

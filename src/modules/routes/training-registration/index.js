@@ -2,10 +2,11 @@
  * @description: 安全培训报名相关路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-08-02 15:49:22
+ * @LastEditTime: 2020-08-06 15:18:31
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
+const {Op} = require('sequelize');
 const {queryAll, queryByTid} = require('./query-list-method');
 const {onRouteError} = require('../util');
 
@@ -104,7 +105,7 @@ module.exports = fp(async (server, opts, next) => {
             trainingReg.mobile = request.body.mobile;
             trainingReg.email = request.body.email;
             trainingReg.comp = request.body.comp;
-            trainingReg.signInTime = request.body.signInTime || '';
+            trainingReg.signInTime = request.body.signInTime || trainingReg.signInTime || null;
             trainingReg.setTraining(training);
             mobileChanged ?
               await trainingReg.save() :
@@ -150,19 +151,35 @@ module.exports = fp(async (server, opts, next) => {
     }
   });
 
-  server.delete('/api/trainingReg', {}, async (request, reply) => {
+  server.delete('/api/trainingRegs', {}, async (request, reply) => {
     try {
-      const id = request.body.id;
-      const trainingReg = await TrainingReg.findOne({where: {id}});
-      if (trainingReg) {
-        await trainingReg.destroy();
-        reply.code(204);
-      } else {
+      const ids = request.body.ids;
+      if (!ids || !Array.isArray(ids)) {
         reply.code(400).send({
           status: 'error',
-          message: '培训报名ID无效，无法删除。',
+          message: '培训报名ID无效。',
         });
+        return;
       }
+
+      await TrainingReg.destroy({
+        where: {
+          id: {
+            [Op.in]: ids,
+          },
+        },
+      });
+      reply.code(204);
+      // const trainingReg = await TrainingReg.findOne({ where: { id } });
+      // if (trainingReg) {
+      //   await trainingReg.destroy();
+      //   reply.code(204);
+      // } else {
+      //   reply.code(400).send({
+      //     status: 'error',
+      //     message: '培训报名ID无效，无法删除。',
+      //   });
+      // }
     } catch (error) {
       return onRouteError(error, reply);
     }
