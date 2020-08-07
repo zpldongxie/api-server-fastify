@@ -2,7 +2,7 @@
  * @description rest接口，不做身份验证，其他系统使用的路由要加验证
  * @author: zpl
  * @Date: 2020-07-30 11:26:02
- * @LastEditTime: 2020-08-06 17:56:45
+ * @LastEditTime: 2020-08-07 14:00:56
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -16,7 +16,7 @@ module.exports = fp(async (server, opts, next) => {
   const {ajv} = opts;
 
   // 按条件获取发布的文章列表
-  server.post('/getPubList', {querySchema}, async (req, reply) => {
+  server.post('/getPubList', {schema: querySchema}, async (req, reply) => {
     const validate = ajv.compile(querySchema.body.valueOf());
     const valid = validate(req.body);
     if (!valid) {
@@ -104,11 +104,11 @@ module.exports = fp(async (server, opts, next) => {
 
   // 新增或更新培训
   const putTrainingRegSchema = require('./put-training-reg-schema');
-  server.put('/trainingReg', {putTrainingRegSchema}, async (request, reply) => {
+  server.put('/trainingReg', {schema: putTrainingRegSchema}, async (request, reply) => {
     const validate = ajv.compile(putTrainingRegSchema.body.valueOf());
     const valid = validate(request.body);
     if (!valid) {
-      return reply.code(200).send(validate.errors);
+      return reply.code(400).send(validate.errors);
     }
     try {
       const training = await mysqlModel.Training.findOne({where: {id: request.body.TrainingId}});

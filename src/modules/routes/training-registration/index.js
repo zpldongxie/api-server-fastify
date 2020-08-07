@@ -2,7 +2,7 @@
  * @description: 安全培训报名相关路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-08-06 15:18:31
+ * @LastEditTime: 2020-08-06 23:17:37
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -92,7 +92,7 @@ module.exports = fp(async (server, opts, next) => {
     const validate = ajv.compile(updateSchema.body.valueOf());
     const valid = validate(request.body);
     if (!valid) {
-      return reply.code(200).send(validate.errors);
+      return reply.code(400).send(validate.errors);
     }
     try {
       const id = request.body.id;

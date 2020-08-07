@@ -3,7 +3,6 @@ const sourceMapSupport = require('source-map-support');
 sourceMapSupport.install();
 
 const fastify = require('fastify');
-const fastifyBlipp = require('fastify-blipp');
 const config = require('config');
 const auth = require('./authenticate');
 const usersRoutes = require('./modules/routes/users');
@@ -22,7 +21,8 @@ const server = fastify({
 });
 
 server.register(auth);
-server.register(fastifyBlipp);
+const swagger = require('./swagger');
+server.register(swagger);
 
 // 连接数据库
 server.register(db, config.get('db'));
@@ -58,7 +58,6 @@ server.register(restRoutes, {ajv});
 const start = async () => {
   try {
     await server.listen(3000, '0.0.0.0');
-    server.blipp();
   } catch (err) {
     console.log(err);
     server.log.error(err);

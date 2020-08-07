@@ -2,7 +2,7 @@
  * @description: 用户相关路由
  * @author: zpl
  * @Date: 2020-07-25 16:36:13
- * @LastEditTime: 2020-08-01 13:45:32
+ * @LastEditTime: 2020-08-07 13:47:47
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -14,7 +14,7 @@ module.exports = fp(async (server, opts, next) => {
 
   // 登录
   const loginSchema = require('./login-schema');
-  server.post('/api/doLogin', {loginSchema}, async (request, reply) => {
+  server.post('/api/doLogin', {schema: loginSchema}, async (request, reply) => {
     const validate = ajv.compile(loginSchema.body.valueOf());
     const valid = validate(request.body);
     if (!valid) {
