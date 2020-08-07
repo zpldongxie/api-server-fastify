@@ -2,7 +2,7 @@
  * @description: 栏目管理相关路由
  * @author: zpl
  * @Date: 2020-07-23 11:41:05
- * @LastEditTime: 2020-08-01 21:28:10
+ * @LastEditTime: 2020-08-06 23:01:08
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -54,7 +54,7 @@ module.exports = fp(async (server, opts, next) => {
     }
   });
 
-  // TODO: 新增或更新文章
+  // TODO: 新增或更新栏目
   server.post('/api/channel', {}, async (req, reply) => {
     try {
       return reply.code(201).send('暂未实现此功能');

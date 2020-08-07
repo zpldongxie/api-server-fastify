@@ -151,6 +151,7 @@ module.exports = fp(async (server, opts, next) => {
     }
   });
 
+  // 删除报名
   server.delete('/api/trainingRegs', {}, async (request, reply) => {
     try {
       const ids = request.body.ids;
@@ -170,16 +171,30 @@ module.exports = fp(async (server, opts, next) => {
         },
       });
       reply.code(204);
-      // const trainingReg = await TrainingReg.findOne({ where: { id } });
-      // if (trainingReg) {
-      //   await trainingReg.destroy();
-      //   reply.code(204);
-      // } else {
-      //   reply.code(400).send({
-      //     status: 'error',
-      //     message: '培训报名ID无效，无法删除。',
-      //   });
-      // }
+    } catch (error) {
+      return onRouteError(error, reply);
+    }
+  });
+
+  // 设置审批状态
+  const setPassedSchema = require('./set-passed-schema');
+  server.post('/api/trainingRegs/setPassed', {setPassedSchema}, async (request, reply) => {
+    const validate = ajv.compile(setPassedSchema.body.valueOf());
+    const valid = validate(request.body);
+    if (!valid) {
+      return reply.code(400).send(validate.errors);
+    }
+
+    try {
+      const {ids, passed} = request.body;
+      await TrainingReg.update({passed}, {
+        where: {
+          id: {
+            [Op.in]: ids,
+          },
+        },
+      });
+      return reply.code(200).send({message: '设置完成'});
     } catch (error) {
       return onRouteError(error, reply);
     }
