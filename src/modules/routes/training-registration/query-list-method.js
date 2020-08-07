@@ -2,7 +2,7 @@
  * @description: 报名列表统一查询方法
  * @author: zpl
  * @Date: 2020-08-02 15:03:30
- * @LastEditTime: 2020-08-03 15:47:54
+ * @LastEditTime: 2020-08-06 23:05:24
  * @LastEditors: zpl
  */
 const {Op} = require('sequelize');
@@ -27,7 +27,7 @@ const queryAll = async ({
     where: {
       ...filter,
     },
-    order: [orderName ? [orderName, orderValue || 'DESC'] : ['updatedAt', 'DESC']],
+    order: [orderName ? [orderName, orderValue || 'DESC'] : ['createdAt', 'DESC']],
     offset: (current - 1) * pageSize,
     limit: pageSize,
   };
@@ -74,7 +74,7 @@ const queryByTid = async ({
     where: {
       ...filter,
     },
-    order: [orderName ? [orderName, orderValue || 'DESC'] : ['updatedAt', 'DESC']],
+    order: [orderName ? [orderName, orderValue || 'DESC'] : ['createdAt', 'DESC']],
     offset: (current - 1) * pageSize,
     limit: pageSize,
   };

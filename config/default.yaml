@@ -14,6 +14,6 @@ mysql:
     min: 0
     acquie: 30000
     idle: 10000
-  needCreatTable: true
+  needCreatTable: false
 
 oldManager: "http://www.snains.cn:9001"

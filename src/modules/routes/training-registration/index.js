@@ -59,25 +59,27 @@ module.exports = fp(async (server, opts, next) => {
         search,
         current = 1,
         pageSize = 20,
+        sorter,
       } = request.body;
+      const queryParams = {
+        mysqlModel,
+        search,
+        pageSize,
+        current,
+      };
+      if (sorter && Object.keys(sorter).length) {
+        queryParams.orderName = Object.keys(sorter)[0];
+        queryParams.orderValue = sorter[queryParams.orderName].includes('asc') ? 'ASC' : 'DESC';
+      }
+
       if (trainingId) {
         const result = await queryByTid({
-          mysqlModel,
-          search,
+          ...queryParams,
           trainingId,
-          pageSize,
-          current,
         });
         return reply.code(200).send(result);
       }
-      const result = await queryAll({
-        mysqlModel,
-        search,
-        orderName: '',
-        orderValue: '',
-        pageSize,
-        current,
-      });
+      const result = await queryAll(queryParams);
       return reply.code(200).send(result);
     } catch (error) {
       return onRouteError(error, reply);

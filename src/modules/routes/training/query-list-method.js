@@ -2,7 +2,7 @@
  * @description: 文章列表统一查询方法
  * @author: zpl
  * @Date: 2020-07-30 14:49:39
- * @LastEditTime: 2020-08-02 15:08:42
+ * @LastEditTime: 2020-08-06 22:59:45
  * @LastEditors: zpl
  */
 const {Op} = require('sequelize');
@@ -58,7 +58,7 @@ const queryByCid = async ({
     where: {
       ...filter,
     },
-    order: [orderName ? [orderName, orderValue || 'DESC'] : ['updatedAt', 'DESC']],
+    order: [orderName ? [orderName, orderValue || 'DESC'] : ['createdAt', 'DESC']],
     offset: (current - 1) * pageSize,
     limit: pageSize,
   };
