@@ -12,6 +12,7 @@
     },
     "rules": {
         "linebreak-style": [0, "error", "windows"],
-        "max-len": ["error", 120]
+        "max-len": ["error", 120],
+        "object-curly-spacing": ["error", "always"]
     }
 }
