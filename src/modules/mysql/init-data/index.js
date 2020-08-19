@@ -2,7 +2,7 @@
  * @description: 初始化数据库
  * @author: zpl
  * @Date: 2020-07-27 12:40:11
- * @LastEditTime: 2020-07-30 00:29:57
+ * @LastEditTime: 2020-08-18 21:35:57
  * @LastEditors: zpl
  */
 
@@ -22,9 +22,9 @@ const initUserGroup = async (UserGroupModel, dataList) => {
       result.push(`userGroup: ${userGroup.name}，创建成功。`);
     }
   } catch (err) {
-    const {errors} = err;
+    const { errors } = err;
     if (errors && errors.length) {
-      const {message} = errors[0];
+      const { message } = errors[0];
       console.error(`数据库执行失败，userGroup创建失败： ${message}`);
       result.push(`数据库执行失败，userGroup创建失败： ${message}`);
     }
@@ -50,21 +50,49 @@ const initUser = async (UserGroupModel, UserModel, dataList) => {
       console.log(`user: ${user.name}，创建成功。`);
       result.push(`user: ${user.name}，创建成功。`);
       const groupList = await UserGroupModel.findAll({
-        where: {name: user.group},
+        where: { name: user.group },
       });
       await currentUser.setUserGroups(groupList);
       console.log(`user: ${user.name}，用户组关联成功。`);
       result.push(`user: ${user.name}，用户组关联成功。`);
     }
   } catch (err) {
-    const {errors} = err;
+    const { errors } = err;
     if (errors && errors.length) {
-      const {message} = errors[0];
+      const { message } = errors[0];
       console.error(`数据库执行失败： ${message}`);
       result.push(`数据库执行失败： ${message}`);
     }
     console.error(`系统异常，user创建失败： ${err}`);
     result.push(`系统异常，user创建失败： ${err}`);
+  }
+  return result;
+};
+
+/**
+ * 初始化会员类型
+ *
+ * @param {*} MemberTypeModel 会员类型模型
+ * @param {*} dataList 会员类型初始数据
+ * @return {Array} 操作结果
+ */
+const initMemberType = async (MemberTypeModel, dataList) => {
+  const result = [];
+  try {
+    for (const memberType of dataList) {
+      const currentMemberType = await MemberTypeModel.create(memberType);
+      console.log(`memberType: ${currentMemberType.name}，创建成功。`);
+      result.push(`memberType: ${currentMemberType.name}，创建成功。`);
+    }
+  } catch (err) {
+    const { errors } = err;
+    if (errors && errors.length) {
+      const { message } = errors[0];
+      console.error(`数据库执行失败： ${message}`);
+      result.push(`数据库执行失败： ${message}`);
+    }
+    console.error(`系统异常，memberType创建失败： ${err}`);
+    result.push(`系统异常，memberType创建失败： ${err}`);
   }
   return result;
 };
@@ -84,18 +112,24 @@ const checkTablesExists = async (database, models) => {
     ChannelSetting,
     Training,
     TrainingReg,
+    MemberType,
+    MemberCompany,
+    MemberIndivic,
   } = models;
   console.log('===============数据库表创建开始===============');
-  await User.sync({match: new RegExp('^' + database + '$')});
-  await UserGroup.sync({match: new RegExp('^' + database + '$')});
-  await models['user-group-user'].sync({match: new RegExp('^' + database + '$')});
-  await Channel.sync({match: new RegExp('^' + database + '$')});
-  await ContentDetail.sync({match: new RegExp('^' + database + '$')});
-  await models['content_detail_channel'].sync({match: new RegExp('^' + database + '$')});
+  await User.sync({ match: new RegExp('^' + database + '$') });
+  await UserGroup.sync({ match: new RegExp('^' + database + '$') });
+  await models['user-group-user'].sync({ match: new RegExp('^' + database + '$') });
+  await Channel.sync({ match: new RegExp('^' + database + '$') });
+  await ContentDetail.sync({ match: new RegExp('^' + database + '$') });
+  await models['content_detail_channel'].sync({ match: new RegExp('^' + database + '$') });
   // 注意会强制多生成ChannelId外键，对原java系统会产生影响，先手动删除多余外键
-  await ChannelSetting.sync({match: new RegExp('^' + database + '$')});
-  await Training.sync({match: new RegExp('^' + database + '$')});
-  await TrainingReg.sync({match: new RegExp('^' + database + '$')});
+  await ChannelSetting.sync({ match: new RegExp('^' + database + '$') });
+  await Training.sync({ match: new RegExp('^' + database + '$') });
+  await TrainingReg.sync({ match: new RegExp('^' + database + '$') });
+  await MemberType.sync({ match: new RegExp('^' + database + '$') });
+  await MemberCompany.sync({ match: new RegExp('^' + database + '$') });
+  await MemberIndivic.sync({ match: new RegExp('^' + database + '$') });
   console.log('===============数据库表创建结束===============');
 };
 
@@ -108,8 +142,8 @@ const checkTablesExists = async (database, models) => {
  * @return {Array} 执行结果
  */
 module.exports = async (models, needCreatTable, database) => {
-  const {UserGroup, User} = models;
-  const {userList, userGroupList} = require('./data');
+  const { UserGroup, User, MemberType } = models;
+  const { userList, userGroupList, memberTypeList } = require('./data');
   let returnResult = [];
 
   if (needCreatTable) {
@@ -127,6 +161,8 @@ module.exports = async (models, needCreatTable, database) => {
   returnResult = returnResult.concat(await initUserGroup(UserGroup, userGroupList));
   console.log('2. 初始化用户...');
   returnResult = returnResult.concat(await initUser(UserGroup, User, userList));
+  console.log('3. 初始化会员类型...');
+  returnResult = returnResult.concat(await initMemberType(MemberType, memberTypeList));
 
   console.log('-----------------------------------------------');
   console.log('---------------初始化数据库 结束---------------');

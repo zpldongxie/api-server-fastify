@@ -2,7 +2,7 @@
  * @description: 数据库初始数据
  * @author: zpl
  * @Date: 2020-07-26 22:19:42
- * @LastEditTime: 2020-07-28 08:50:55
+ * @LastEditTime: 2020-08-18 21:37:58
  * @LastEditors: zpl
  */
 exports.userGroupList = [{
@@ -29,7 +29,7 @@ exports.userList = [{
   group: '管理员',
 }, {
   loginName: 'user',
-  password: 'user',
+  password: 'Ysp@1234',
   name: 'user',
   sex: '男',
   mobile: '',
@@ -38,4 +38,10 @@ exports.userList = [{
   verification_code: '',
   status: 1,
   group: '用户',
+}];
+
+exports.memberTypeList = [{
+  name: 'vip会员',
+}, {
+  name: '普通会员',
 }];
