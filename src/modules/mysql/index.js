@@ -2,17 +2,17 @@
  * @description: mySql
  * @author: zpl
  * @Date: 2020-07-25 14:47:25
- * @LastEditTime: 2020-07-30 09:15:21
+ * @LastEditTime: 2020-08-18 21:13:58
  * @LastEditors: zpl
  */
 
 const fp = require('fastify-plugin');
-const {Sequelize} = require('sequelize');
+const { Sequelize } = require('sequelize');
 
-const {loadModel} = require('./framework/loader');
+const { loadModel } = require('./framework/loader');
 
 module.exports = fp(async (fastify, opts, next) => {
-  const {host, database, user, password, dialect, pool, needCreatTable} = opts;
+  const { host, database, user, password, dialect, pool, needCreatTable } = opts;
   const sequelize = new Sequelize(database, user, password, {
     host,
     dialect,
@@ -23,13 +23,13 @@ module.exports = fp(async (fastify, opts, next) => {
   try {
     await sequelize.authenticate();
     console.log('Connection has been established successfully.');
-    loadModel(sequelize);
+    await loadModel(sequelize);
 
     console.log('--------start init -----------');
     const initResult = await require('./init-data')(sequelize.models, needCreatTable, database);
     console.log('数据库初始化执行结果：');
     console.log(initResult);
-    fastify.decorate('mysql', {models: sequelize.models});
+    fastify.decorate('mysql', { models: sequelize.models });
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }

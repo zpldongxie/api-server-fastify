@@ -2,7 +2,7 @@
  * @description: 安全培训报名相关路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-08-09 16:16:44
+ * @LastEditTime: 2020-08-09 16:38:26
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -148,7 +148,13 @@ module.exports = fp(async (server, opts, next) => {
   });
 
   // 删除报名
-  server.delete('/api/trainingRegs', {}, async (request, reply) => {
+  const deleteSchema = require('./delete-schema');
+  server.delete('/api/trainingRegs', { schema: deleteSchema }, async (request, reply) => {
+    const validate = ajv.compile(deleteSchema.body.valueOf());
+    const valid = validate(request.body);
+    if (!valid) {
+      return reply.code(400).send(validate.errors);
+    }
     try {
       const ids = request.body.ids;
       if (!ids || !Array.isArray(ids)) {
