@@ -2,10 +2,10 @@
  * @description: 用户
  * @author: zpl
  * @Date: 2020-07-25 15:10:09
- * @LastEditTime: 2020-07-30 00:21:14
+ * @LastEditTime: 2020-08-18 20:58:51
  * @LastEditors: zpl
  */
-const {Model, DataTypes} = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 
 /**
  * 用户

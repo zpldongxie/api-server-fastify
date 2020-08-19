@@ -2,10 +2,10 @@
  * @description: 栏目
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2020-08-06 12:26:39
+ * @LastEditTime: 2020-08-18 20:56:27
  * @LastEditors: zpl
  */
-const {Model, DataTypes} = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 
 /**
    * 栏目
@@ -103,7 +103,7 @@ class Channel extends Model {
       tableName: 'channel',
       // FIXME: 等完全从java后台切换过来后，这个属性要移除
       timestamps: false,
-      indexes: [{unique: true, fields: ['id']}],
+      indexes: [{ unique: true, fields: ['id'] }],
     });
   }
 

@@ -2,10 +2,10 @@
  * @description: 栏目配置
  * @author: zpl
  * @Date: 2020-07-28 10:42:50
- * @LastEditTime: 2020-07-30 00:14:39
+ * @LastEditTime: 2020-08-18 20:55:41
  * @LastEditors: zpl
  */
-const {Model, DataTypes} = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 
 /**
  * 栏目配置
@@ -73,7 +73,7 @@ class ChannelSetting extends Model {
       tableName: 'channel_setting',
       // TODO: 等完全从java后台切换过来后，这个属性要移除
       timestamps: false,
-      indexes: [{unique: true, fields: ['id']}],
+      indexes: [{ unique: true, fields: ['id'] }],
     });
   }
 
@@ -86,7 +86,7 @@ class ChannelSetting extends Model {
    */
   static reateAssociation(sequelize) {
     // 栏目 - 栏目配置， 一对多
-    ChannelSetting.belongsTo(sequelize.models['Channel'], {foreignKey: {name: 'channel_id'}});
+    ChannelSetting.belongsTo(sequelize.models['Channel'], { foreignKey: { name: 'channel_id' } });
   }
 }
 

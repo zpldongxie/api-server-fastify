@@ -2,10 +2,10 @@
  * @description: 文章内容
  * @author: zpl
  * @Date: 2020-07-28 10:16:12
- * @LastEditTime: 2020-08-06 12:28:57
+ * @LastEditTime: 2020-08-18 20:55:22
  * @LastEditors: zpl
  */
-const {Model, DataTypes} = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 
 /**
  * 文章
@@ -170,7 +170,7 @@ class ContentDetail extends Model {
       tableName: 'content_detail',
       // TODO: 等完全从java后台切换过来后，这个属性要移除
       timestamps: false,
-      indexes: [{unique: true, fields: ['id']}],
+      indexes: [{ unique: true, fields: ['id'] }],
     });
   }
 

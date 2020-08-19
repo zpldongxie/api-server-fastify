@@ -2,7 +2,7 @@
  * @description:
  * @author: zpl
  * @Date: 2020-07-29 22:16:11
- * @LastEditTime: 2020-07-30 00:37:33
+ * @LastEditTime: 2020-08-18 21:25:59
  * @LastEditors: zpl
  */
 
@@ -34,15 +34,24 @@ function load(dir, cb) {
  *
  * @param {*} sequelize
  */
-const loadModel = (sequelize) => {
+const loadModel = async (sequelize) => {
+  const initFunList = [];
+  const reateAssociationList = [];
+  load('../models', (filename, Model) => {
+    typeof Model.initNow === 'function' && initFunList.push(Model.initNow);
+    typeof Model.reateAssociation === 'function' && reateAssociationList.push(Model.reateAssociation);
+  });
+
   // init
-  load('../models', (filename, Model) => {
-    typeof Model.initNow === 'function' && Model.initNow(sequelize);
-  });
+  for (let i = 0; i < initFunList.length; i++) {
+    const initFun = initFunList[i];
+    await initFun(sequelize);
+  }
   // 关系映射
-  load('../models', (filename, Model) => {
-    typeof Model.reateAssociation === 'function' && Model.reateAssociation(sequelize);
-  });
+  for (let i = 0; i < reateAssociationList.length; i++) {
+    const reateAssociation = reateAssociationList[i];
+    await reateAssociation(sequelize);
+  }
 };
 
-module.exports = {loadModel};
+module.exports = { loadModel };
