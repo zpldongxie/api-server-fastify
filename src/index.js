@@ -13,7 +13,7 @@ const trainingRoutes = require('./routes/training');
 const trainingRegRoutes = require('./routes/training-registration');
 const errorThrowerRoutes = require('./routes/error-thrower');
 const restRoutes = require('./routes/rest');
-const db = require('./modules/db');
+// const db = require('./modules/db');
 const mysql = require('./modules/mysql');
 
 const server = fastify({
@@ -25,7 +25,7 @@ const swagger = require('./swagger');
 server.register(swagger);
 
 // 连接数据库
-server.register(db, config.get('db'));
+// server.register(db, config.get('db'));
 server.register(mysql, config.get('mysql'));
 
 // 设置跨域规则

@@ -2,34 +2,45 @@
  * @description: 安全培训报名相关路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-08-09 16:38:26
+ * @LastEditTime: 2020-09-06 21:28:14
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
-const { findAll, findOne, findSome, create, updateOne, updateMany, deleteSome } = require('../../modules/mysql/dao');
-const { onRouteError } = require('../util');
+const { findOne } = require('../../modules/mysql/dao');
+const { onRouteError, commonCatch, CommonMethod } = require('../util');
+
 
 module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
   const { TrainingReg, Training, Channel } = mysqlModel;
   const { ajv } = opts;
+  const routerMethod = new CommonMethod(TrainingReg);
 
   // 根据ID获取单个
   server.get('/api/trainingReg/:id', {}, async (request, reply) => {
-    const id = request.params.id;
-    const result = await findOne(TrainingReg)({ id });
-    return reply.code(200).send(result);
+    const runFun = async () => {
+      const id = request.params.id;
+      routerMethod.findOne(reply, id);
+    };
+
+    // 统一捕获异常
+    commonCatch(runFun, reply)();
   });
 
   // 获取所有培训信息
   server.get('/api/trainingRegs', {}, async (request, reply) => {
-    const result = await findAll(TrainingReg)({
-      include: {
-        model: Training,
-        attributes: ['id', 'title'],
-      },
-    });
-    return reply.code(200).send(result.data);
+    const runFun = async () => {
+      const conditions = {
+        include: {
+          model: Training,
+          attributes: ['id', 'title'],
+        },
+      };
+      routerMethod.findAll(reply, conditions);
+    };
+
+    // 统一捕获异常
+    commonCatch(runFun, reply)();
   });
 
   // 根据条件获取培训信息列表
@@ -41,110 +52,54 @@ module.exports = fp(async (server, opts, next) => {
       return reply.code(400).send(validate.errors);
     }
 
-    const {
-      TrainingId,
-      name,
-      mobile,
-      email,
-      comp,
-      passed,
-      current = 1,
-      pageSize = 20,
-      sorter,
-    } = request.body;
-    const queryParams = {
-      where: {},
-      pageSize,
-      current,
-      include: {
+    const runFun = async () => {
+      const {
+        current,
+        pageSize,
+        sorter,
+        filter,
+        ...where
+      } = request.body;
+      const include = {
         model: Training,
         attributes: ['id', 'title'],
         include: {
           model: Channel,
           attributes: ['id', 'name'],
         },
-      },
+      };
+      routerMethod.queryList(reply, where, current, pageSize, sorter, filter, include);
     };
-    if (sorter && Object.keys(sorter).length) {
-      const orderName = Object.keys(sorter)[0];
-      const orderValue = sorter[orderName].includes('asc') ? 'ASC' : 'DESC';
-      queryParams.order = [[orderName, orderValue]];
-    }
-    if (TrainingId) {
-      queryParams.where.TrainingId = TrainingId;
-    }
-    if (name) {
-      queryParams.where.name = name;
-    }
-    if (mobile) {
-      queryParams.where.mobile = mobile;
-    }
-    if (email) {
-      queryParams.where.email = email;
-    }
-    if (comp) {
-      queryParams.where.comp = comp;
-    }
-    if (typeof passed !== 'undefined') {
-      queryParams.where.passed = passed;
-    }
 
-    const result = await findSome(TrainingReg)(queryParams);
-    return reply.code(200).send(result);
+    // 统一捕获异常
+    commonCatch(runFun, reply)();
   });
 
   // 新增或更新培训
   const updateSchema = require('./update-schema');
   server.put('/api/trainingReg', { schema: updateSchema }, async (request, reply) => {
+    // 参数校验
     const validate = ajv.compile(updateSchema.body.valueOf());
     const valid = validate(request.body);
     if (!valid) {
       return reply.code(400).send(validate.errors);
     }
-    try {
-      const id = request.body.id;
-      const training = await findOne(Training)( { id: request.body.TrainingId } );
-      // const training = await Training.findOne({ where: { id: request.body.TrainingId } });
-      if (id) {
-        // 更新
-        const trainingReg = await TrainingReg.findOne({ id });
-        if (trainingReg) {
-          if (training) {
-            const result = await updateOne(TrainingReg)({ id, updateInfo: request.body });
-            if (result.status) {
-              return reply.code(201).send(result);
-            }
-            return reply.code(422).send(result);
-          } else {
-            reply.code(400).send({
-              status: 'error',
-              message: '指定培训不存在，无法更新。',
-            });
-          }
-        } else {
-          reply.code(400).send({
-            status: 'error',
-            message: '培训记录不存在，无法更新。',
-          });
-        }
+
+    // 执行方法
+    const runFun = async () => {
+      const training = await findOne(Training, { id: request.body.TrainingId });
+      if (training) {
+        await routerMethod.upsert(reply, request.body);
       } else {
-        // 新增
-        if (training) {
-          const trainingReg = await create(TrainingReg)(request.body);
-          if (trainingReg.status) {
-            return reply.code(201).send(trainingReg.data);
-          }
-          return reply.code(422).send(result);
-        } else {
-          reply.code(200).send({
-            status: '0',
-            message: '指定培训不存在，无法创建报名。',
-          });
-        }
+        onRouteError(reply, {
+          status: 422,
+          message: '指定培训不存在。',
+        });
       }
-    } catch (error) {
-      return onRouteError(error, reply);
-    }
+    };
+
+    // 统一捕获异常
+    commonCatch(runFun, reply)();
   });
 
   // 删除报名
@@ -155,21 +110,14 @@ module.exports = fp(async (server, opts, next) => {
     if (!valid) {
       return reply.code(400).send(validate.errors);
     }
-    try {
-      const ids = request.body.ids;
-      if (!ids || !Array.isArray(ids)) {
-        reply.code(400).send({
-          status: 'error',
-          message: '培训报名ID无效。',
-        });
-        return;
-      }
 
-      await deleteSome(TrainingReg)(ids);
-      reply.code(204);
-    } catch (error) {
-      return onRouteError(error, reply);
-    }
+    const runFun = async () => {
+      const ids = request.body.ids;
+      await routerMethod.delete(ids);
+    };
+
+    // 统一捕获异常
+    commonCatch(runFun, reply)();
   });
 
   // 设置审批状态
@@ -181,13 +129,13 @@ module.exports = fp(async (server, opts, next) => {
       return reply.code(400).send(validate.errors);
     }
 
-    try {
+    const runFun = async () => {
       const { ids, passed } = request.body;
-      await updateMany(TrainingReg)({ ids, updateInfo: { passed } });
-      return reply.code(200).send({ message: '设置完成' });
-    } catch (error) {
-      return onRouteError(error, reply);
-    }
+      await routerMethod.updateMany({ ids, updateInfo: { passed } });
+    };
+
+    // 统一捕获异常
+    commonCatch(runFun, reply)();
   });
 
   next();

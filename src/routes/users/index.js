@@ -2,33 +2,33 @@
  * @description: 用户相关路由
  * @author: zpl
  * @Date: 2020-07-25 16:36:13
- * @LastEditTime: 2020-08-07 13:47:47
+ * @LastEditTime: 2020-09-05 20:35:26
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
-const {onRouteError} = require('../util');
+const { onRouteError } = require('../util');
 
 module.exports = fp(async (server, opts, next) => {
-  const {User, UserGroup} = server.mysql.models;
-  const {ajv} = opts;
+  const { User, UserGroup } = server.mysql.models;
+  const { ajv } = opts;
 
   // 登录
   const loginSchema = require('./login-schema');
-  server.post('/api/doLogin', {schema: loginSchema}, async (request, reply) => {
+  server.post('/api/doLogin', { schema: loginSchema }, async (request, reply) => {
     const validate = ajv.compile(loginSchema.body.valueOf());
     const valid = validate(request.body);
     if (!valid) {
       return reply.code(400).send(validate.errors);
     }
 
-    const {userName, pwd} = request.body;
+    const { userName, pwd } = request.body;
     try {
       const user = await User.findOne({
-        where: {loginName: userName, password: pwd},
+        where: { loginName: userName, password: pwd },
         include: UserGroup,
       });
       if (user) {
-        const token = server.jwt.sign({id: user.id});
+        const token = server.jwt.sign({ id: user.id });
         const authors = user.UserGroups.map((g) => g.tag);
         return reply.code(200).send({
           status: 'ok',
@@ -36,7 +36,7 @@ module.exports = fp(async (server, opts, next) => {
           token: token,
         });
       }
-      return reply.code(200).send({status: 'error'});
+      return reply.code(200).send({ status: 'error' });
     } catch (error) {
       return onRouteError(error, reply);
     }
@@ -66,11 +66,11 @@ module.exports = fp(async (server, opts, next) => {
 
   // 获取当前用户，暂时返回固定内容
   server.get('/api/currentUser',
-      {preValidation: [server.authenticate]},
+      { preValidation: [server.authenticate] },
       async (request, reply) => {
         console.log(request.user);
         const user = await User.findOne({
-          where: {id: request.user.id, status: 1},
+          where: { id: request.user.id, status: 1 },
           exclude: ['password', 'verification_code', 'status'],
         });
         return reply.code(200).send(user);

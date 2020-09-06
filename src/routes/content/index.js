@@ -2,7 +2,7 @@
  * @description: 文章管理相关路由
  * @author: zpl
  * @Date: 2020-07-23 11:41:05
- * @LastEditTime: 2020-07-31 21:49:48
+ * @LastEditTime: 2020-09-05 20:34:31
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -35,9 +35,9 @@ module.exports = fp(async (server, opts, next) => {
     const {
       pageSize = 10,
       current = 1,
-      title='',
+      title = '',
       // filter,
-      sorter={'conDate': 'desc'}, // 默认以时间降序排序
+      sorter = { 'conDate': 'desc' }, // 默认以时间降序排序
       channelId,
     } = param;
 
@@ -87,7 +87,7 @@ module.exports = fp(async (server, opts, next) => {
   // TODO: 新增或更新文章
   server.post('/api/content', {}, async (req, reply) => {
     try {
-      const {TrainingReg} = server.db.models;
+      const { TrainingReg } = server.db.models;
 
       const training = await TrainingReg.create(req.body);
 

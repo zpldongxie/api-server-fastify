@@ -3,12 +3,12 @@
  * @author: zpl
  * @Date: 2020-08-09 09:28:40
  * @LastEditors: zpl
- * @LastEditTime: 2020-08-09 16:06:15
+ * @LastEditTime: 2020-09-06 20:54:08
  */
 const { Op } = require('sequelize');
 
 /**
- * 统一成功应答
+ * 数据库操作统一成功应答
  *
  * @param {any} [data={}] 返回数据
  * @param {string} [message=''] 成功消息提示
@@ -23,7 +23,7 @@ const onSuccess = (data = {}, message = '') => {
 };
 
 /**
- * 统一错误应答
+ * 数据库操作统一错误应答
  *
  * @param {string} [message=''] 错误消息提示
  * @return {any}
@@ -36,168 +36,216 @@ const onError = (message = '') => {
   };
 };
 
-/**
- * 执行方法前统一捕获异常进行处理
- *
- * @param {any} method
- * @return {any}
- */
-const doSomething = (method) => {
-  try {
-    return method;
-  } catch (error) {
-    return onError('系统异常');
-  }
-};
 
 /**
- * 查询所有
+ * 数据库操作类
  *
- * @param {any} Model
- * @return {any}
+ * @class Dao
  */
-const findAll = (Model) => async ({
-  order = [],
-  attributes,
-  include,
-}) => {
-  const list = await Model.findAll({
-    order: order.concat([['createdAt', 'DESC']]),
+class Dao {
+  /**
+   * Creates an instance of Dao.
+   * @param {*} Model
+   * @memberof Dao
+   */
+  constructor(Model) {
+    this.Model = Model;
+  }
+
+  /**
+   * 查询所有
+   *
+   * @param {*} {
+   *     order = [],
+   *     attributes,
+   *     include,
+   *   }
+   * @return {*}
+   * @memberof Dao
+   */
+  async findAll({
+    order = [],
     attributes,
     include,
-  });
-
-  return onSuccess({
-    list,
-  }, '查询成功');
-};
-
-/**
- * 查询单个
- *
- * @param {any} Model
- * @return {any}
- */
-const findOne = (Model) => async (where = {}) => {
-  const result = await Model.findOne({ where });
-  if (result) {
-    return onSuccess(result, '查询成功');
+  }) {
+    const list = await this.Model.findAll({
+      order: order.concat([['createdAt', 'DESC']]),
+      attributes,
+      include,
+    });
+    if (list && list.length) {
+      return onSuccess({ list }, '查询成功');
+    }
+    return onError('未查询到信息');
   }
-  return onError('查询失败');
-};
 
-/**
- * 按条件查询
- *
- * @param {any} Model
- * @return {any}
- */
-const findSome = (Model) => async ({
-  where,
-  order = [],
-  pageSize = 20,
-  current = 1,
-  attributes,
-  include,
-}) => {
-  const total = await Model.count({ where });
-  const list = await Model.findAll({
+  /**
+   * 查询单个
+   *
+   * @param {*} [where={}]
+   * @return {*}
+   */
+  async findOne(where = {}) {
+    const result = await this.Model.findOne({ where });
+    if (result) {
+      return onSuccess(result, '查询成功');
+    }
+    return onError('查询失败');
+  }
+
+  /**
+   * 按条件查询
+   *
+   * @param {*} {
+   *   where,
+   *   order = [],
+   *   pageSize = 20,
+   *   current = 1,
+   *   attributes,
+   *   include,
+   * }
+   * @return {*}
+   */
+  async findSome({
     where,
-    order: order.concat([['createdAt', 'DESC']]),
-    offset: (current - 1) * pageSize,
-    limit: pageSize,
+    order = [],
+    pageSize = 20,
+    current = 1,
     attributes,
     include,
-  });
+  }) {
+    const total = await this.Model.count({ where });
+    const list = await this.Model.findAll({
+      where,
+      order: order.concat([['createdAt', 'DESC']]),
+      offset: (current - 1) * pageSize,
+      limit: pageSize,
+      attributes,
+      include,
+    });
 
-  return onSuccess({
-    total,
-    list,
-  }, '查询成功');
-};
+    if (list && list.length) {
+      return onSuccess({
+        total,
+        list,
+      }, '查询成功');
+    }
+    return onError('未查询到信息');
+  }
 
-/**
- * 创建
- *
- * @param {any} Model
- * @return {any}
- */
-const create = (Model) => async (info) => {
-  const model = await Model.create(info);
-  return onSuccess(model, '创建成功');
-};
+  /**
+   * 创建
+   *
+   * @param {*} info
+   * @return {*}
+   */
+  async create(info) {
+    const result = await this.Model.create(info);
+    if (result) {
+      return onSuccess(result, '创建成功');
+    } else {
+      return onError('创建失败');
+    }
+  }
 
-/**
- * 更新
- *
- * @param {any} Model
- * @return {any}
- */
-const updateOne = (Model) => async ({
-  id,
-  updateInfo,
-}) => {
-  await Model.update({ ...updateInfo }, { where: { id } });
-  return onSuccess({}, '更新成功');
-};
+  /**
+   * 单个更新
+   *
+   * @param {*} {
+   *   id,
+   *   updateInfo,
+   * }
+   * @return {*}
+   */
+  async updateOne({
+    id,
+    updateInfo,
+  }) {
+    const result = await this.Model.update({ ...updateInfo }, { where: { id } });
+    if (result[0]) {
+      return onSuccess(result[0], '更新成功');
+    } else {
+      return onError('更新失败');
+    }
+  }
 
-/**
- * 更新
- *
- * @param {any} Model
- * @return {any}
- */
-const updateMany = (Model) => async ({
-  ids,
-  updateInfo,
-}) => {
-  await Model.update({ ...updateInfo }, {
-    where: {
-      id: {
-        [Op.in]: ids,
+  /**
+   * 批量更新
+   *
+   * @param {*} {
+   *   ids,
+   *   updateInfo,
+   * }
+   * @return {*}
+   */
+  async updateMany({
+    ids,
+    updateInfo,
+  }) {
+    const result = await this.Model.update({ ...updateInfo }, {
+      where: {
+        id: {
+          [Op.in]: ids,
+        },
       },
-    },
-  });
-  return onSuccess({}, '更新成功');
-};
+    });
+    if (result[0]) {
+      return onSuccess(result[0], '更新成功');
+    } else {
+      return onError('更新失败');
+    }
+  }
 
-/**
- * 删除单个
- *
- * @param {any} Model
- * @return {any}
- */
-const deleteOne = (Model) => async (id) => {
-  await Model.destroy({
-    where: { id },
-  });
-  return onSuccess({}, '删除成功');
-};
+  /**
+   * 新增或更新
+   *
+   * @param {*} values
+   */
+  async upsert(values) {
+    const result = await this.Model.upsert(values);
+    if (result[0]) {
+      return onSuccess(result[0], '操作成功');
+    }
+    return onError('操作失败');
+  }
 
-/**
- * 删除多个
- *
- * @param {any} Model
- * @return {any}
- */
-const deleteSome = (Model) => async (ids = []) => {
-  await Model.destroy({
-    where: {
-      id: {
-        [Op.in]: ids,
+  /**
+   * 删除单个
+   *
+   * @param {*} id
+   * @return {*}
+   */
+  async deleteOne(id) {
+    const num = await this.Model.destroy({
+      where: { id },
+    });
+    if (num) {
+      return onSuccess({}, '删除成功');
+    }
+    return onError('删除失败');
+  }
+
+  /**
+   * 删除多个
+   *
+   * @param {*} [ids=[]]
+   * @return {*}
+   */
+  async deleteSome(ids = []) {
+    await this.Model.destroy({
+      where: {
+        id: {
+          [Op.in]: ids,
+        },
       },
-    },
-  });
-  return onSuccess({}, '删除成功');
-};
+    });
+    if (num) {
+      return onSuccess(num, '删除成功');
+    }
+    return onError('删除失败');
+  }
+}
 
 module.exports = {
-  findAll: doSomething(findAll),
-  findOne: doSomething(findOne),
-  findSome: doSomething(findSome),
-  create: doSomething(create),
-  updateOne: doSomething(updateOne),
-  updateMany: doSomething(updateMany),
-  deleteOne: doSomething(deleteOne),
-  deleteSome: doSomething(deleteSome),
+  Dao,
 };
