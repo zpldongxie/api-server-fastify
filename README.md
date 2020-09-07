@@ -49,5 +49,7 @@ if (!valid) {
 ```
 - routes -> util.js 实现了面向业务操作的基本封装以及统一应答设定，由route文件进行调用
 ### 本系统使用fastify-swagger自动生成api文档（未完成）
+api文档地址：
+[http://49.234.158.74:3000/documentation/static/index.html](http://49.234.158.74:3000/documentation/static/index.html)
 
 
