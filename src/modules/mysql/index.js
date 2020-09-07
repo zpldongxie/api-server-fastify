@@ -2,14 +2,14 @@
  * @description: mySql
  * @author: zpl
  * @Date: 2020-07-25 14:47:25
- * @LastEditTime: 2020-08-18 21:13:58
+ * @LastEditTime: 2020-09-07 00:34:55
  * @LastEditors: zpl
  */
 
 const fp = require('fastify-plugin');
 const { Sequelize } = require('sequelize');
 
-const { loadModel } = require('./framework/loader');
+const { loadModel, buildRoute } = require('./framework/loader');
 
 module.exports = fp(async (fastify, opts, next) => {
   const { host, database, user, password, dialect, pool, needCreatTable } = opts;
@@ -24,6 +24,7 @@ module.exports = fp(async (fastify, opts, next) => {
     await sequelize.authenticate();
     console.log('Connection has been established successfully.');
     await loadModel(sequelize);
+    await buildRoute(sequelize.models);
 
     console.log('--------start init -----------');
     const initResult = await require('./init-data')(sequelize.models, needCreatTable, database);

@@ -3,16 +3,10 @@ const sourceMapSupport = require('source-map-support');
 sourceMapSupport.install();
 
 const fastify = require('fastify');
+const path = require('path');
 const config = require('config');
 const auth = require('./authenticate');
-const usersRoutes = require('./routes/users');
-const statusRoutes = require('./routes/status');
-const channelRoutes = require('./routes/channel');
-const contentRoutes = require('./routes/content');
-const trainingRoutes = require('./routes/training');
-const trainingRegRoutes = require('./routes/training-registration');
-const errorThrowerRoutes = require('./routes/error-thrower');
-const restRoutes = require('./routes/rest');
+const { load } = require('./util');
 // const db = require('./modules/db');
 const mysql = require('./modules/mysql');
 
@@ -46,14 +40,10 @@ server.register(require('fastify-cors'), {
 // 挂载路由
 const Ajv = require('ajv');
 const ajv = new Ajv({ allErrors: true });
-server.register(usersRoutes, { ajv });
-server.register(channelRoutes, { ajv });
-server.register(contentRoutes, config.get('oldManager'));
-server.register(trainingRoutes, { ajv });
-server.register(trainingRegRoutes, { ajv });
-server.register(statusRoutes);
-server.register(errorThrowerRoutes);
-server.register(restRoutes, { ajv });
+const routeDir = path.resolve(__dirname, './routes');
+load(routeDir, (name, model) => {
+  server.register(model, { ajv });
+}, 'index.js');
 
 const start = async () => {
   try {

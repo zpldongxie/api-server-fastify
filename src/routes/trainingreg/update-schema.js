@@ -2,7 +2,7 @@
  * @description: 更新接口参数和返回值定义
  * @author: zpl
  * @Date: 2020-07-24 15:14:04
- * @LastEditTime: 2020-08-07 09:36:10
+ * @LastEditTime: 2020-09-07 17:08:27
  * @LastEditors: zpl
  */
 const S = require('fluent-schema');
