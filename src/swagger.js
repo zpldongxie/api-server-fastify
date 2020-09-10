@@ -2,7 +2,7 @@
  * @description:
  * @author: zpl
  * @Date: 2020-08-07 10:32:25
- * @LastEditTime: 2020-09-07 19:57:58
+ * @LastEditTime: 2020-09-08 10:58:42
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -20,12 +20,12 @@ module.exports = fp(async (server, opts, next) => {
       },
       externalDocs: {
         url: 'https://github.com/fastify/fastify-swagger',
-        description: '技术参考',
+        description: 'fastify-swagger技术参考',
       },
-      host: '49.234.158.74:3000',
-      schemes: ['http'],
-      consumes: ['application/json'],
-      produces: ['application/json'],
+      // host: '49.234.158.74:3000',
+      // schemes: ['http'],
+      // consumes: ['application/json'],
+      // produces: ['application/json'],
       tags: [
         { name: 'rest', description: '所有对外rest接口' },
         { name: 'user', description: '用户管理' },

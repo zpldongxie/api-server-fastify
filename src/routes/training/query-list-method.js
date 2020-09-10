@@ -2,10 +2,10 @@
  * @description: 文章列表统一查询方法
  * @author: zpl
  * @Date: 2020-07-30 14:49:39
- * @LastEditTime: 2020-08-06 22:59:45
+ * @LastEditTime: 2020-09-09 18:12:53
  * @LastEditors: zpl
  */
-const {Op} = require('sequelize');
+const { Op } = require('sequelize');
 const queryAll = async ({
   mysqlModel,
   search = '',
@@ -14,9 +14,9 @@ const queryAll = async ({
   pageSize = 10,
   current = 1,
 }) => {
-  const {Training, Channel} = mysqlModel;
+  const { Training, Channel } = mysqlModel;
 
-  const filter = search ? {title: {[Op.substring]: search}} : {};
+  const filter = search ? { title: { [Op.substring]: search } } : {};
   const queryOpt = {
     where: {
       ...filter,
@@ -26,7 +26,7 @@ const queryAll = async ({
     limit: pageSize,
   };
 
-  const total = await Training.count({where: queryOpt.where});
+  const total = await Training.count({ where: queryOpt.where });
   const list = await Training.findAll({
     ...queryOpt,
     include: {
@@ -51,9 +51,9 @@ const queryByCid = async ({
   pageSize = 10,
   current = 1,
 }) => {
-  const {Channel} = mysqlModel;
+  const { Channel } = mysqlModel;
 
-  const filter = search ? {title: {[Op.substring]: search}} : {};
+  const filter = search ? { title: { [Op.substring]: search } } : {};
   const queryOpt = {
     where: {
       ...filter,
@@ -64,11 +64,11 @@ const queryByCid = async ({
   };
 
   const channel = await Channel.findOne({
-    where: {id: channelId},
+    where: { id: channelId },
   });
 
   if (channel) {
-    const total = await channel.countTrainings({where: queryOpt.where});
+    const total = await channel.countTrainings({ where: queryOpt.where });
     const list = await channel.getTrainings(queryOpt);
     return {
       status: 'ok',

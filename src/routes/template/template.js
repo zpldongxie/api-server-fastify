@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-07 19:00:15
+ * @LastEditTime: 2020-09-10 17:52:50
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -34,7 +34,7 @@ module.exports = fp(async (server, opts, next) => {
     commonCatch(runFun, reply)();
   });
 
-  // 获取所有培训信息
+  // 获取所有
   server.get(routerBaseInfo.getAllURL, { schema: { tags: ['currentModelName'] } }, async (request, reply) => {
     const runFun = async () => {
       const conditions = {};
@@ -45,7 +45,7 @@ module.exports = fp(async (server, opts, next) => {
     commonCatch(runFun, reply)();
   });
 
-  // 根据条件获取培训信息列表
+  // 根据条件获取列表
   const queryListSchema = require('./query-list-schema');
   server.post(
       routerBaseInfo.getListURL,
@@ -74,7 +74,7 @@ module.exports = fp(async (server, opts, next) => {
       },
   );
 
-  // 新增或更新培训
+  // 新增或更新
   const updateSchema = require('./update-schema');
   server.put(routerBaseInfo.putURL,
       { schema: { ...updateSchema, tags: ['currentModelName'] } },
@@ -95,7 +95,7 @@ module.exports = fp(async (server, opts, next) => {
         commonCatch(runFun, reply)();
       });
 
-  // 删除报名
+  // 删除
   const deleteSchema = require('./delete-schema');
   server.delete(
       routerBaseInfo.deleteURL,

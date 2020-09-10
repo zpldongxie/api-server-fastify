@@ -2,7 +2,7 @@
  * @description:通用工具
  * @author: zpl
  * @Date: 2020-07-28 19:22:01
- * @LastEditTime: 2020-09-06 21:26:45
+ * @LastEditTime: 2020-09-10 17:24:38
  * @LastEditors: zpl
  */
 const { Dao } = require('../modules/mysql/dao');
@@ -140,7 +140,7 @@ class CommonMethod {
     if (sorter && Object.keys(sorter).length) {
       const orderName = Object.keys(sorter)[0];
       const orderValue = sorter[orderName].includes('asc') ? 'ASC' : 'DESC';
-      queryParams.order = [[orderName, orderValue]];
+      conditions.order = [[orderName, orderValue]];
     }
     // 过滤条件暂不实现
     if (filter && Object.keys(filter).length) {
@@ -156,7 +156,6 @@ class CommonMethod {
         }
       }
     }
-
     const result = await this.dao.findSome(conditions);
     if (result.status) {
       onRouterSuccess(reply, result.data);
