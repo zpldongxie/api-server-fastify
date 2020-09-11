@@ -3,7 +3,7 @@
  * @author: zpl
  * @Date: 2020-08-09 09:28:40
  * @LastEditors: zpl
- * @LastEditTime: 2020-09-10 17:55:46
+ * @LastEditTime: 2020-09-11 19:06:52
  */
 const { Op } = require('sequelize');
 
@@ -256,6 +256,31 @@ class Dao {
   }
 }
 
+/**
+ * 执行mysql事务
+ *
+ * @param {*} sequelize
+ * @return {*}
+ */
+const transaction = (sequelize) => async (tran) => {
+  try {
+    const result = await sequelize.transaction(async (t) => {
+      return await tran(t);
+    });
+    // 如果执行到此行,则表示事务已成功提交,`result`是事务返回的结果
+    return {
+      status: 1,
+      result,
+    };
+  } catch (error) {
+    console.log('mysql事务执行失败，执行回滚...', error);
+    return { status: 0 };
+    // 如果执行到此,则发生错误.
+    // 该事务已由 Sequelize 自动回滚！
+  }
+};
+
 module.exports = {
   Dao,
+  transaction,
 };

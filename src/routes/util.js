@@ -2,10 +2,10 @@
  * @description:通用工具
  * @author: zpl
  * @Date: 2020-07-28 19:22:01
- * @LastEditTime: 2020-09-10 17:24:38
+ * @LastEditTime: 2020-09-11 13:21:04
  * @LastEditors: zpl
  */
-const { Dao } = require('../modules/mysql/dao');
+const { Dao, transaction } = require('../modules/mysql/dao');
 
 /**
  * 统一正常响应处理

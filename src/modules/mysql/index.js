@@ -2,7 +2,7 @@
  * @description: mySql
  * @author: zpl
  * @Date: 2020-07-25 14:47:25
- * @LastEditTime: 2020-09-07 00:34:55
+ * @LastEditTime: 2020-09-11 12:42:27
  * @LastEditors: zpl
  */
 
@@ -30,6 +30,7 @@ module.exports = fp(async (fastify, opts, next) => {
     const initResult = await require('./init-data')(sequelize.models, needCreatTable, database);
     console.log('数据库初始化执行结果：');
     console.log(initResult);
+    fastify.decorate('sequelize', sequelize);
     fastify.decorate('mysql', { models: sequelize.models });
   } catch (error) {
     console.error('Unable to connect to the database:', error);
