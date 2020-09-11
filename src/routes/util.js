@@ -249,4 +249,5 @@ module.exports = {
   onRouteError,
   commonCatch,
   CommonMethod,
+  transaction,
 };
