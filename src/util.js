@@ -2,7 +2,7 @@
  * @description: 全局工具
  * @author: zpl
  * @Date: 2020-09-07 00:38:53
- * @LastEditTime: 2020-09-07 19:48:42
+ * @LastEditTime: 2020-09-11 10:14:56
  * @LastEditors: zpl
  */
 const path = require('path');

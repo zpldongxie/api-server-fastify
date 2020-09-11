@@ -68,13 +68,19 @@ class Dao {
     attributes,
     include,
   }) {
-    const list = await this.Model.findAll({
-      order: order.concat([['createdAt', 'DESC']]),
-      attributes,
-      include,
-    });
-    if (list && list.length) {
-      return onSuccess({ list }, '查询成功');
+    const opt = {
+      // order: order.concat([['createdAt', 'DESC']]),
+    };
+    if (include && Object.keys(include).length) {
+      opt.include = include;
+    }
+    if (attributes && Array.isArray(attributes) && attributes.length) {
+      opt.attributes = attributes;
+    }
+
+    const list = await this.Model.findAll(opt);
+    if (list) {
+      return onSuccess(list, '查询成功');
     }
     return onError('未查询到信息');
   }
@@ -114,7 +120,6 @@ class Dao {
     attributes,
     include,
   }) {
-    const total = await this.Model.count({ where });
     const opt = {
       where,
       order: order.concat([['createdAt', 'DESC']]),
@@ -127,12 +132,12 @@ class Dao {
     if (attributes && Array.isArray(attributes) && attributes.length) {
       opt.attributes = attributes;
     }
-    const list = await this.Model.findAll(opt);
+    const result = await this.Model.findAndCountAll(opt);
 
-    if (list && list.length) {
+    if (result) {
       return onSuccess({
-        total,
-        list,
+        total: result.count,
+        list: result.rows,
       }, '查询成功');
     }
     return onError('未查询到信息');
