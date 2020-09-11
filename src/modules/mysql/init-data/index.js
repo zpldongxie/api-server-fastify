@@ -2,7 +2,7 @@
  * @description: 初始化数据库
  * @author: zpl
  * @Date: 2020-07-27 12:40:11
- * @LastEditTime: 2020-08-18 21:35:57
+ * @LastEditTime: 2020-09-11 18:38:49
  * @LastEditors: zpl
  */
 
@@ -104,32 +104,40 @@ const initMemberType = async (MemberTypeModel, dataList) => {
  * @param {*} models
  */
 const checkTablesExists = async (database, models) => {
-  const {
-    User,
-    UserGroup,
-    Channel,
-    ContentDetail,
-    ChannelSetting,
-    Training,
-    TrainingReg,
-    MemberType,
-    MemberCompany,
-    MemberIndivic,
-  } = models;
   console.log('===============数据库表创建开始===============');
-  await User.sync({ match: new RegExp('^' + database + '$') });
-  await UserGroup.sync({ match: new RegExp('^' + database + '$') });
-  await models['user-group-user'].sync({ match: new RegExp('^' + database + '$') });
-  await Channel.sync({ match: new RegExp('^' + database + '$') });
-  await ContentDetail.sync({ match: new RegExp('^' + database + '$') });
-  await models['content_detail_channel'].sync({ match: new RegExp('^' + database + '$') });
-  // 注意会强制多生成ChannelId外键，对原java系统会产生影响，先手动删除多余外键
-  await ChannelSetting.sync({ match: new RegExp('^' + database + '$') });
-  await Training.sync({ match: new RegExp('^' + database + '$') });
-  await TrainingReg.sync({ match: new RegExp('^' + database + '$') });
-  await MemberType.sync({ match: new RegExp('^' + database + '$') });
-  await MemberCompany.sync({ match: new RegExp('^' + database + '$') });
-  await MemberIndivic.sync({ match: new RegExp('^' + database + '$') });
+  for (const key in models) {
+    if (models.hasOwnProperty(key)) {
+      console.log(`----------创建 ${key} 表----------`);
+      const Model = models[key];
+      await Model.sync({ match: new RegExp('^' + database + '$') });
+      console.log(`----------创建 ${key} 表结束----------`);
+    }
+  }
+  // const {
+  //   User,
+  //   UserGroup,
+  //   Channel,
+  //   ContentDetail,
+  //   ChannelSetting,
+  //   Training,
+  //   TrainingReg,
+  //   MemberType,
+  //   MemberCompany,
+  //   MemberIndivic,
+  // } = models;
+  // await User.sync({ match: new RegExp('^' + database + '$') });
+  // await UserGroup.sync({ match: new RegExp('^' + database + '$') });
+  // await models['user-group-user'].sync({ match: new RegExp('^' + database + '$') });
+  // await Channel.sync({ match: new RegExp('^' + database + '$') });
+  // await ContentDetail.sync({ match: new RegExp('^' + database + '$') });
+  // await models['content_detail_channel'].sync({ match: new RegExp('^' + database + '$') });
+  // // 注意会强制多生成ChannelId外键，对原java系统会产生影响，先手动删除多余外键
+  // await ChannelSetting.sync({ match: new RegExp('^' + database + '$') });
+  // await Training.sync({ match: new RegExp('^' + database + '$') });
+  // await TrainingReg.sync({ match: new RegExp('^' + database + '$') });
+  // await MemberType.sync({ match: new RegExp('^' + database + '$') });
+  // await MemberCompany.sync({ match: new RegExp('^' + database + '$') });
+  // await MemberIndivic.sync({ match: new RegExp('^' + database + '$') });
   console.log('===============数据库表创建结束===============');
 };
 

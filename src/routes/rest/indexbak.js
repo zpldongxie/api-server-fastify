@@ -2,12 +2,12 @@
  * @description rest接口，不做身份验证，其他系统使用的路由要加验证
  * @author: zpl
  * @Date: 2020-07-30 11:26:02
- * @LastEditTime: 2020-08-09 16:35:13
+ * @LastEditTime: 2020-09-11 10:03:39
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
 const { findAll, findOne, findSome, create, updateOne, updateMany, deleteSome } = require('../../modules/mysql/dao');
-const { queryByCid, queryAll } = require('../content/query-list-method');
+// const { queryByCid, queryAll } = require('../content/query-list-method');
 const { onRouteError } = require('../util');
 
 const querySchema = require('./query-content-list-schema');
@@ -29,14 +29,14 @@ module.exports = fp(async (server, opts, next) => {
         current = 1,
         pageSize = 20,
       } = req.body;
-      const result = await queryByCid({
-        mysqlModel,
-        channelId,
-        search: { pubStatus: '已发布' },
-        pageSize,
-        current,
-      });
-      return reply.code(200).send(result);
+      // const result = await queryByCid({
+      //   mysqlModel,
+      //   channelId,
+      //   search: { pubStatus: '已发布' },
+      //   pageSize,
+      //   current,
+      // });
+      // return reply.code(200).send(result);
     } catch (error) {
       return onRouteError(error, reply);
     }
@@ -45,8 +45,8 @@ module.exports = fp(async (server, opts, next) => {
   // 获取推荐文章
   server.get('/recomList', {}, async (req, reply) => {
     try {
-      const result = await queryAll({ mysqlModel, search: { pubStatus: '已发布', isRecom: true } });
-      return reply.code(200).send(result);
+      // const result = await queryAll({ mysqlModel, search: { pubStatus: '已发布', isRecom: true } });
+      // return reply.code(200).send(result);
     } catch (error) {
       return onRouteError(error, reply);
     }

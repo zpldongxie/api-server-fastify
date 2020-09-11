@@ -5,7 +5,7 @@
  * @LastEditTime: 2020-08-05 11:09:43
  * @LastEditors: zpl
  */
-const {Model, DataTypes} = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 
 /**
    * 安全培训报名
