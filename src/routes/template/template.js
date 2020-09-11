@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-10 17:52:50
+ * @LastEditTime: 2020-09-11 09:56:59
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -93,13 +93,14 @@ module.exports = fp(async (server, opts, next) => {
 
         // 统一捕获异常
         commonCatch(runFun, reply)();
-      });
+      },
+  );
 
   // 删除
   const deleteSchema = require('./delete-schema');
   server.delete(
       routerBaseInfo.deleteURL,
-      { schema: { deleteSchema, tags: ['currentModelName'] } },
+      { schema: { ...deleteSchema, tags: ['currentModelName'] } },
       async (request, reply) => {
         const validate = ajv.compile(deleteSchema.body.valueOf());
         const valid = validate(request.body);
@@ -109,12 +110,13 @@ module.exports = fp(async (server, opts, next) => {
 
         const runFun = async () => {
           const ids = request.body.ids;
-          await routerMethod.delete(ids);
+          await routerMethod.delete(reply, ids);
         };
 
         // 统一捕获异常
         commonCatch(runFun, reply)();
-      });
+      },
+  );
 
   next();
 });

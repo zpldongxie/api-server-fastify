@@ -1,10 +1,3 @@
-/*
- * @description: 更新接口参数和返回值定义
- * @author: zpl
- * @Date: 2020-07-24 15:14:04
- * @LastEditTime: 2020-08-01 15:43:17
- * @LastEditors: zpl
- */
 const S = require('fluent-schema');
 
 const bodyJsonSchema = S.object()

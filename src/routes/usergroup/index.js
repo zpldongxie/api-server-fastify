@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-07 19:00:15
+ * @LastEditTime: 2020-09-11 09:56:59
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -34,7 +34,7 @@ module.exports = fp(async (server, opts, next) => {
     commonCatch(runFun, reply)();
   });
 
-  // 获取所有培训信息
+  // 获取所有
   server.get(routerBaseInfo.getAllURL, { schema: { tags: ['usergroup'] } }, async (request, reply) => {
     const runFun = async () => {
       const conditions = {};
@@ -45,7 +45,7 @@ module.exports = fp(async (server, opts, next) => {
     commonCatch(runFun, reply)();
   });
 
-  // 根据条件获取培训信息列表
+  // 根据条件获取列表
   const queryListSchema = require('./query-list-schema');
   server.post(
       routerBaseInfo.getListURL,
@@ -74,7 +74,7 @@ module.exports = fp(async (server, opts, next) => {
       },
   );
 
-  // 新增或更新培训
+  // 新增或更新
   const updateSchema = require('./update-schema');
   server.put(routerBaseInfo.putURL,
       { schema: { ...updateSchema, tags: ['usergroup'] } },
@@ -93,13 +93,14 @@ module.exports = fp(async (server, opts, next) => {
 
         // 统一捕获异常
         commonCatch(runFun, reply)();
-      });
+      },
+  );
 
-  // 删除报名
+  // 删除
   const deleteSchema = require('./delete-schema');
   server.delete(
       routerBaseInfo.deleteURL,
-      { schema: { deleteSchema, tags: ['usergroup'] } },
+      { schema: { ...deleteSchema, tags: ['usergroup'] } },
       async (request, reply) => {
         const validate = ajv.compile(deleteSchema.body.valueOf());
         const valid = validate(request.body);
@@ -109,12 +110,13 @@ module.exports = fp(async (server, opts, next) => {
 
         const runFun = async () => {
           const ids = request.body.ids;
-          await routerMethod.delete(ids);
+          await routerMethod.delete(reply, ids);
         };
 
         // 统一捕获异常
         commonCatch(runFun, reply)();
-      });
+      },
+  );
 
   next();
 });
