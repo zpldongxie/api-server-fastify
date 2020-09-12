@@ -2,10 +2,11 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-10 18:44:46
+ * @LastEditTime: 2020-09-12 11:20:07
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
+const { Op } = require('sequelize');
 const { commonCatch, CommonMethod } = require('../util');
 
 const routerBaseInfo = {
@@ -13,6 +14,7 @@ const routerBaseInfo = {
   modelName_L: 'channel',
   getURL: '/api/channel/:id',
   getAllURL: '/api/channels',
+  getOnFilterURL: '/api/channels/:filter',
   getListURL: '/api/getChannelList',
   putURL: '/api/channel',
   deleteURL: '/api/channels',
@@ -33,6 +35,26 @@ module.exports = fp(async (server, opts, next) => {
     // 统一捕获异常
     commonCatch(runFun, reply)();
   });
+
+  // 简单关键字过滤查找
+  const keywordFilterSchema = require('./keyword-filter-schema');
+  server.get(
+      routerBaseInfo.getOnFilterURL,
+      { schema: { ...keywordFilterSchema, tags: ['channel'] } },
+      async (request, reply) => {
+        const runFun = async () => {
+          const filter = request.params.filter;
+          const conditions = {
+            where: filter ? { keyWord: { [Op.substring]: filter } } : {},
+            attributes: ['id', 'name', 'keyWord'],
+          };
+          routerMethod.findAll(reply, conditions);
+        };
+
+        // 统一捕获异常
+        commonCatch(runFun, reply)();
+      },
+  );
 
   // 获取所有
   server.get(routerBaseInfo.getAllURL, { schema: { tags: ['channel'] } }, async (request, reply) => {
