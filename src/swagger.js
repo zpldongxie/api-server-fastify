@@ -2,7 +2,7 @@
  * @description:
  * @author: zpl
  * @Date: 2020-08-07 10:32:25
- * @LastEditTime: 2020-09-10 20:05:05
+ * @LastEditTime: 2020-09-12 12:43:56
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -30,7 +30,7 @@ module.exports = fp(async (server, opts, next) => {
         { name: 'rest', description: '所有对外rest接口' },
         { name: 'user', description: '用户管理' },
         { name: 'usergroup', description: '用户组管理' },
-        { name: 'cnannel', description: '栏目管理' },
+        { name: 'channel', description: '栏目管理' },
         { name: 'channelsetting', description: '栏目配置管理' },
         { name: 'article', description: '文章管理' },
         { name: 'contentdetail', description: '文章管理' },

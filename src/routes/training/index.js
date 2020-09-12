@@ -2,7 +2,7 @@
  * @description: 安全培训管理相关路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-11 09:56:59
+ * @LastEditTime: 2020-09-12 12:42:49
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -65,7 +65,10 @@ module.exports = fp(async (server, opts, next) => {
             filter,
             ...where
           } = request.body;
-          const include = {};
+          const include = {
+            model: mysqlModel.Channel,
+            attributes: ['id', 'name'],
+          };
           routerMethod.queryList(reply, where, current, pageSize, sorter, filter, include);
         };
 

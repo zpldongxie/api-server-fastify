@@ -3,7 +3,7 @@
  * @author: zpl
  * @Date: 2020-08-09 09:28:40
  * @LastEditors: zpl
- * @LastEditTime: 2020-09-11 19:06:52
+ * @LastEditTime: 2020-09-12 12:54:28
  */
 const { Op } = require('sequelize');
 
@@ -64,11 +64,14 @@ class Dao {
    * @memberof Dao
    */
   async findAll({
+    where = {},
     order = [],
     attributes,
     include,
   }) {
     const opt = {
+      where,
+      // TODO: 目前考虑兼容旧数据库表，后期应使用默认时间降序排序
       // order: order.concat([['createdAt', 'DESC']]),
     };
     if (include && Object.keys(include).length) {
@@ -122,7 +125,8 @@ class Dao {
   }) {
     const opt = {
       where,
-      order: order.concat([['createdAt', 'DESC']]),
+      // TODO: 目前考虑兼容旧数据库表，后期应使用默认时间降序排序
+      // order: order.concat([['createdAt', 'DESC']]),
       offset: (current - 1) * pageSize,
       limit: pageSize,
     };
