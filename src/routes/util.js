@@ -2,9 +2,10 @@
  * @description:通用工具
  * @author: zpl
  * @Date: 2020-07-28 19:22:01
- * @LastEditTime: 2020-09-11 13:21:04
+ * @LastEditTime: 2020-09-12 15:28:41
  * @LastEditors: zpl
  */
+const { Op } = require('sequelize');
 const { Dao, transaction } = require('../modules/mysql/dao');
 
 /**
@@ -134,17 +135,30 @@ class CommonMethod {
       where: {},
       current,
       pageSize,
+      order: [],
       include,
     };
+
     // 组合排序条件
     if (sorter && Object.keys(sorter).length) {
-      const orderName = Object.keys(sorter)[0];
-      const orderValue = sorter[orderName].includes('asc') ? 'ASC' : 'DESC';
-      conditions.order = [[orderName, orderValue]];
+      for (const key in sorter) {
+        if (sorter.hasOwnProperty(key)) {
+          const value = sorter[key].includes('asc') ? 'ASC' : 'DESC';
+          conditions.order.push([key, value]);
+        }
+      }
     }
-    // 过滤条件暂不实现
+
+    // 过滤条件
     if (filter && Object.keys(filter).length) {
-      // do nothing
+      for (const key in filter) {
+        if (filter.hasOwnProperty(key)) {
+          const value = filter[key];
+          if (value) {
+            conditions.where[key] = Array.isArray(value) ? { [Op.in]: value } : value;
+          }
+        }
+      }
     }
 
     // 组合查询条件
@@ -156,6 +170,7 @@ class CommonMethod {
         }
       }
     }
+
     const result = await this.dao.findSome(conditions);
     if (result.status) {
       onRouterSuccess(reply, result.data);

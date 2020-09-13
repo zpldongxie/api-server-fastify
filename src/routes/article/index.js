@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-11 22:15:46
+ * @LastEditTime: 2020-09-12 15:53:03
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -61,12 +61,17 @@ module.exports = fp(async (server, opts, next) => {
           const {
             current,
             pageSize,
-            sorter,
+            sorter={},
             filter,
             ...where
           } = request.body;
-          const include = {};
-          routerMethod.queryList(reply, where, current, pageSize, sorter, filter, include);
+          const include = {
+            model: mysqlModel.Channel,
+            attributes: ['id', 'name'],
+          };
+          routerMethod.queryList(
+              reply, where, current, pageSize, sorter, filter, include,
+          );
         };
 
         // 统一捕获异常

@@ -3,7 +3,7 @@
  * @author: zpl
  * @Date: 2020-08-09 09:28:40
  * @LastEditors: zpl
- * @LastEditTime: 2020-09-12 12:54:28
+ * @LastEditTime: 2020-09-12 13:12:17
  */
 const { Op } = require('sequelize');
 
@@ -73,6 +73,7 @@ class Dao {
       where,
       // TODO: 目前考虑兼容旧数据库表，后期应使用默认时间降序排序
       // order: order.concat([['createdAt', 'DESC']]),
+      order,
     };
     if (include && Object.keys(include).length) {
       opt.include = include;
@@ -127,6 +128,7 @@ class Dao {
       where,
       // TODO: 目前考虑兼容旧数据库表，后期应使用默认时间降序排序
       // order: order.concat([['createdAt', 'DESC']]),
+      order,
       offset: (current - 1) * pageSize,
       limit: pageSize,
     };
