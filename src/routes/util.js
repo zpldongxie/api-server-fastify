@@ -2,7 +2,7 @@
  * @description:通用工具
  * @author: zpl
  * @Date: 2020-07-28 19:22:01
- * @LastEditTime: 2020-09-12 15:28:41
+ * @LastEditTime: 2020-09-13 16:19:55
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -166,7 +166,7 @@ class CommonMethod {
       for (const key in where) {
         if (this.dao.Model.rawAttributes.hasOwnProperty(key)) {
           const value = where[key];
-          conditions.where[key] = value;
+          conditions.where[key] = { [Op.like]: `%${value}%` };
         }
       }
     }

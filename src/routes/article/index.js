@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-12 15:53:03
+ * @LastEditTime: 2020-09-13 16:03:08
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -63,12 +63,18 @@ module.exports = fp(async (server, opts, next) => {
             pageSize,
             sorter={},
             filter,
+            channelId,
             ...where
           } = request.body;
           const include = {
             model: mysqlModel.Channel,
             attributes: ['id', 'name'],
           };
+          if (channelId) {
+            include.where = {
+              id: channelId,
+            };
+          }
           routerMethod.queryList(
               reply, where, current, pageSize, sorter, filter, include,
           );
