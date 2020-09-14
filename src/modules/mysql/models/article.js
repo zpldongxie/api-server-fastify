@@ -1,8 +1,9 @@
+/* eslint-disable new-cap */
 /*
  * @description: 文章内容
  * @author: zpl
  * @Date: 2020-07-28 10:16:12
- * @LastEditTime: 2020-09-11 18:41:58
+ * @LastEditTime: 2020-09-14 11:01:45
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -146,13 +147,13 @@ class Article extends Model {
         comment: '链接文章内容',
       },
       approvalStatus: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM('无需审核', '待审核', '通过', '驳回'),
         allowNull: false,
         field: 'approval_status',
         comment: '审核状态',
       },
       pubStatus: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM('草稿', '已发布', '已删除'),
         allowNull: false,
         field: 'pub_status',
         comment: '发布状态',

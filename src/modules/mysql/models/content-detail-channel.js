@@ -2,7 +2,7 @@
  * @description: 老后台关联表，完全切换到新后台后删除
  * @author: zpl
  * @Date: 2020-07-28 10:16:12
- * @LastEditTime: 2020-09-11 21:36:41
+ * @LastEditTime: 2020-09-14 11:05:42
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -34,7 +34,6 @@ class ContentDetailChannel extends Model {
       modelName: 'content_detail_channel',
       tableName: 'content_detail_channel',
       timestamps: false,
-      indexes: [{ unique: true, fields: ['id'] }],
     });
   }
 }
