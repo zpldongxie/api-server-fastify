@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-11 09:56:59
+ * @LastEditTime: 2020-09-14 22:01:28
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -24,15 +24,20 @@ module.exports = fp(async (server, opts, next) => {
   const routerMethod = new CommonMethod(CurrentModel);
 
   // 根据ID获取单个
-  server.get(routerBaseInfo.getURL, { schema: { tags: ['channelsetting'] } }, async (request, reply) => {
-    const runFun = async () => {
-      const id = request.params.id;
-      routerMethod.findOne(reply, id);
-    };
+  const getByIdSchema = require('./query-by-id-schema');
+  server.get(
+      routerBaseInfo.getURL,
+      { schema: { ...getByIdSchema, tags: ['channelsetting'] } },
+      async (request, reply) => {
+        const runFun = async () => {
+          const id = request.params.id;
+          routerMethod.findOne(reply, id);
+        };
 
-    // 统一捕获异常
-    commonCatch(runFun, reply)();
-  });
+        // 统一捕获异常
+        commonCatch(runFun, reply)();
+      },
+  );
 
   // 获取所有
   server.get(routerBaseInfo.getAllURL, { schema: { tags: ['channelsetting'] } }, async (request, reply) => {
