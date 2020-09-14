@@ -2,11 +2,13 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-13 16:03:08
+ * @LastEditTime: 2020-09-14 22:35:07
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
-const { commonCatch, CommonMethod, transaction } = require('../util');
+const { Op } = require('sequelize');
+const { commonCatch, CommonMethod, transaction, onRouterSuccess } = require('../util');
+const { Dao } = require('../../modules/mysql/dao');
 
 const routerBaseInfo = {
   modelName_U: 'Article',
@@ -20,24 +22,44 @@ const routerBaseInfo = {
 module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
   const CurrentModel = mysqlModel[routerBaseInfo.modelName_U];
+  const ChannelModel = mysqlModel.Channel;
   const { ajv } = opts;
   const routerMethod = new CommonMethod(CurrentModel);
+  const articleDao = new Dao(CurrentModel);
+  const channelDao = new Dao(ChannelModel);
 
   // 根据ID获取单个
-  server.get(routerBaseInfo.getURL, { schema: { tags: ['article'] } }, async (request, reply) => {
-    const runFun = async () => {
-      const id = request.params.id;
-      routerMethod.findOne(reply, id);
-    };
+  const getByIdSchema = require('./query-by-id-schema');
+  server.get(
+      routerBaseInfo.getURL,
+      { schema: { ...getByIdSchema, tags: ['article'] } },
+      async (request, reply) => {
+        const runFun = async () => {
+          const id = request.params.id;
+          const include = {
+            model: mysqlModel.Channel,
+            attributes: ['id', 'name'],
+          };
+          routerMethod.findOne(reply, id, include);
+        };
 
-    // 统一捕获异常
-    commonCatch(runFun, reply)();
-  });
+        // 统一捕获异常
+        commonCatch(runFun, reply)();
+      },
+  );
 
   // 获取所有
   server.get(routerBaseInfo.getAllURL, { schema: { tags: ['article'] } }, async (request, reply) => {
     const runFun = async () => {
-      const conditions = {};
+      const conditions = {
+        attributes: {
+          exclude: ['mainCon'],
+        },
+        include: {
+          model: mysqlModel.Channel,
+          attributes: ['id', 'name'],
+        },
+      };
       routerMethod.findAll(reply, conditions);
     };
 
@@ -61,14 +83,20 @@ module.exports = fp(async (server, opts, next) => {
           const {
             current,
             pageSize,
-            sorter={},
+            sorter = {},
             filter,
             channelId,
             ...where
           } = request.body;
+          if (!sorter.hasOwnProperty('conDate')) {
+            sorter.conDate = 'desc';
+          }
           const include = {
             model: mysqlModel.Channel,
             attributes: ['id', 'name'],
+          };
+          const attributes = {
+            exclude: ['mainCon'],
           };
           if (channelId) {
             include.where = {
@@ -76,7 +104,7 @@ module.exports = fp(async (server, opts, next) => {
             };
           }
           routerMethod.queryList(
-              reply, where, current, pageSize, sorter, filter, include,
+              reply, where, current, pageSize, sorter, filter, include, attributes,
           );
         };
 
@@ -99,7 +127,35 @@ module.exports = fp(async (server, opts, next) => {
 
         // 执行方法
         const runFun = async () => {
-          await routerMethod.upsert(reply, request.body);
+          const params = {
+            approvalStatus: '无需审核',
+            pubStatus: '草稿',
+            ...request.body,
+          // Channels: request.body.Channels.map((channel) => ({ id: channel })),
+          };
+          const result = await articleDao.upsert(params);
+          const cResult = await channelDao.findSome({ where: { id: { [Op.in]: params.Channels } } });
+          if (result.status) {
+            const article = result.data;
+            if (cResult.status) {
+              await article.setChannels(cResult.data.list.map((c)=>c.id));
+            }
+            onRouterSuccess(reply, article);
+          }
+
+        // if (params.id) {
+        //   console.log('----update----');
+        //   // 修改
+        //   const article = await articleDao.updateOne(params.id, params);
+        //   // const article = await articleDao.findOne({ id: params.id });
+        //   if (article) {
+        //     onRouterSuccess(reply, article);
+        //   }
+        // } else {
+        //   console.log('----insert----');
+        //   // 新增
+        //   await routerMethod.create(reply, params, opt);
+        // }
         };
 
         // 统一捕获异常

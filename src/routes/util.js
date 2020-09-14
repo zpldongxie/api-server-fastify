@@ -2,7 +2,7 @@
  * @description:通用工具
  * @author: zpl
  * @Date: 2020-07-28 19:22:01
- * @LastEditTime: 2020-09-13 16:19:55
+ * @LastEditTime: 2020-09-14 22:34:58
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -94,9 +94,10 @@ class CommonMethod {
    *
    * @param {*} reply
    * @param {*} id
+   * @param {*} include
    */
-  async findOne(reply, id) {
-    const result = await this.dao.findOne({ id });
+  async findOne(reply, id, include) {
+    const result = await this.dao.findOne({ id }, include);
     if (result.status) {
       onRouterSuccess(reply, result.data);
     } else {
@@ -129,8 +130,9 @@ class CommonMethod {
    * @param {*} sorter 排序条件
    * @param {*} filter 过滤条件
    * @param {*} include 关联查询条件
+   * @param {*} attributes 查询列配置
    */
-  async queryList(reply, where, current, pageSize, sorter, filter, include) {
+  async queryList(reply, where, current, pageSize, sorter, filter, include, attributes) {
     const conditions = {
       where: {},
       current,
@@ -171,6 +173,10 @@ class CommonMethod {
       }
     }
 
+    if (attributes) {
+      conditions.attributes = attributes;
+    }
+
     const result = await this.dao.findSome(conditions);
     if (result.status) {
       onRouterSuccess(reply, result.data);
@@ -184,9 +190,10 @@ class CommonMethod {
    *
    * @param {*} reply
    * @param {*} data 数据
+   * @param {*} opt
    */
-  async create(reply, data) {
-    const result = await this.dao.create(data);
+  async create(reply, data, opt) {
+    const result = await this.dao.create(data, opt);
     if (result.status) {
       onRouterSuccess(reply, result.data, '创建成功', 201);
     } else {

@@ -3,7 +3,7 @@
  * @author: zpl
  * @Date: 2020-08-09 09:28:40
  * @LastEditors: zpl
- * @LastEditTime: 2020-09-12 13:12:17
+ * @LastEditTime: 2020-09-14 22:34:49
  */
 const { Op } = require('sequelize');
 
@@ -93,10 +93,11 @@ class Dao {
    * 查询单个
    *
    * @param {*} [where={}]
+   * @param {*} [include={}]
    * @return {*}
    */
-  async findOne(where = {}) {
-    const result = await this.Model.findOne({ where });
+  async findOne(where = {}, include={}) {
+    const result = await this.Model.findOne({ where, include });
     if (result) {
       return onSuccess(result, '查询成功');
     }
@@ -135,7 +136,7 @@ class Dao {
     if (include && Object.keys(include).length) {
       opt.include = include;
     }
-    if (attributes && Array.isArray(attributes) && attributes.length) {
+    if (attributes) {
       opt.attributes = attributes;
     }
     const result = await this.Model.findAndCountAll(opt);
@@ -153,10 +154,12 @@ class Dao {
    * 创建
    *
    * @param {*} info
+   * @param {*} [opt={}]
    * @return {*}
+   * @memberof Dao
    */
-  async create(info) {
-    const result = await this.Model.create(info);
+  async create(info, opt={}) {
+    const result = await this.Model.create(info, opt);
     if (result) {
       return onSuccess(result, '创建成功');
     } else {
@@ -248,7 +251,7 @@ class Dao {
    * @return {*}
    */
   async deleteSome(ids = []) {
-    await this.Model.destroy({
+    const num = await this.Model.destroy({
       where: {
         id: {
           [Op.in]: ids,

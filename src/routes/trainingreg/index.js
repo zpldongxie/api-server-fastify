@@ -74,6 +74,9 @@ module.exports = fp(async (server, opts, next) => {
             filter,
             ...where
           } = request.body;
+          if (!sorter.hasOwnProperty('createdAt')) {
+            sorter.createdAt = 'desc';
+          }
           const include = {
             model: Training,
             attributes: ['id', 'title'],
@@ -153,7 +156,7 @@ module.exports = fp(async (server, opts, next) => {
 
         const runFun = async () => {
           const { ids, passed } = request.body;
-          await routerMethod.updateMany(reply, ids, { passed } );
+          await routerMethod.updateMany(reply, ids, { passed });
         };
 
         // 统一捕获异常
