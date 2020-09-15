@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-14 22:06:56
+ * @LastEditTime: 2020-09-15 10:22:54
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -25,11 +25,11 @@ module.exports = fp(async (server, opts, next) => {
   const { ajv } = opts;
   const routerMethod = new CommonMethod(CurrentModel);
 
-  // 根据ID获取单个
+  // 根据ID获取单个培训报名
   const getByIdSchema = require('./query-by-id-schema');
   server.get(
       routerBaseInfo.getURL,
-      { ...getByIdSchema, schema: { tags: ['trainingreg'] } },
+      { schema: { ...getByIdSchema, tags: ['trainingreg'], description: '根据ID获取单个培训报名' } },
       async (request, reply) => {
         const runFun = async () => {
           const id = request.params.id;
@@ -41,28 +41,32 @@ module.exports = fp(async (server, opts, next) => {
       },
   );
 
-  // 获取所有培训信息
-  server.get(routerBaseInfo.getAllURL, { schema: { tags: ['trainingreg'] } }, async (request, reply) => {
-    const runFun = async () => {
-      const conditions = {
-        include: {
-          model: Training,
-          attributes: ['id', 'title'],
-        },
-      };
-      routerMethod.findAll(reply, conditions);
-    };
+  // 获取所有培训报名
+  server.get(
+      routerBaseInfo.getAllURL,
+      { schema: { tags: ['trainingreg'], description: '获取所有培训报名' } },
+      async (request, reply) => {
+        const runFun = async () => {
+          const conditions = {
+            include: {
+              model: Training,
+              attributes: ['id', 'title'],
+            },
+          };
+          routerMethod.findAll(reply, conditions);
+        };
 
-    // 统一捕获异常
-    commonCatch(runFun, reply)();
-  });
+        // 统一捕获异常
+        commonCatch(runFun, reply)();
+      },
+  );
 
-  // 根据条件获取培训信息列表
+  // 根据条件获取培训报名列表
   const queryListSchema = require('./query-list-schema');
   server.post(
       routerBaseInfo.getListURL,
       {
-        schema: { ...queryListSchema, tags: ['trainingreg'] },
+        schema: { ...queryListSchema, tags: ['trainingreg'], description: '根据条件获取培训报名列表' },
       },
       async (request, reply) => {
         const validate = ajv.compile(queryListSchema.body.valueOf());
@@ -98,13 +102,11 @@ module.exports = fp(async (server, opts, next) => {
       },
   );
 
-  // 新增或更新培训
+  // 新增或更新培训报名
   const updateSchema = require('./update-schema');
   server.put(
       routerBaseInfo.putURL,
-      {
-        schema: { ...updateSchema, tags: ['trainingreg'] },
-      },
+      { schema: { ...updateSchema, tags: ['trainingreg'], description: '新增或更新培训报名' } },
       async (request, reply) => {
       // 参数校验
         const validate = ajv.compile(updateSchema.body.valueOf());
@@ -123,12 +125,12 @@ module.exports = fp(async (server, opts, next) => {
       },
   );
 
-  // 删除报名
+  // 批量删除培训报名
   const deleteSchema = require('./delete-schema');
   server.delete(
       routerBaseInfo.deleteURL,
       {
-        schema: { ...deleteSchema, tags: ['trainingreg'] },
+        schema: { ...deleteSchema, tags: ['trainingreg'], description: '批量删除培训报名' },
       },
       async (request, reply) => {
         const validate = ajv.compile(deleteSchema.body.valueOf());
@@ -151,7 +153,7 @@ module.exports = fp(async (server, opts, next) => {
   const setPassedSchema = require('./set-passed-schema');
   server.post(
       routerBaseInfo.setPassedURL,
-      { schema: { ...setPassedSchema, tags: ['trainingreg'] } },
+      { schema: { ...setPassedSchema, tags: ['trainingreg'], description: '设置审批状态' } },
       async (request, reply) => {
         const validate = ajv.compile(setPassedSchema.body.valueOf());
         const valid = validate(request.body);

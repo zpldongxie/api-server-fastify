@@ -2,7 +2,7 @@
  * @description: 安全培训管理相关路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-14 22:07:23
+ * @LastEditTime: 2020-09-15 10:17:47
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -27,7 +27,7 @@ module.exports = fp(async (server, opts, next) => {
   const getByIdSchema = require('./query-by-id-schema');
   server.get(
       routerBaseInfo.getURL,
-      { ...getByIdSchema, schema: { tags: ['training'] } },
+      { ...getByIdSchema, schema: { tags: ['training'], description: '根据ID获取单个培训' } },
       async (request, reply) => {
         const runFun = async () => {
           const id = request.params.id;
@@ -40,21 +40,25 @@ module.exports = fp(async (server, opts, next) => {
   );
 
   // 获取所有
-  server.get(routerBaseInfo.getAllURL, { schema: { tags: ['training'] } }, async (request, reply) => {
-    const runFun = async () => {
-      const conditions = {};
-      routerMethod.findAll(reply, conditions);
-    };
+  server.get(
+      routerBaseInfo.getAllURL,
+      { schema: { tags: ['training'], description: '获取所有培训' } },
+      async (request, reply) => {
+        const runFun = async () => {
+          const conditions = {};
+          routerMethod.findAll(reply, conditions);
+        };
 
-    // 统一捕获异常
-    commonCatch(runFun, reply)();
-  });
+        // 统一捕获异常
+        commonCatch(runFun, reply)();
+      },
+  );
 
   // 根据条件获取列表
   const queryListSchema = require('./query-list-schema');
   server.post(
       routerBaseInfo.getListURL,
-      { schema: { ...queryListSchema, tags: ['training'] } },
+      { schema: { ...queryListSchema, tags: ['training'], description: '根据条件获取培训列表' } },
       async (request, reply) => {
         const validate = ajv.compile(queryListSchema.body.valueOf());
         const valid = validate(request.body);
@@ -85,7 +89,7 @@ module.exports = fp(async (server, opts, next) => {
   // 新增或更新
   const updateSchema = require('./update-schema');
   server.put(routerBaseInfo.putURL,
-      { schema: { ...updateSchema, tags: ['training'] } },
+      { schema: { ...updateSchema, tags: ['training'], description: '新增或更新培训' } },
       async (request, reply) => {
       // 参数校验
         const validate = ajv.compile(updateSchema.body.valueOf());
@@ -108,7 +112,7 @@ module.exports = fp(async (server, opts, next) => {
   const deleteSchema = require('./delete-schema');
   server.delete(
       routerBaseInfo.deleteURL,
-      { schema: { ...deleteSchema, tags: ['training'] } },
+      { schema: { ...deleteSchema, tags: ['training'], description: '批量删除培训' } },
       async (request, reply) => {
         const validate = ajv.compile(deleteSchema.body.valueOf());
         const valid = validate(request.body);

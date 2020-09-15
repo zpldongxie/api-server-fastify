@@ -34,7 +34,7 @@ server.register(require('fastify-cors'), {
     // }
     // cb(new Error('Not allowed'), false);
   },
-  methods: ['POST', 'GET', 'PUT'],
+  methods: ['POST', 'GET', 'PUT', 'DELETE'],
 });
 
 // 挂载路由

@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-14 22:07:52
+ * @LastEditTime: 2020-09-15 09:58:15
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -29,7 +29,7 @@ module.exports = fp(async (server, opts, next) => {
   const getByIdSchema = require('./query-by-id-schema');
   server.get(
       routerBaseInfo.getURL,
-      { schema: { ...getByIdSchema, tags: ['channel'] } },
+      { schema: { ...getByIdSchema, tags: ['channel'], description: '根据ID获取单个栏目' } },
       async (request, reply) => {
         const runFun = async () => {
           const id = request.params.id;
@@ -45,7 +45,7 @@ module.exports = fp(async (server, opts, next) => {
   const keywordFilterSchema = require('./keyword-filter-schema');
   server.get(
       routerBaseInfo.getOnFilterURL,
-      { schema: { ...keywordFilterSchema, tags: ['channel'] } },
+      { schema: { ...keywordFilterSchema, tags: ['channel'], description: '简单关键字过滤查找栏目' } },
       async (request, reply) => {
         const runFun = async () => {
           const filter = request.params.filter;
@@ -62,21 +62,25 @@ module.exports = fp(async (server, opts, next) => {
   );
 
   // 获取所有
-  server.get(routerBaseInfo.getAllURL, { schema: { tags: ['channel'] } }, async (request, reply) => {
-    const runFun = async () => {
-      const conditions = {};
-      routerMethod.findAll(reply, conditions);
-    };
+  server.get(
+      routerBaseInfo.getAllURL,
+      { schema: { tags: ['channel'], description: '获取所有栏目' } },
+      async (request, reply) => {
+        const runFun = async () => {
+          const conditions = {};
+          routerMethod.findAll(reply, conditions);
+        };
 
-    // 统一捕获异常
-    commonCatch(runFun, reply)();
-  });
+        // 统一捕获异常
+        commonCatch(runFun, reply)();
+      },
+  );
 
   // 根据条件获取列表
   const queryListSchema = require('./query-list-schema');
   server.post(
       routerBaseInfo.getListURL,
-      { schema: { ...queryListSchema, tags: ['channel'] } },
+      { schema: { ...queryListSchema, tags: ['channel'], description: '根据条件获取栏目列表' } },
       async (request, reply) => {
         const validate = ajv.compile(queryListSchema.body.valueOf());
         const valid = validate(request.body);
@@ -103,8 +107,9 @@ module.exports = fp(async (server, opts, next) => {
 
   // 新增或更新
   const updateSchema = require('./update-schema');
-  server.put(routerBaseInfo.putURL,
-      { schema: { ...updateSchema, tags: ['channel'] } },
+  server.put(
+      routerBaseInfo.putURL,
+      { schema: { ...updateSchema, tags: ['channel'], description: '新增或更新栏目' } },
       async (request, reply) => {
       // 参数校验
         const validate = ajv.compile(updateSchema.body.valueOf());
@@ -120,13 +125,14 @@ module.exports = fp(async (server, opts, next) => {
 
         // 统一捕获异常
         commonCatch(runFun, reply)();
-      });
+      },
+  );
 
   // 删除
   const deleteSchema = require('./delete-schema');
   server.delete(
       routerBaseInfo.deleteURL,
-      { schema: { deleteSchema, tags: ['channel'] } },
+      { schema: { ...deleteSchema, tags: ['channel'], description: '批量删除栏目' } },
       async (request, reply) => {
         const validate = ajv.compile(deleteSchema.body.valueOf());
         const valid = validate(request.body);
@@ -141,7 +147,8 @@ module.exports = fp(async (server, opts, next) => {
 
         // 统一捕获异常
         commonCatch(runFun, reply)();
-      });
+      },
+  );
 
   next();
 });

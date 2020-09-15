@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-14 22:06:29
+ * @LastEditTime: 2020-09-15 10:26:47
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -30,7 +30,7 @@ module.exports = fp(async (server, opts, next) => {
   const loginSchema = require('../user/login-schema');
   server.post(
       routerBaseInfo.doLoginURL,
-      { schema: { ...loginSchema, tags: ['user'] } },
+      { schema: { ...loginSchema, tags: ['user'] }, description: '登录' },
       async (request, reply) => {
         const validate = ajv.compile(loginSchema.body.valueOf());
         const valid = validate(request.body);
@@ -65,7 +65,7 @@ module.exports = fp(async (server, opts, next) => {
   const getByIdSchema = require('./query-by-id-schema');
   server.get(
       routerBaseInfo.getURL,
-      { ...getByIdSchema, schema: { tags: ['user'] } },
+      { schema: { ...getByIdSchema, tags: ['user'], description: '根据ID获取单个用户' } },
       async (request, reply) => {
         const runFun = async () => {
           const id = request.params.id;
@@ -77,22 +77,26 @@ module.exports = fp(async (server, opts, next) => {
       },
   );
 
-  // 获取所有用户信息
-  server.get(routerBaseInfo.getAllURL, { schema: { tags: ['user'] } }, async (request, reply) => {
-    const runFun = async () => {
-      const conditions = {};
-      routerMethod.findAll(reply, conditions);
-    };
+  // 获取所有用户
+  server.get(
+      routerBaseInfo.getAllURL,
+      { schema: { tags: ['user'], description: '获取所有用户' } },
+      async (request, reply) => {
+        const runFun = async () => {
+          const conditions = {};
+          routerMethod.findAll(reply, conditions);
+        };
 
-    // 统一捕获异常
-    commonCatch(runFun, reply)();
-  });
+        // 统一捕获异常
+        commonCatch(runFun, reply)();
+      },
+  );
 
-  // 根据条件获取用户信息列表
+  // 根据条件获取用户列表
   const queryListSchema = require('./query-list-schema');
   server.post(
       routerBaseInfo.getListURL,
-      { schema: { ...queryListSchema, tags: ['user'] } },
+      { schema: { ...queryListSchema, tags: ['user'], description: '根据条件获取用户列表' } },
       async (request, reply) => {
         const validate = ajv.compile(queryListSchema.body.valueOf());
         const valid = validate(request.body);
@@ -117,12 +121,12 @@ module.exports = fp(async (server, opts, next) => {
       },
   );
 
-  // 获取当前用户
+  // 获取当前登录用户
   server.get(
       routerBaseInfo.getCurrentUserURL,
       {
         preValidation: [server.authenticate],
-        schema: { tags: ['user'] },
+        schema: { tags: ['user'], description: '获取当前登录用户' },
       },
       async (request, reply) => {
         const user = await CurrentModel.findOne({
@@ -135,7 +139,7 @@ module.exports = fp(async (server, opts, next) => {
   // 新增或更新用户
   const updateSchema = require('./update-schema');
   server.put(routerBaseInfo.putURL,
-      { schema: { ...updateSchema, tags: ['user'] } },
+      { schema: { ...updateSchema, tags: ['user'], description: '新增或更新用户' } },
       async (request, reply) => {
       // 参数校验
         const validate = ajv.compile(updateSchema.body.valueOf());
@@ -158,7 +162,7 @@ module.exports = fp(async (server, opts, next) => {
   const deleteSchema = require('./delete-schema');
   server.delete(
       routerBaseInfo.deleteURL,
-      { schema: { deleteSchema, tags: ['user'] } },
+      { schema: { ...deleteSchema, tags: ['user'], description: '批量删除用户' } },
       async (request, reply) => {
         const validate = ajv.compile(deleteSchema.body.valueOf());
         const valid = validate(request.body);
