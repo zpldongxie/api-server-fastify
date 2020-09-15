@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-14 22:35:07
+ * @LastEditTime: 2020-09-15 11:01:35
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -17,6 +17,7 @@ const routerBaseInfo = {
   getAllURL: '/api/articles',
   getListURL: '/api/getArticleList',
   putURL: '/api/article',
+  setAttributURL: '/api/article/attribut',
   deleteURL: '/api/articles',
 };
 module.exports = fp(async (server, opts, next) => {
@@ -32,7 +33,7 @@ module.exports = fp(async (server, opts, next) => {
   const getByIdSchema = require('./query-by-id-schema');
   server.get(
       routerBaseInfo.getURL,
-      { schema: { ...getByIdSchema, tags: ['article'] } },
+      { schema: { ...getByIdSchema, tags: ['article'], description: '根据ID获取单个文章' } },
       async (request, reply) => {
         const runFun = async () => {
           const id = request.params.id;
@@ -49,29 +50,33 @@ module.exports = fp(async (server, opts, next) => {
   );
 
   // 获取所有
-  server.get(routerBaseInfo.getAllURL, { schema: { tags: ['article'] } }, async (request, reply) => {
-    const runFun = async () => {
-      const conditions = {
-        attributes: {
-          exclude: ['mainCon'],
-        },
-        include: {
-          model: mysqlModel.Channel,
-          attributes: ['id', 'name'],
-        },
-      };
-      routerMethod.findAll(reply, conditions);
-    };
+  server.get(
+      routerBaseInfo.getAllURL,
+      { schema: { tags: ['article'], description: '获取所有文章' } },
+      async (request, reply) => {
+        const runFun = async () => {
+          const conditions = {
+            attributes: {
+              exclude: ['mainCon'],
+            },
+            include: {
+              model: mysqlModel.Channel,
+              attributes: ['id', 'name'],
+            },
+          };
+          routerMethod.findAll(reply, conditions);
+        };
 
-    // 统一捕获异常
-    commonCatch(runFun, reply)();
-  });
+        // 统一捕获异常
+        commonCatch(runFun, reply)();
+      },
+  );
 
   // 根据条件获取列表
   const queryListSchema = require('./query-list-schema');
   server.post(
       routerBaseInfo.getListURL,
-      { schema: { ...queryListSchema, tags: ['article'] } },
+      { schema: { ...queryListSchema, tags: ['article'], description: '根据条件获取文章列表' } },
       async (request, reply) => {
         const validate = ajv.compile(queryListSchema.body.valueOf());
         const valid = validate(request.body);
@@ -116,9 +121,9 @@ module.exports = fp(async (server, opts, next) => {
   // 新增或更新
   const updateSchema = require('./update-schema');
   server.put(routerBaseInfo.putURL,
-      { schema: { ...updateSchema, tags: ['article'] } },
+      { schema: { ...updateSchema, tags: ['article'], description: '新增或更新文章' } },
       async (request, reply) => {
-      // 参数校验
+        // 参数校验
         const validate = ajv.compile(updateSchema.body.valueOf());
         const valid = validate(request.body);
         if (!valid) {
@@ -131,7 +136,6 @@ module.exports = fp(async (server, opts, next) => {
             approvalStatus: '无需审核',
             pubStatus: '草稿',
             ...request.body,
-          // Channels: request.body.Channels.map((channel) => ({ id: channel })),
           };
           const result = await articleDao.upsert(params);
           const cResult = await channelDao.findSome({ where: { id: { [Op.in]: params.Channels } } });
@@ -142,20 +146,31 @@ module.exports = fp(async (server, opts, next) => {
             }
             onRouterSuccess(reply, article);
           }
+          onRouteError(reply, '保存失败');
+        };
 
-        // if (params.id) {
-        //   console.log('----update----');
-        //   // 修改
-        //   const article = await articleDao.updateOne(params.id, params);
-        //   // const article = await articleDao.findOne({ id: params.id });
-        //   if (article) {
-        //     onRouterSuccess(reply, article);
-        //   }
-        // } else {
-        //   console.log('----insert----');
-        //   // 新增
-        //   await routerMethod.create(reply, params, opt);
-        // }
+        // 统一捕获异常
+        commonCatch(runFun, reply)();
+      },
+  );
+
+  // 批量设置单个属性
+  const setAttributSchema = require('./set-attr-schema');
+  server.put(
+      routerBaseInfo.setAttributURL,
+      { schema: { ...setAttributSchema, tags: ['article'], description: '批量设置单个文章属性' } },
+      async (request, reply) => {
+        // 参数校验
+        const validate = ajv.compile(setAttributSchema.body.valueOf());
+        const valid = validate(request.body);
+        if (!valid) {
+          return reply.code(400).send(validate.errors);
+        }
+
+        // 执行方法
+        const runFun = async () => {
+          const { ids, attr } = request.body;
+          routerMethod.updateMany(reply, ids, attr);
         };
 
         // 统一捕获异常
@@ -167,7 +182,7 @@ module.exports = fp(async (server, opts, next) => {
   const deleteSchema = require('./delete-schema');
   server.delete(
       routerBaseInfo.deleteURL,
-      { schema: { ...deleteSchema, tags: ['article'] } },
+      { schema: { ...deleteSchema, tags: ['article'], description: '批量删除文章' } },
       async (request, reply) => {
         const validate = ajv.compile(deleteSchema.body.valueOf());
         const valid = validate(request.body);
@@ -188,7 +203,7 @@ module.exports = fp(async (server, opts, next) => {
   const trans = transaction(server.sequelize);
   server.post(
       '/api/updateDatabase',
-      { schema: { tags: ['article'] } },
+      { schema: { tags: ['article'], description: '从旧文章表向新文章表同步数据' } },
       async (request, reply) => {
         const runFun = async () => {
           console.log('查询旧文章表');
