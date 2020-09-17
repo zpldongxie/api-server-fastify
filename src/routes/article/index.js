@@ -93,6 +93,10 @@ module.exports = fp(async (server, opts, next) => {
             channelId,
             ...where
           } = request.body;
+
+          if (!where.hasOwnProperty('pubStatus')) {
+            where.pubStatus = { [Op.not]: '已删除' };
+          }
           if (!sorter.hasOwnProperty('conDate')) {
             sorter.conDate = 'desc';
           }
