@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-15 10:09:56
+ * @LastEditTime: 2020-09-15 17:39:55
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -27,7 +27,7 @@ module.exports = fp(async (server, opts, next) => {
   const getByIdSchema = require('./query-by-id-schema');
   server.get(
       routerBaseInfo.getURL,
-      { schema: { ...getByIdSchema, tags: ['memberindivic'], description: '根据ID获取单个个人会员' } },
+      { schema: { ...getByIdSchema, tags: ['memberindivic'], summary: '根据ID获取单个个人会员' } },
       async (request, reply) => {
         const runFun = async () => {
           const id = request.params.id;
@@ -42,7 +42,7 @@ module.exports = fp(async (server, opts, next) => {
   // 获取所有
   server.get(
       routerBaseInfo.getAllURL,
-      { schema: { tags: ['memberindivic'], description: '获取所有个人会员' } },
+      { schema: { tags: ['memberindivic'], summary: '获取所有个人会员' } },
       async (request, reply) => {
         const runFun = async () => {
           const conditions = {};
@@ -58,7 +58,7 @@ module.exports = fp(async (server, opts, next) => {
   const queryListSchema = require('./query-list-schema');
   server.post(
       routerBaseInfo.getListURL,
-      { schema: { ...queryListSchema, tags: ['memberindivic'], description: '根据条件获取个人会员列表' } },
+      { schema: { ...queryListSchema, tags: ['memberindivic'], summary: '根据条件获取个人会员列表' } },
       async (request, reply) => {
         const validate = ajv.compile(queryListSchema.body.valueOf());
         const valid = validate(request.body);
@@ -86,7 +86,7 @@ module.exports = fp(async (server, opts, next) => {
   // 新增或更新
   const updateSchema = require('./update-schema');
   server.put(routerBaseInfo.putURL,
-      { schema: { ...updateSchema, tags: ['memberindivic'], description: '新增或更新个人会员' } },
+      { schema: { ...updateSchema, tags: ['memberindivic'], summary: '新增或更新个人会员' } },
       async (request, reply) => {
       // 参数校验
         const validate = ajv.compile(updateSchema.body.valueOf());
@@ -109,7 +109,7 @@ module.exports = fp(async (server, opts, next) => {
   const deleteSchema = require('./delete-schema');
   server.delete(
       routerBaseInfo.deleteURL,
-      { schema: { ...deleteSchema, tags: ['memberindivic'], description: '新增或更新个人会员' } },
+      { schema: { ...deleteSchema, tags: ['memberindivic'], summary: '新增或更新个人会员' } },
       async (request, reply) => {
         const validate = ajv.compile(deleteSchema.body.valueOf());
         const valid = validate(request.body);

@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-15 10:04:15
+ * @LastEditTime: 2020-09-15 17:40:10
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -26,7 +26,7 @@ module.exports = fp(async (server, opts, next) => {
   // 根据ID获取单个
   server.get(
       routerBaseInfo.getURL,
-      { schema: { tags: ['contentdetail'], description: '根据ID获取单个' } },
+      { schema: { tags: ['contentdetail'], summary: '根据ID获取单个' } },
       async (request, reply) => {
         const runFun = async () => {
           const id = request.params.id;
@@ -41,7 +41,7 @@ module.exports = fp(async (server, opts, next) => {
   // 获取所有
   server.get(
       routerBaseInfo.getAllURL,
-      { schema: { tags: ['contentdetail'], description: '获取所有' } },
+      { schema: { tags: ['contentdetail'], summary: '获取所有' } },
       async (request, reply) => {
         const runFun = async () => {
           const conditions = {};
@@ -58,7 +58,7 @@ module.exports = fp(async (server, opts, next) => {
   const queryListSchema = require('./query-list-schema');
   server.post(
       routerBaseInfo.getListURL,
-      { schema: { ...queryListSchema, tags: ['contentdetail'], description: '根据条件获取列表' } },
+      { schema: { ...queryListSchema, tags: ['contentdetail'], summary: '根据条件获取列表' } },
       async (request, reply) => {
         const validate = ajv.compile(queryListSchema.body.valueOf());
         const valid = validate(request.body);
@@ -86,7 +86,7 @@ module.exports = fp(async (server, opts, next) => {
   // 新增或更新
   const updateSchema = require('./update-schema');
   server.put(routerBaseInfo.putURL,
-      { schema: { ...updateSchema, tags: ['contentdetail'], description: '新增或更新' } },
+      { schema: { ...updateSchema, tags: ['contentdetail'], summary: '新增或更新' } },
       async (request, reply) => {
       // 参数校验
         const validate = ajv.compile(updateSchema.body.valueOf());
@@ -109,7 +109,7 @@ module.exports = fp(async (server, opts, next) => {
   const deleteSchema = require('./delete-schema');
   server.delete(
       routerBaseInfo.deleteURL,
-      { schema: { ...deleteSchema, tags: ['contentdetail'], description: '删除' } },
+      { schema: { ...deleteSchema, tags: ['contentdetail'], summary: '删除' } },
       async (request, reply) => {
         const validate = ajv.compile(deleteSchema.body.valueOf());
         const valid = validate(request.body);

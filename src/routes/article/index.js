@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-15 11:01:35
+ * @LastEditTime: 2020-09-17 12:12:21
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -33,7 +33,7 @@ module.exports = fp(async (server, opts, next) => {
   const getByIdSchema = require('./query-by-id-schema');
   server.get(
       routerBaseInfo.getURL,
-      { schema: { ...getByIdSchema, tags: ['article'], description: '根据ID获取单个文章' } },
+      { schema: { ...getByIdSchema, tags: ['article'], summary: '根据ID获取单个文章' } },
       async (request, reply) => {
         const runFun = async () => {
           const id = request.params.id;
@@ -52,7 +52,7 @@ module.exports = fp(async (server, opts, next) => {
   // 获取所有
   server.get(
       routerBaseInfo.getAllURL,
-      { schema: { tags: ['article'], description: '获取所有文章' } },
+      { schema: { tags: ['article'], summary: '获取所有文章' } },
       async (request, reply) => {
         const runFun = async () => {
           const conditions = {
@@ -76,7 +76,7 @@ module.exports = fp(async (server, opts, next) => {
   const queryListSchema = require('./query-list-schema');
   server.post(
       routerBaseInfo.getListURL,
-      { schema: { ...queryListSchema, tags: ['article'], description: '根据条件获取文章列表' } },
+      { schema: { ...queryListSchema, tags: ['article'], summary: '根据条件获取文章列表' } },
       async (request, reply) => {
         const validate = ajv.compile(queryListSchema.body.valueOf());
         const valid = validate(request.body);
@@ -121,7 +121,7 @@ module.exports = fp(async (server, opts, next) => {
   // 新增或更新
   const updateSchema = require('./update-schema');
   server.put(routerBaseInfo.putURL,
-      { schema: { ...updateSchema, tags: ['article'], description: '新增或更新文章' } },
+      { schema: { ...updateSchema, tags: ['article'], summary: '新增或更新文章' } },
       async (request, reply) => {
         // 参数校验
         const validate = ajv.compile(updateSchema.body.valueOf());
@@ -158,7 +158,7 @@ module.exports = fp(async (server, opts, next) => {
   const setAttributSchema = require('./set-attr-schema');
   server.put(
       routerBaseInfo.setAttributURL,
-      { schema: { ...setAttributSchema, tags: ['article'], description: '批量设置单个文章属性' } },
+      { schema: { ...setAttributSchema, tags: ['article'], summary: '批量设置单个文章属性' } },
       async (request, reply) => {
         // 参数校验
         const validate = ajv.compile(setAttributSchema.body.valueOf());
@@ -182,7 +182,7 @@ module.exports = fp(async (server, opts, next) => {
   const deleteSchema = require('./delete-schema');
   server.delete(
       routerBaseInfo.deleteURL,
-      { schema: { ...deleteSchema, tags: ['article'], description: '批量删除文章' } },
+      { schema: { ...deleteSchema, tags: ['article'], summary: '批量删除文章' } },
       async (request, reply) => {
         const validate = ajv.compile(deleteSchema.body.valueOf());
         const valid = validate(request.body);
@@ -203,7 +203,7 @@ module.exports = fp(async (server, opts, next) => {
   const trans = transaction(server.sequelize);
   server.post(
       '/api/updateDatabase',
-      { schema: { tags: ['article'], description: '从旧文章表向新文章表同步数据' } },
+      { schema: { tags: ['article'], summary: '从旧文章表向新文章表同步数据' } },
       async (request, reply) => {
         const runFun = async () => {
           console.log('查询旧文章表');

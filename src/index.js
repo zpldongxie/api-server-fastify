@@ -2,7 +2,7 @@ const sourceMapSupport = require('source-map-support');
 
 sourceMapSupport.install();
 
-const fastify = require('fastify');
+const fastify = require('fastify')();
 const path = require('path');
 const config = require('config');
 const auth = require('./authenticate');
@@ -10,20 +10,17 @@ const { load } = require('./util');
 // const db = require('./modules/db');
 const mysql = require('./modules/mysql');
 
-const server = fastify({
-  // logger: true
-});
 
-server.register(auth);
+fastify.register(auth);
 const swagger = require('./swagger');
-server.register(swagger);
+fastify.register(swagger);
 
 // 连接数据库
-// server.register(db, config.get('db'));
-server.register(mysql, config.get('mysql'));
+// fastify.register(db, config.get('db'));
+fastify.register(mysql, config.get('mysql'));
 
 // 设置跨域规则
-server.register(require('fastify-cors'), {
+fastify.register(require('fastify-cors'), {
   // TODO: 上生产环境后，应改为所有api开头的接口只允许后台管理服务器访问
   origin: (origin, cb) => {
     console.log(origin);
@@ -42,15 +39,15 @@ const Ajv = require('ajv');
 const ajv = new Ajv({ allErrors: true });
 const routeDir = path.resolve(__dirname, './routes');
 load(routeDir, (name, model) => {
-  server.register(model, { ajv });
+  fastify.register(model, { ajv });
 }, 'index.js');
 
 const start = async () => {
   try {
-    await server.listen(3000, '0.0.0.0');
+    await fastify.listen(3000, '0.0.0.0');
   } catch (err) {
     console.log(err);
-    server.log.error(err);
+    fastify.log.error(err);
     process.exit(1);
   }
 };
