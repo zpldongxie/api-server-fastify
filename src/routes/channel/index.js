@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-15 17:40:25
+ * @LastEditTime: 2020-09-19 17:49:38
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -67,7 +67,9 @@ module.exports = fp(async (server, opts, next) => {
       { schema: { tags: ['channel'], summary: '获取所有栏目' } },
       async (request, reply) => {
         const runFun = async () => {
-          const conditions = {};
+          const conditions = {
+            order: [['orderIndex', 'DESC']],
+          };
           routerMethod.findAll(reply, conditions);
         };
 
