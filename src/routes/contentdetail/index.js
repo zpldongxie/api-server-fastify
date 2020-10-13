@@ -42,7 +42,7 @@ module.exports = fp(async (server, opts, next) => {
   server.get(
       routerBaseInfo.getAllURL,
       { schema: { tags: ['contentdetail'], summary: '获取所有' } },
-      async (request, reply) => {
+      async (_, reply) => {
         const runFun = async () => {
           const conditions = {};
           conditions.include = {};

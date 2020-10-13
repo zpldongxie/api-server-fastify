@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-15 17:40:17
+ * @LastEditTime: 2020-10-07 22:44:47
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -45,7 +45,13 @@ module.exports = fp(async (server, opts, next) => {
       { schema: { tags: ['channelsetting'], summary: '获取所有栏目设置' } },
       async (request, reply) => {
         const runFun = async () => {
-          const conditions = {};
+          const conditions = {
+            attributes: ['id', 'title', 'descStr', 'pic', 'video', 'link', 'type', 'createTime'],
+            include: {
+              model: mysqlModel.Channel,
+              attributes: ['id', 'name'],
+            },
+          };
           routerMethod.findAll(reply, conditions);
         };
 
