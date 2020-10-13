@@ -2,7 +2,7 @@
  * @description rest接口，不做身份验证，其他系统使用的路由要加验证
  * @author: zpl
  * @Date: 2020-07-30 11:26:02
- * @LastEditTime: 2020-09-23 15:25:54
+ * @LastEditTime: 2020-10-13 11:08:04
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -57,13 +57,16 @@ module.exports = fp(async (server, opts, next) => {
           const attributes = {
             exclude: ['mainCon'],
           };
-          const sorter = {};
+          const sorter = {
+            'orderIndex': 'desc',
+            'conDate': 'desc',
+          };
           if (orderName) {
             sorter[orderName] = (orderValue && orderValue.toLowerCase() === 'desc') ? 'desc' : 'asc';
           }
           const include = {
             model: mysqlModel.Channel,
-            attributes: ['id', 'name'],
+            attributes: ['id', 'name', 'enName'],
             where: {
               id: channelId,
             },
@@ -92,11 +95,18 @@ module.exports = fp(async (server, opts, next) => {
             'pubStatus': '已发布',
             'isHead': true,
           };
-          const sorter = {};
+          const sorter = {
+            'orderIndex': 'desc',
+            'conDate': 'desc',
+          };
           const attributes = {
             exclude: ['mainCon'],
           };
-          articleMethod.queryList(reply, where, 1, 6, sorter, null, null, attributes);
+          const include = {
+            model: mysqlModel.Channel,
+            attributes: ['id', 'name', 'enName'],
+          };
+          articleMethod.queryList(reply, where, 1, 6, sorter, null, include, attributes);
         };
 
         // 统一捕获异常
@@ -114,11 +124,18 @@ module.exports = fp(async (server, opts, next) => {
             'pubStatus': '已发布',
             'isRecom': true,
           };
-          const sorter = {};
+          const sorter = {
+            'orderIndex': 'desc',
+            'conDate': 'desc',
+          };
           const attributes = {
             exclude: ['mainCon'],
           };
-          articleMethod.queryList(reply, where, 1, 6, sorter, null, null, attributes);
+          const include = {
+            model: mysqlModel.Channel,
+            attributes: ['id', 'name', 'enName'],
+          };
+          articleMethod.queryList(reply, where, 1, 6, sorter, null, include, attributes);
         };
 
         // 统一捕获异常
@@ -153,29 +170,25 @@ module.exports = fp(async (server, opts, next) => {
   //   }
   // });
 
-  // // 按ID获取文章内容
-  // server.get('/content/:id', {}, async (req, reply) => {
-  //   try {
-  //     const id = req.params.id;
-  //     const content = await mysqlModel.ContentDetail.findOne({
-  //       where: {
-  //         id,
-  //         pubStatus: '已发布',
-  //       },
-  //       include: {
-  //         model: mysqlModel.Channel,
-  //         attributes: ['id', 'name'],
-  //       },
-  //     });
-  //     if (content) {
-  //       reply.code(200).send(content);
-  //     } else {
-  //       reply.code(404);
-  //     }
-  //   } catch (error) {
-  //     return onRouteError(error, reply);
-  //   }
-  // });
+  // 按ID获取文章内容
+  const getByIdSchema = require('./query-content-by-id-schema');
+  server.get(
+      '/rest/content/:id',
+      { schema: { ...getByIdSchema, tags: ['rest'], summary: '按ID获取文章内容' } },
+      async (req, reply) => {
+        const runFun = async () => {
+          const id = req.params.id;
+          const include = {
+            model: mysqlModel.Channel,
+            attributes: ['id', 'name'],
+          };
+          articleMethod.findOne(reply, id, include);
+        };
+
+        // 统一捕获异常
+        commonCatch(runFun, reply)();
+      },
+  );
 
   // // 培训报名
   // const putTrainingRegSchema = require('./put-training-reg-schema');
