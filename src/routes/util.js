@@ -2,7 +2,7 @@
  * @description:通用工具
  * @author: zpl
  * @Date: 2020-07-28 19:22:01
- * @LastEditTime: 2020-10-10 17:36:45
+ * @LastEditTime: 2020-10-13 11:34:43
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -154,6 +154,16 @@ class CommonMethod {
       }
     }
 
+    // 组合查询条件
+    if (where && Object.keys(where).length) {
+      for (const key in where) {
+        if (this.dao.Model.rawAttributes.hasOwnProperty(key)) {
+          const value = where[key];
+          conditions.where[key] = typeof value === 'string' ? { [Op.like]: `%${value}%` } : value;
+        }
+      }
+    }
+
     // 过滤条件
     if (filter && Object.keys(filter).length) {
       for (const key in filter) {
@@ -162,16 +172,6 @@ class CommonMethod {
           if (value) {
             conditions.where[key] = Array.isArray(value) ? { [Op.in]: value } : value;
           }
-        }
-      }
-    }
-
-    // 组合查询条件
-    if (where && Object.keys(where).length) {
-      for (const key in where) {
-        if (this.dao.Model.rawAttributes.hasOwnProperty(key)) {
-          const value = where[key];
-          conditions.where[key] = typeof value === 'string' ? { [Op.like]: `%${value}%` } : value;
         }
       }
     }
