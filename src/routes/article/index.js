@@ -2,12 +2,13 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-17 12:12:21
+ * @LastEditTime: 2020-10-10 12:16:06
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
 const { Op } = require('sequelize');
-const { commonCatch, CommonMethod, transaction, onRouterSuccess } = require('../util');
+const request = require('request');
+const { commonCatch, CommonMethod, transaction, onRouterSuccess, onRouteError } = require('../util');
 const { Dao } = require('../../modules/mysql/dao');
 
 const routerBaseInfo = {
@@ -143,14 +144,15 @@ module.exports = fp(async (server, opts, next) => {
           };
           const result = await articleDao.upsert(params);
           const cResult = await channelDao.findSome({ where: { id: { [Op.in]: params.Channels } } });
-          if (result.status) {
+          if (!!result.status) {
             const article = result.data;
             if (cResult.status) {
               await article.setChannels(cResult.data.list.map((c)=>c.id));
             }
             onRouterSuccess(reply, article);
+          } else {
+            onRouteError(reply, '保存失败');
           }
-          onRouteError(reply, '保存失败');
         };
 
         // 统一捕获异常
@@ -207,7 +209,7 @@ module.exports = fp(async (server, opts, next) => {
   const trans = transaction(server.sequelize);
   server.post(
       '/api/updateDatabase',
-      { schema: { tags: ['article'], summary: '从旧文章表向新文章表同步数据' } },
+      { schema: { tags: ['article'], summary: '从旧文章表向新文章表同步数据，同一个库' } },
       async (request, reply) => {
         const runFun = async () => {
           console.log('查询旧文章表');
@@ -240,6 +242,168 @@ module.exports = fp(async (server, opts, next) => {
           reply.code(200).send({
             state: 'ok',
             total: result,
+          });
+        };
+
+        // 统一捕获异常
+        commonCatch(runFun, reply)();
+      },
+  );
+
+  // 同步文章表
+  const updateArticle = async (channel) => {
+    return new Promise((resolve, reject) => {
+      request({
+        url: `http://www.snains.cn:9000/getContentList`,
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          channelId: channel.id,
+          length: -1,
+          start: 0,
+        }),
+      }, function(error, response, body) {
+        if (error) {
+          reject(error);
+        }
+        if (!error && response.statusCode == 200) {
+          const contentList = JSON.parse(body).list;
+          (async () => {
+            // 新旧数据库映射关系，可以通过旧栏目名快速找到对就的新栏目名
+            let channelName;
+            switch (channel.name) {
+              case '会费标准':
+                channelName = '独立文章-隐藏';
+                break;
+              case '协会简介':
+                channelName = '协会简介';
+                break;
+              case '协会动态':
+                channelName = '协会动态';
+                break;
+              case '协会章程':
+                channelName = '协会章程';
+                break;
+              case '组织机构':
+                channelName = '组织机构';
+                break;
+              case '副理事长单位':
+                channelName = '副理事长单位';
+                break;
+              case '理事单位':
+                channelName = '理事单位';
+                break;
+              case '单位会员':
+                channelName = '单位会员';
+                break;
+              case '个人会员':
+                channelName = '个人会员';
+                break;
+              case '单位会员入会终审申请表':
+                channelName = '单位会员入会';
+                break;
+              case '个人会员入会终审申请表':
+                channelName = '个人会员入会';
+                break;
+              case '联系我们':
+                channelName = '联系我们';
+                break;
+              case '行业动态':
+                channelName = '国内动态';
+                break;
+              case '国内法律法规':
+                channelName = '国内';
+                break;
+              case '国外法律法规':
+                channelName = '国际';
+                break;
+              default:
+                channelName = '未分类';
+            }
+            const cResult = await channelDao.findSome({ where: { name: channelName } });
+            for (const content of contentList) {
+              const {
+                // eslint-disable-next-line no-unused-vars
+                id,
+                // eslint-disable-next-line no-unused-vars
+                createTime,
+                // eslint-disable-next-line no-unused-vars
+                cId,
+                ...params
+              } = content;
+              const result = await articleDao.upsert(params);
+              if (result.status) {
+                const article = result.data;
+                if (cResult.status) {
+                  await article.setChannels(cResult.data.list.map((c)=>c.id));
+                }
+              }
+            }
+          })();
+          resolve(contentList);
+          // onRouterSuccess(reply, JSON.parse(body));
+        } else {
+          reject(response);
+        }
+      });
+    });
+  };
+
+  /**
+   * 遍历所有旧库中的栏目
+   *
+   * @param {*} channelList
+   */
+  const findAllChannels = async (channelList) => {
+    for (const channel of channelList) {
+      const contentList = await updateArticle(channel);
+      console.log(channel.name + ' 下有： ' + contentList.length + '条记录');
+      if (channel.children && channel.children.length) {
+        await findAllChannels(channel.children);
+      }
+    }
+  };
+
+  server.post(
+      '/api/updateDatabaseFromOldDB',
+      { schema: { tags: ['article'], summary: '从旧数据库中旧文章表向新库新文章表同步数据' } },
+      async (_, reply) => {
+        const runFun = async () => {
+          console.log('----清空新表----');
+          await CurrentModel.destroy({ where: {} });
+          console.log('----新表已清空----');
+          console.log('----查询旧栏目表----');
+          request({
+            url: `http://www.snains.cn:9000/getNavTree`,
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+            },
+            body: '{}',
+          }, function(error, response, body) {
+            if (error) {
+              console.log('----旧栏目表查询失败----');
+              console.error(error);
+              onRouteError(reply, error);
+              return;
+            }
+            if (!error && response.statusCode == 200) {
+              const channelList = JSON.parse(body).list;
+              console.log('----旧栏目表查询完成----', channelList.length);
+              console.log('----开始同步----');
+              (async () => {
+                await findAllChannels(channelList);
+                console.log('----同步完成----');
+                onRouterSuccess(reply, '同步完成');
+              })();
+            } else {
+              console.log('----旧栏目表查询失败----');
+              console.error(response);
+              onRouteError(reply, response);
+              return;
+            }
           });
         };
 
