@@ -10,7 +10,6 @@ const { load } = require('./util');
 // const db = require('./modules/db');
 const mysql = require('./modules/mysql');
 
-
 fastify.register(auth);
 const swagger = require('./swagger');
 fastify.register(swagger);

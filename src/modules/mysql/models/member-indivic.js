@@ -3,7 +3,7 @@
  * @description: 个人会员
  * @author: zpl
  * @Date: 2020-08-17 18:35:54
- * @LastEditTime: 2020-08-18 21:19:41
+ * @LastEditTime: 2020-10-14 23:07:39
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');

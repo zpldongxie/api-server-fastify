@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-09-15 17:39:13
+ * @LastEditTime: 2020-10-16 11:23:04
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -32,6 +32,7 @@ module.exports = fp(async (server, opts, next) => {
       routerBaseInfo.doLoginURL,
       { schema: { ...loginSchema, tags: ['user'] }, summary: '登录' },
       async (request, reply) => {
+        console.log('post' + routerBaseInfo.doLoginURL);
         const validate = ajv.compile(loginSchema.body.valueOf());
         const valid = validate(request.body);
         if (!valid) {
@@ -129,6 +130,7 @@ module.exports = fp(async (server, opts, next) => {
         schema: { tags: ['user'], summary: '获取当前登录用户' },
       },
       async (request, reply) => {
+        console.log('get ' + routerBaseInfo.getCurrentUserURL);
         const user = await CurrentModel.findOne({
           where: { id: request.user.id, status: 1 },
           exclude: ['password', 'verification_code', 'status'],
