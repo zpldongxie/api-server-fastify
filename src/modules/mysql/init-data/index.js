@@ -2,7 +2,7 @@
  * @description: 初始化数据库
  * @author: zpl
  * @Date: 2020-07-27 12:40:11
- * @LastEditTime: 2020-09-12 12:53:03
+ * @LastEditTime: 2020-10-15 17:54:52
  * @LastEditors: zpl
  */
 
@@ -98,6 +98,34 @@ const initMemberType = async (MemberTypeModel, dataList) => {
 };
 
 /**
+ * 初始化系统配置
+ *
+ * @param {*} SysConfigModel 系统配置模型
+ * @param {*} dataList 系统配置初始数据
+ * @return {Array} 操作结果
+ */
+const initSysConfig = async (SysConfigModel, dataList) => {
+  const result = [];
+  try {
+    for (const config of dataList) {
+      const currentSysConfig = await SysConfigModel.create(config);
+      console.log(`sysConfig: ${currentSysConfig.name}，创建成功。`);
+      result.push(`sysConfig: ${currentSysConfig.name}，创建成功。`);
+    }
+  } catch (err) {
+    const { errors } = err;
+    if (errors && errors.length) {
+      const { message } = errors[0];
+      console.error(`数据库执行失败： ${message}`);
+      result.push(`数据库执行失败： ${message}`);
+    }
+    console.error(`系统异常，memberType创建失败： ${err}`);
+    result.push(`系统异常，memberType创建失败： ${err}`);
+  }
+  return result;
+};
+
+/**
  * 检查表是否存在，如不存在，则自动创建
  *
  * @param {*} database
@@ -125,8 +153,8 @@ const checkTablesExists = async (database, models) => {
  * @return {Array} 执行结果
  */
 module.exports = async (models, needCreatTable, database) => {
-  const { UserGroup, User, MemberType } = models;
-  const { userList, userGroupList, memberTypeList } = require('./data');
+  const { UserGroup, User, MemberType, SysConfig } = models;
+  const { userList, userGroupList, memberTypeList, sysConfig } = require('./data');
   let returnResult = [];
 
   if (needCreatTable) {
@@ -146,6 +174,8 @@ module.exports = async (models, needCreatTable, database) => {
   returnResult = returnResult.concat(await initUser(UserGroup, User, userList));
   console.log('3. 初始化会员类型...');
   returnResult = returnResult.concat(await initMemberType(MemberType, memberTypeList));
+  console.log('4. 初始化系统配置...');
+  returnResult = returnResult.concat(await initSysConfig(SysConfig, sysConfig));
 
   console.log('-----------------------------------------------');
   console.log('---------------初始化数据库 结束---------------');

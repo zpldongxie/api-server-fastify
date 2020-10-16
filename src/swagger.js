@@ -2,7 +2,7 @@
  * @description:
  * @author: zpl
  * @Date: 2020-08-07 10:32:25
- * @LastEditTime: 2020-09-12 12:43:56
+ * @LastEditTime: 2020-10-14 23:23:19
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -39,6 +39,7 @@ module.exports = fp(async (server, opts, next) => {
         { name: 'membercompany', description: '企业会员管理' },
         { name: 'memberindivic', description: '个人会员管理' },
         { name: 'membertype', description: '会员类别管理' },
+        { name: 'sysconfig', description: '系统配置' },
       ],
       definitions: {
         User: {
