@@ -53,9 +53,16 @@ api文档地址：
 [http://49.234.158.74:3000/documentation/static/index.html](http://49.234.158.74:3000/documentation/static/index.html)
 
 ## 其他实现
-### 上传下载使用fastify-multer插件
+### 1. 上传下载使用fastify-multer插件
+配置方法
+- 在项目config中配置上传的物理路径，建议先手动创建uploads/文件夹，再配置具体路径
+- 此时可以正常进行上传
+- 在管理平台上传配置中设置访问域名，例如 http://www.baidu.com/，建议以 / 结尾
+- 资源管理功能中会默认域名对应配置的物理路径，且上传文件夹是以静态资源进行访问
+- 例如磁盘中/uploads/image/aaa.png 对应的访问地址就是 ip:port/uploads/image/aaa.png
 
-### 一行命令查找服务进程并kill掉
+### 2. 一行命令查找服务进程并kill掉
+首次使用先用ps命令确认node和项目脚本的执行信息
 ```bash
 ps -ef|grep /root/.nvm/versions/node/v10.16.3/bin/node |grep ./src/index.js  | grep  -v grep  | awk '{print $2}' | xargs kill -9
 ```

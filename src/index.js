@@ -38,7 +38,7 @@ const Ajv = require('ajv');
 const ajv = new Ajv({ allErrors: true });
 const routeDir = path.resolve(__dirname, './routes');
 load(routeDir, (name, model) => {
-  fastify.register(model, { ajv });
+  fastify.register(model, { ajv, config });
 }, 'index.js');
 
 const start = async () => {

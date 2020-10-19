@@ -17,3 +17,5 @@ mysql:
   needCreatTable: false
 
 oldManager: "http://localhost:9001"
+
+uploadRootPath: "/usr/share/nginx/html/uploads/"
