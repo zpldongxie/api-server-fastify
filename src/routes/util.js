@@ -2,7 +2,7 @@
  * @description:通用工具
  * @author: zpl
  * @Date: 2020-07-28 19:22:01
- * @LastEditTime: 2020-10-13 11:34:43
+ * @LastEditTime: 2020-10-20 16:54:13
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -35,11 +35,11 @@ const onRouteError = (reply, err) => {
   console.debug(err);
   console.log('====================================');
   const code = err.status || 500;
-  const { original: { sqlMessage } } = err;
+  const { sqlMessage } = err.original || {};
   const message = sqlMessage || (
     code === 500 ?
       'Internal Server Error' :
-      err.message
+      err.message || 'Internal Server Error'
   );
   const resBody = {
     status: 'error',
