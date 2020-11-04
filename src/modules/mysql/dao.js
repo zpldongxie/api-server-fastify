@@ -3,7 +3,7 @@
  * @author: zpl
  * @Date: 2020-08-09 09:28:40
  * @LastEditors: zpl
- * @LastEditTime: 2020-09-14 22:34:49
+ * @LastEditTime: 2020-11-04 18:36:43
  */
 const { Op } = require('sequelize');
 
@@ -78,7 +78,7 @@ class Dao {
     if (include && Object.keys(include).length) {
       opt.include = include;
     }
-    if (attributes && Array.isArray(attributes) && attributes.length) {
+    if (attributes) {
       opt.attributes = attributes;
     }
 
