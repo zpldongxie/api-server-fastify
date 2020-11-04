@@ -2,7 +2,7 @@
  * @description: 上传功能
  * @author: zpl
  * @Date: 2020-10-13 17:39:11
- * @LastEditTime: 2020-10-18 14:24:31
+ * @LastEditTime: 2020-10-21 14:34:17
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -11,8 +11,8 @@ const path = require('path');
 const multer = require('fastify-multer');
 const dayjs = require('dayjs');
 
-const { commonCatch, onRouterSuccess } = require('../util');
-const { viewList } = require('../file_manager');
+const { commonCatch, onRouterSuccess, onRouteError } = require('../util');
+const { viewList, removeFile } = require('../file_manager');
 
 /**
  * 上传配置
@@ -48,6 +48,7 @@ const getPreHandler = (config, getSysConfig) => {
       const currentExt = index < 0 ? null : file.originalname.substr(index + 1);
       const saveName = `${currentName}-${Date.now()}${currentExt ? '.' + currentExt : ''}`;
       req.body.saveName = saveName;
+      console.log('upload file: ', saveName);
       cb(null, saveName);
     },
   });
@@ -115,6 +116,7 @@ module.exports = fp(async (server, opts, next) => {
     return config;
   };
 
+  // 上传
   server.route({
     method: 'POST',
     url: '/api/upload',
@@ -128,6 +130,7 @@ module.exports = fp(async (server, opts, next) => {
     },
   });
 
+  // 查看
   const showFileListSchema = require('./show-file-list-schema');
   server.post(
       '/api/showFileList',
@@ -149,6 +152,39 @@ module.exports = fp(async (server, opts, next) => {
             f.url = `${baseUrl}uploads/${currentPath}/${f.name}`;
           });
           onRouterSuccess(reply, list);
+        };
+
+        // 统一捕获异常
+        commonCatch(runFun, reply)();
+      },
+  );
+
+  // 删除
+  const deleteSchema = require('./delete-schema');
+  server.delete(
+      '/api/file',
+      { schema: { ...deleteSchema, tags: ['文件管理'], summary: '删除文件' } },
+      async (request, reply) => {
+        const validate = ajv.compile(deleteSchema.body.valueOf());
+        const valid = validate(request.body);
+        if (!valid) {
+          return reply.code(400).send(validate.errors);
+        }
+
+        const runFun = async () => {
+          const { filePath, fileName } = request.body;
+          const tempPath = `${filePath}/${fileName}`;
+          const absPath = path.resolve(opts.config.get('uploadRootPath'), tempPath);
+          removeFile(
+              absPath,
+              () => {
+                onRouterSuccess(reply);
+              },
+              (err) => {
+                console.error(err);
+                onRouteError(reply, { status: 200 });
+              },
+          );
         };
 
         // 统一捕获异常
