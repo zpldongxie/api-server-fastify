@@ -3,7 +3,7 @@
  * @description: 文章内容
  * @author: zpl
  * @Date: 2020-07-28 10:16:12
- * @LastEditTime: 2020-10-09 17:43:28
+ * @LastEditTime: 2020-11-08 13:31:20
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -160,7 +160,6 @@ class Article extends Model {
       },
     }, {
       sequelize,
-      tableName: 'articles',
       modelName: 'Article',
     });
   }
@@ -175,6 +174,9 @@ class Article extends Model {
   static reateAssociation(sequelize) {
     // 栏目 - 文章， 多对多
     Article.belongsToMany(sequelize.models['Channel'], { through: 'article_channel' });
+    // 文章 - 扩展，一对多
+    Article.sync();
+    Article.Extensions = Article.hasMany(sequelize.models['ArticleExtension']);
   }
 }
 

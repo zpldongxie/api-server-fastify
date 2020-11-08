@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-11-04 18:46:14
+ * @LastEditTime: 2020-11-08 21:28:33
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -27,10 +27,12 @@ module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
   const CurrentModel = mysqlModel[routerBaseInfo.modelName_U];
   const ChannelModel = mysqlModel.Channel;
+  const ArticleExtensionModel = mysqlModel.ArticleExtension;
   const { ajv } = opts;
   const routerMethod = new CommonMethod(CurrentModel);
   const articleDao = new Dao(CurrentModel);
   const channelDao = new Dao(ChannelModel);
+  const articleExtensionDao = new Dao(ArticleExtensionModel);
 
   /**
    * 根据ID获取单个文章
@@ -41,10 +43,16 @@ module.exports = fp(async (server, opts, next) => {
   const getById = async (request, reply) => {
     const runFun = async () => {
       const id = request.params.id;
-      const include = {
-        model: mysqlModel.Channel,
-        attributes: ['id', 'name'],
-      };
+      const include = [
+        {
+          model: mysqlModel.Channel,
+          attributes: ['id', 'name'],
+        },
+        {
+          model: mysqlModel.ArticleExtension,
+          attributes: ['id', 'title', 'info', 'remark'],
+        },
+      ];
       routerMethod.findOne(reply, id, include);
     };
 
@@ -64,10 +72,16 @@ module.exports = fp(async (server, opts, next) => {
         attributes: {
           exclude: ['mainCon'],
         },
-        include: {
-          model: mysqlModel.Channel,
-          attributes: ['id', 'name'],
-        },
+        include: [
+          {
+            model: mysqlModel.Channel,
+            attributes: ['id', 'name'],
+          },
+          {
+            model: mysqlModel.ArticleExtension,
+            attributes: ['id', 'title', 'info', 'remark'],
+          },
+        ],
       };
       routerMethod.findAll(reply, conditions);
     };
@@ -106,15 +120,21 @@ module.exports = fp(async (server, opts, next) => {
       if (!sorter.hasOwnProperty('conDate')) {
         sorter.conDate = 'desc';
       }
-      const include = {
-        model: mysqlModel.Channel,
-        attributes: ['id', 'name'],
-      };
+      const include = [
+        {
+          model: mysqlModel.Channel,
+          attributes: ['id', 'name'],
+        },
+        {
+          model: mysqlModel.ArticleExtension,
+          attributes: ['id', 'title', 'info', 'remark'],
+        },
+      ];
       const attributes = {
         exclude: ['mainCon'],
       };
       if (channelId) {
-        include.where = {
+        include[0].where = {
           id: channelId,
         };
       }
@@ -149,10 +169,19 @@ module.exports = fp(async (server, opts, next) => {
         pubStatus: '草稿',
         ...request.body,
       };
-      const result = await articleDao.upsert(params);
+      const result = await articleDao.upsert(params, { include: [ArticleExtensionModel] });
       const cResult = await channelDao.findSome({ where: { id: { [Op.in]: params.Channels } } });
       if (!!result.status) {
         const article = result.data;
+        const eResult = await articleExtensionDao.findSome({ where: { ArticleId: article.id } });
+        if (eResult.status) {
+          articleExtensionDao.deleteSome(eResult.data.list.map((e)=>e.id));
+        }
+        const articleExtensions = request.body.ArticleExtensions || [];
+        for (let i = 0; i < articleExtensions.length; i++) {
+          const extension = articleExtensions[i];
+          await articleExtensionDao.upsert({ ...extension, ArticleId: article.id });
+        }
         if (cResult.status) {
           await article.setChannels(cResult.data.list.map((c)=>c.id));
         }
