@@ -2,7 +2,7 @@
  * @description: 上传功能
  * @author: zpl
  * @Date: 2020-10-13 17:39:11
- * @LastEditTime: 2020-10-21 14:34:17
+ * @LastEditTime: 2020-12-18 14:16:36
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
