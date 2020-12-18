@@ -39,14 +39,14 @@ const loadModel = async (sequelize) => {
 
 const buildRoute = async (models) => {
   // 路由文件根目录
-  const root = path.join(env.PWD, './src/routes');
+  const root = path.join(env.PWD || env.INIT_CWD, './src/routes');
   // 读取模板文件
-  const templateRoot = path.join(env.PWD, './src/routes/template');
+  const templateRoot = path.join(env.PWD || env.INIT_CWD, './src/routes/template');
   const templates = [];
   load(templateRoot, (name, _) => {
     templates.push({
       name: name === 'template' ? 'index.js' : `${name}.js`,
-      template: fs.readFileSync(path.join(env.PWD, `./src/routes/template/${name}.js`), 'utf8'),
+      template: fs.readFileSync(path.join(env.PWD || env.INIT_CWD, `./src/routes/template/${name}.js`), 'utf8'),
     });
   });
 
