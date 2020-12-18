@@ -4,17 +4,17 @@ db:
   pass: "ysp@1234"
 
 mysql:
-  host: "www.snains.cn"
-  database: "websiteManager"
+  host: "49.234.158.74"
+  database: "apiServer_xafygcc"
   user: "root"
-  password: "10isp.com!a"
+  password: "Zpl@4117"
   dialect: 'mysql'
   pool:
     max: 5
     min: 0
     acquie: 30000
     idle: 10000
-  needCreatTable: false
+  needCreatTable: true
 
 oldManager: "http://www.snains.cn:9001"
 
