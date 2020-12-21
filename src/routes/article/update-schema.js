@@ -19,10 +19,10 @@ const bodyJsonSchema = S.object()
     .prop('ArticleExtensions', S.array().items(
         S.object()
             .prop('id')
-            .prop('title').description('扩展标题')
-            .prop('info').description('扩展内容')
-            .prop('maket').description('备注'),
-    ).description('扩展信息'));
+            .prop('title').description('鎵╁睍鏍囬')
+            .prop('info').description('鎵╁睍鍐呭')
+            .prop('maket').description('澶囨敞'),
+    ).description('鎵╁睍淇℃伅'));
 
 module.exports = {
   body: bodyJsonSchema,
