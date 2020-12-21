@@ -3,7 +3,7 @@
  * @description: 会员类型
  * @author: zpl
  * @Date: 2020-08-17 18:57:56
- * @LastEditTime: 2020-10-14 23:18:56
+ * @LastEditTime: 2020-12-21 10:53:25
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -48,8 +48,6 @@ class MemberType extends Model {
    * @memberof MemberType
    */
   static reateAssociation(sequelize) {
-    // 一对多关系表，必须先同步，否则会报 'Cannot add foreign key constraint'
-    MemberType.sync();
     // 会员类型 - 企业会员， 一对多
     MemberType.hasMany(sequelize.models['MemberCompany']);
     // 会员类型 - 个人会员， 一对多

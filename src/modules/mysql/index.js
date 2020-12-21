@@ -2,7 +2,7 @@
  * @description: mySql
  * @author: zpl
  * @Date: 2020-07-25 14:47:25
- * @LastEditTime: 2020-09-11 12:42:27
+ * @LastEditTime: 2020-12-21 10:21:42
  * @LastEditors: zpl
  */
 
@@ -23,11 +23,11 @@ module.exports = fp(async (fastify, opts, next) => {
   try {
     await sequelize.authenticate();
     console.log('Connection has been established successfully.');
-    await loadModel(sequelize);
+    await loadModel(sequelize, needCreatTable, database);
     await buildRoute(sequelize.models);
 
     console.log('--------start init -----------');
-    const initResult = await require('./init-data')(sequelize.models, needCreatTable, database);
+    const initResult = await require('./init-data')(sequelize.models);
     console.log('数据库初始化执行结果：');
     console.log(initResult);
     fastify.decorate('sequelize', sequelize);

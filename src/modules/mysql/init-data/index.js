@@ -2,7 +2,7 @@
  * @description: 初始化数据库
  * @author: zpl
  * @Date: 2020-07-27 12:40:11
- * @LastEditTime: 2020-10-15 17:54:52
+ * @LastEditTime: 2020-12-21 10:18:37
  * @LastEditors: zpl
  */
 
@@ -126,40 +126,15 @@ const initSysConfig = async (SysConfigModel, dataList) => {
 };
 
 /**
- * 检查表是否存在，如不存在，则自动创建
- *
- * @param {*} database
- * @param {*} models
- */
-const checkTablesExists = async (database, models) => {
-  console.log('===============数据库表创建开始===============');
-  for (const key in models) {
-    if (models.hasOwnProperty(key)) {
-      console.log(`----------创建 ${key} 表----------`);
-      const Model = models[key];
-      await Model.sync({ match: new RegExp('^' + database + '$') });
-      console.log(`----------创建 ${key} 表结束----------`);
-    }
-  }
-  console.log('===============数据库表创建结束===============');
-};
-
-/**
  * 初始化数据库
  *
  * @param {*} models
- * @param {Boolean} needCreatTable
- * @param {String} database
  * @return {Array} 执行结果
  */
-module.exports = async (models, needCreatTable, database) => {
+module.exports = async (models) => {
   const { UserGroup, User, MemberType, SysConfig } = models;
   const { userList, userGroupList, memberTypeList, sysConfig } = require('./data');
   let returnResult = [];
-
-  if (needCreatTable) {
-    await checkTablesExists(database, models);
-  }
 
   const userGroups = await UserGroup.findAll();
   if (userGroups && userGroups.length) return ['无需初始化'];
