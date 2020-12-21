@@ -2,7 +2,7 @@
  * @description: 用户
  * @author: zpl
  * @Date: 2020-12-18 11:52:48
- * @LastEditTime: 2020-12-18 14:30:55
+ * @LastEditTime: 2020-12-21 10:12:51
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -140,7 +140,7 @@ class User extends Model {
       },
     }, {
       sequelize,
-      modelName: 'User',
+      comment: '用户表',
     });
   }
 
@@ -152,6 +152,18 @@ class User extends Model {
    * @memberof User
    */
   static reateAssociation(sequelize) {
+    // 待遇
+    User.hasOne(sequelize.models['TmtTarget']);
+    User.hasMany(sequelize.models['TmtResult']);
+    // 论文
+    User.hasOne(sequelize.models['ThesisTarget']);
+    User.hasOne(sequelize.models['ThesisResult']);
+    // 项目
+    User.hasOne(sequelize.models['ProjectTarget']);
+    User.hasOne(sequelize.models['ProjectResult']);
+    // 其他
+    User.hasOne(sequelize.models['OtherTarget']);
+    User.hasOne(sequelize.models['OtherResult']);
   }
 }
 

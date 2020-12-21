@@ -2,7 +2,7 @@
  * @description:
  * @author: zpl
  * @Date: 2020-08-07 10:32:25
- * @LastEditTime: 2020-10-14 23:23:19
+ * @LastEditTime: 2020-12-21 09:44:09
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -27,19 +27,7 @@ module.exports = fp(async (server, opts, next) => {
       // consumes: ['application/json'],
       // produces: ['application/json'],
       tags: [
-        { name: 'rest', description: '所有对外rest接口' },
         { name: 'user', description: '用户管理' },
-        { name: 'usergroup', description: '用户组管理' },
-        { name: 'channel', description: '栏目管理' },
-        { name: 'channelsetting', description: '栏目配置管理' },
-        { name: 'article', description: '文章管理' },
-        { name: 'contentdetail', description: '文章管理' },
-        { name: 'training', description: '培训管理' },
-        { name: 'trainingreg', description: '培训报名管理' },
-        { name: 'membercompany', description: '企业会员管理' },
-        { name: 'memberindivic', description: '个人会员管理' },
-        { name: 'membertype', description: '会员类别管理' },
-        { name: 'sysconfig', description: '系统配置' },
       ],
       definitions: {
         User: {

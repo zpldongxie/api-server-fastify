@@ -35,12 +35,12 @@ fastify.register(require('fastify-cors'), {
 const Ajv = require('ajv');
 const ajv = new Ajv({ allErrors: true });
 const routeDir = path.resolve(__dirname, './routes');
-// load(routeDir, (name, model) => {
-//   fastify.register(model, { ajv, config });
-// }, 'index.js');
-fastify.get('/', function(request, reply) {
-  reply.send({ hello: 'world' });
-});
+load(routeDir, (name, model) => {
+  fastify.register(model, { ajv, config });
+}, 'index.js');
+// fastify.get('/', function(request, reply) {
+//   reply.send({ hello: 'world' });
+// });
 
 const start = async () => {
   try {
