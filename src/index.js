@@ -22,7 +22,7 @@ fastify.register(mysql, config.get('mysql'));
 fastify.register(require('fastify-cors'), {
   // TODO: 上生产环境后，应改为所有api开头的接口只允许后台管理服务器访问
   origin: (origin, cb) => {
-    console.log(origin);
+    console.log('origin', origin);
     // if (/localhost/.test(origin)) {
     //  Request from localhost will pass
     cb(null, true);
