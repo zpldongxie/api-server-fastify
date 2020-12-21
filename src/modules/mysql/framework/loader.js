@@ -2,7 +2,7 @@
  * @description:
  * @author: zpl
  * @Date: 2020-07-29 22:16:11
- * @LastEditTime: 2020-12-18 14:17:29
+ * @LastEditTime: 2020-12-21 10:18:06
  * @LastEditors: zpl
  */
 
@@ -15,8 +15,10 @@ const { load } = require('../../../util');
  *  读取models中的文件，并自动挂载到服务中
  *
  * @param {*} sequelize
+ * @param {*} needCreatTable
+ * @param {*} database
  */
-const loadModel = async (sequelize) => {
+const loadModel = async (sequelize, needCreatTable, database) => {
   const initFunList = [];
   const reateAssociationList = [];
   const url = path.resolve(__dirname, '../models');
@@ -30,7 +32,13 @@ const loadModel = async (sequelize) => {
     const initFun = initFunList[i];
     await initFun(sequelize);
   }
-  // 关系映射
+  // 创建表
+  if (needCreatTable) {
+    console.log('===============数据库表创建开始===============');
+    await sequelize.sync({ match: new RegExp('^' + database + '$') });
+    console.log('===============数据库表创建结束===============');
+  }
+  // 关系映射，注意：进行关系映射前数据库表必须真实存在
   for (let i = 0; i < reateAssociationList.length; i++) {
     const reateAssociation = reateAssociationList[i];
     await reateAssociation(sequelize);
