@@ -1,8 +1,14 @@
+/*
+ * @description: 企业会员注册请求数据校验
+ * @author: zpl
+ * @Date: 2021-01-02 22:47:35
+ * @LastEditTime: 2021-01-02 22:51:52
+ * @LastEditors: zpl
+ */
 const S = require('fluent-schema');
 const { memberStatus } = require('../../dictionary');
 
 const bodyJsonSchema = S.object()
-    .prop('id', S.string().format('uuid'))
     .prop('corporateName', S.string().description('公司名称'))
     .prop('tel', S.string().description('座机'))
     .prop(
@@ -30,14 +36,6 @@ const bodyJsonSchema = S.object()
             .description('邮编'),
     )
     .prop('intro', S.string().description('公司名称'))
-    .prop('logonData', S.string().description('注册日期'))
-    .prop(
-        'status',
-        S.string()
-            .enum(Object.values(memberStatus))
-            .default(memberStatus.underReview)
-            .description('状态'),
-    )
     .required(['corporateName', 'tel', 'email', 'contacts', 'contactsMobile']);
 
 module.exports = {
