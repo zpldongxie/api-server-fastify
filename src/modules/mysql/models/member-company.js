@@ -3,7 +3,7 @@
  * @description: 企业会员
  * @author: zpl
  * @Date: 2020-08-17 18:35:54
- * @LastEditTime: 2020-10-14 23:08:08
+ * @LastEditTime: 2021-01-02 19:19:36
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -87,6 +87,7 @@ class MemberCompany extends Model {
     }, {
       sequelize,
       modelName: 'MemberCompany',
+      comment: '企业会员',
     });
   }
 

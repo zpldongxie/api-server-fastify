@@ -2,7 +2,7 @@
  * @description: 用户
  * @author: zpl
  * @Date: 2020-07-25 15:10:09
- * @LastEditTime: 2020-08-18 20:58:51
+ * @LastEditTime: 2021-01-02 19:24:06
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -81,6 +81,7 @@ class User extends Model {
       sequelize,
       modelName: 'User',
       tableName: 'user',
+      comment: '用户',
     });
   }
 

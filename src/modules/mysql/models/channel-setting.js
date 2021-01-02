@@ -2,7 +2,7 @@
  * @description: 栏目配置
  * @author: zpl
  * @Date: 2020-07-28 10:42:50
- * @LastEditTime: 2020-08-18 20:55:41
+ * @LastEditTime: 2021-01-02 19:17:34
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -65,7 +65,7 @@ class ChannelSetting extends Model {
         type: DataTypes.STRING,
         defaultValue: '',
         field: 'create_time',
-        comment: '',
+        comment: '栏目配置',
       },
     }, {
       sequelize,

@@ -3,7 +3,7 @@
  * @description: 文章扩展信息
  * @author: zpl
  * @Date: 2020-07-28 10:16:12
- * @LastEditTime: 2020-11-08 12:02:50
+ * @LastEditTime: 2021-01-02 19:17:17
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -47,6 +47,7 @@ class ArticleExtension extends Model {
     }, {
       sequelize,
       modelName: 'ArticleExtension',
+      comment: '文章扩展信息',
     });
   }
 

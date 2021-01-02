@@ -2,10 +2,10 @@
  * @description: 安全培训
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2020-08-01 15:47:34
+ * @LastEditTime: 2021-01-02 19:23:23
  * @LastEditors: zpl
  */
-const {Model, DataTypes} = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 
 /**
    * 安全培训
@@ -73,6 +73,7 @@ class Training extends Model {
       sequelize,
       modelName: 'Training',
       tableName: 'training',
+      comment: '安全培训',
     });
   }
 

@@ -16,7 +16,7 @@ mysql:
     idle: 10000
   needCreatTable: false
 
-oldManager: "http://www.snains.cn:9001"
+oldManager: "http://www.snains.cn:9000"
 
 # fs.mkdir不能一次创建多级目录，必须确保上一级目录已经存在
 uploadRootPath: "/usr/share/nginx/html/uploads/"

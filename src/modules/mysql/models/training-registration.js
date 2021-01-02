@@ -2,7 +2,7 @@
  * @description: 安全培训报名
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2020-11-08 23:38:05
+ * @LastEditTime: 2021-01-02 19:22:05
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -61,6 +61,7 @@ class TrainingReg extends Model {
       sequelize,
       modelName: 'TrainingReg',
       tableName: 'training_reg',
+      comment: '安全培训报名',
     });
   }
 

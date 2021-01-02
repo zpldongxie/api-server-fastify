@@ -3,7 +3,7 @@
  * @description: 会员类型
  * @author: zpl
  * @Date: 2020-08-17 18:57:56
- * @LastEditTime: 2020-12-21 10:53:25
+ * @LastEditTime: 2021-01-02 19:21:06
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -37,6 +37,7 @@ class MemberType extends Model {
       sequelize,
       modelName: 'MemberType',
       timestamps: false,
+      comment: '会员类型',
     });
   }
 

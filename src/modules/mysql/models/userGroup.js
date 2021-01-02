@@ -2,11 +2,11 @@
  * @description: 用户组
  * @author: zpl
  * @Date: 2020-07-26 14:30:44
- * @LastEditTime: 2020-07-30 00:21:25
+ * @LastEditTime: 2021-01-02 19:24:46
  * @LastEditors: zpl
  */
 // const sequelize = require('../connect');
-const {Model, DataTypes} = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 
 /**
  * 用户组
@@ -48,6 +48,7 @@ class UserGroup extends Model {
       modelName: 'UserGroup',
       tableName: 'user_group',
       timestamps: false,
+      comment: '用户组',
     });
   }
 
