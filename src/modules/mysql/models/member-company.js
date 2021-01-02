@@ -3,10 +3,11 @@
  * @description: 企业会员
  * @author: zpl
  * @Date: 2020-08-17 18:35:54
- * @LastEditTime: 2021-01-02 19:19:36
+ * @LastEditTime: 2021-01-02 22:39:17
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
+const { memberStatus } = require('../../../dictionary');
 
 /**
    * 企业会员
@@ -81,7 +82,7 @@ class MemberCompany extends Model {
       },
       status: {
         type: DataTypes.STRING,
-        defaultValue: '审核中',
+        defaultValue: memberStatus.underReview,
         comment: '状态',
       },
     }, {
