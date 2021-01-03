@@ -3,10 +3,11 @@
  * @description: 个人会员
  * @author: zpl
  * @Date: 2020-08-17 18:35:54
- * @LastEditTime: 2021-01-02 19:20:26
+ * @LastEditTime: 2021-01-03 09:23:25
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
+const { memberStatus } = require('../../../dictionary');
 
 /**
    * 个人会员
@@ -93,7 +94,7 @@ class MemberIndivic extends Model {
       },
       status: {
         type: DataTypes.STRING,
-        defaultValue: '审核中',
+        defaultValue: memberStatus.underReview,
         comment: '状态',
       },
     }, {

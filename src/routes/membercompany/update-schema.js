@@ -29,7 +29,7 @@ const bodyJsonSchema = S.object()
             .maxLength(6)
             .description('邮编'),
     )
-    .prop('intro', S.string().description('公司名称'))
+    .prop('intro', S.string().description('公司简介'))
     .prop('logonData', S.string().description('注册日期'))
     .prop(
         'status',

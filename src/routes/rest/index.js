@@ -2,7 +2,7 @@
  * @description rest接口，不做身份验证，其他系统使用的路由要加验证
  * @author: zpl
  * @Date: 2020-07-30 11:26:02
- * @LastEditTime: 2021-01-02 23:00:59
+ * @LastEditTime: 2021-01-03 09:21:58
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -15,12 +15,14 @@ module.exports = fp(async (server, opts, next) => {
   const articleMethod = new CommonMethod(mysqlModel.Article);
   const trainingRegMethod = new CommonMethod(mysqlModel.TrainingReg);
   const memberCompanyMethod = new CommonMethod(mysqlModel.MemberCompany);
+  const memberIndivicMethod = new CommonMethod(mysqlModel.MemberIndivic);
   const { ajv } = opts;
 
   const querySchema = require('./query-content-list-schema');
   const getByIdSchema = require('./query-content-by-id-schema');
   const trainingregSchema = require('./trainingreg-schema');
   const memberCompanyRegSchema = require('./member-company-reg-schema');
+  const memberIndivicRegSchema = require('./member-indivic-reg-schema');
 
   /**
    * 获取菜单
@@ -256,6 +258,35 @@ module.exports = fp(async (server, opts, next) => {
     commonCatch(runFun, reply)();
   };
 
+  /**
+   * 个人会员注册
+   *
+   * @param {*} request
+   * @param {*} reply
+   * @return {*}
+   */
+  const memberIndivicReg = async (request, reply) => {
+    // 参数校验
+    const validate = ajv.compile(memberIndivicRegSchema.body.valueOf());
+    const valid = validate(request.body);
+    if (!valid) {
+      return reply.code(400).send(validate.errors);
+    }
+
+    // 执行方法
+    const runFun = async () => {
+      const { mobile } = request.body;
+      const res = await memberIndivicMethod.dao.findAll({ where: { mobile } });
+      if (res.status && res.data.length) {
+        return onRouteError(reply, { status: 200, message: '该手机号已经提交过申请，请不要重复提交' });
+      }
+      await memberIndivicMethod.create(reply, request.body);
+    };
+
+    // 统一捕获异常
+    commonCatch(runFun, reply)();
+  };
+
   /*
   *                        _oo0oo_
   *                       o8888888o
@@ -329,6 +360,13 @@ module.exports = fp(async (server, opts, next) => {
       '/rest/memberCompany/reg',
       { schema: { ...memberCompanyRegSchema, tags: ['rest'], summary: '企业会员注册' } },
       memberCompanyReg,
+  );
+
+  // 个人会员注册
+  server.put(
+      '/rest/memberIndivic/reg',
+      { schema: { ...memberIndivicRegSchema, tags: ['rest'], summary: '个人会员注册' } },
+      memberIndivicReg,
   );
 
   next();

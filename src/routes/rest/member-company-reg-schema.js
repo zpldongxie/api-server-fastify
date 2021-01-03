@@ -2,11 +2,10 @@
  * @description: 企业会员注册请求数据校验
  * @author: zpl
  * @Date: 2021-01-02 22:47:35
- * @LastEditTime: 2021-01-02 22:51:52
+ * @LastEditTime: 2021-01-03 09:16:45
  * @LastEditors: zpl
  */
 const S = require('fluent-schema');
-const { memberStatus } = require('../../dictionary');
 
 const bodyJsonSchema = S.object()
     .prop('corporateName', S.string().description('公司名称'))
