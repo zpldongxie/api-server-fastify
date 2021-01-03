@@ -2,10 +2,12 @@
  * @description rest接口，不做身份验证，其他系统使用的路由要加验证
  * @author: zpl
  * @Date: 2020-07-30 11:26:02
- * @LastEditTime: 2021-01-03 09:21:58
+ * @LastEditTime: 2021-01-03 17:06:15
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
+const { Op } = require('sequelize');
+const { serviceStatus } = require('../../dictionary');
 const { CommonMethod, commonCatch, onRouteError } = require('../util');
 // const { queryByCid, queryAll } = require('../content/query-list-method');
 
@@ -16,6 +18,7 @@ module.exports = fp(async (server, opts, next) => {
   const trainingRegMethod = new CommonMethod(mysqlModel.TrainingReg);
   const memberCompanyMethod = new CommonMethod(mysqlModel.MemberCompany);
   const memberIndivicMethod = new CommonMethod(mysqlModel.MemberIndivic);
+  const serviceRequestMethod = new CommonMethod(mysqlModel.ServiceRequest);
   const { ajv } = opts;
 
   const querySchema = require('./query-content-list-schema');
@@ -23,6 +26,7 @@ module.exports = fp(async (server, opts, next) => {
   const trainingregSchema = require('./trainingreg-schema');
   const memberCompanyRegSchema = require('./member-company-reg-schema');
   const memberIndivicRegSchema = require('./member-indivic-reg-schema');
+  const putServiceRequestSchema = require('./put-service-request-schema');
 
   /**
    * 获取菜单
@@ -287,6 +291,39 @@ module.exports = fp(async (server, opts, next) => {
     commonCatch(runFun, reply)();
   };
 
+  /**
+   * 发起服务申请
+   *
+   * @param {*} request
+   * @param {*} reply
+   * @return {*}
+   */
+  const putServiceRequest = async (request, reply) => {
+    // 参数校验
+    const validate = ajv.compile(putServiceRequestSchema.body.valueOf());
+    const valid = validate(request.body);
+    if (!valid) {
+      return reply.code(400).send(validate.errors);
+    }
+
+    // 执行方法
+    const runFun = async () => {
+      const { contactsMobile, demandType } = request.body;
+      const res = await serviceRequestMethod.dao.findAll(
+          {
+            where: { contactsMobile, demandType, status: { [Op.not]: serviceStatus.finished } },
+          },
+      );
+      if (res.status && res.data.length) {
+        return onRouteError(reply, { status: 200, message: '该手机号已经提交过申请，请不要重复提交' });
+      }
+      await serviceRequestMethod.create(reply, request.body);
+    };
+
+    // 统一捕获异常
+    commonCatch(runFun, reply)();
+  };
+
   /*
   *                        _oo0oo_
   *                       o8888888o
@@ -367,6 +404,13 @@ module.exports = fp(async (server, opts, next) => {
       '/rest/memberIndivic/reg',
       { schema: { ...memberIndivicRegSchema, tags: ['rest'], summary: '个人会员注册' } },
       memberIndivicReg,
+  );
+
+  // 发起服务申请
+  server.put(
+      '/rest/putServiceRequest',
+      { schema: { ...putServiceRequestSchema, tags: ['rest'], summary: '发起服务申请' } },
+      putServiceRequest,
   );
 
   next();
