@@ -2,14 +2,16 @@
  * @description: 业务字典
  * @author: zpl
  * @Date: 2021-01-02 22:25:09
- * @LastEditTime: 2021-01-03 15:27:57
+ * @LastEditTime: 2021-01-05 10:33:07
  * @LastEditors: zpl
  */
 // 审核状态
 exports.memberStatus = {
-  'underReview': '待审核',
-  'approved': '通过审核',
-  'dismiss': '驳回',
+  'applying': '申请中',
+  'firstPass': '初审通过',
+  'formalMember': '正式会员',
+  'reject': '申请驳回',
+  'disable': '禁用',
 };
 
 // 服务需求类型
