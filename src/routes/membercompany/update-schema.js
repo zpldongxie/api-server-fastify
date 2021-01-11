@@ -38,6 +38,7 @@ const bodyJsonSchema = S.object()
             .default(memberStatus.underReview)
             .description('状态'),
     )
+    .prop('rejectDesc', S.string().description('驳回原因'))
     .required(['corporateName', 'tel', 'email', 'contacts', 'contactsMobile']);
 
 module.exports = {

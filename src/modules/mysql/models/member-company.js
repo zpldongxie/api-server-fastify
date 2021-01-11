@@ -3,7 +3,7 @@
  * @description: 企业会员
  * @author: zpl
  * @Date: 2020-08-17 18:35:54
- * @LastEditTime: 2021-01-11 14:29:59
+ * @LastEditTime: 2021-01-11 17:03:22
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -81,7 +81,7 @@ class MemberCompany extends Model {
         type: DataTypes.TEXT,
         comment: '公司简介',
       },
-      logonData: {
+      logonDate: {
         type: DataTypes.STRING,
         comment: '注册日期',
       },
@@ -89,6 +89,10 @@ class MemberCompany extends Model {
         type: DataTypes.STRING,
         defaultValue: memberStatus.applying,
         comment: '状态',
+      },
+      rejectDesc: {
+        type: DataTypes.STRING,
+        comment: '驳回原因',
       },
     }, {
       sequelize,

@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-11 15:48:33
+ * @LastEditTime: 2021-01-11 16:47:29
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -122,7 +122,7 @@ module.exports = fp(async (server, opts, next) => {
             }
             await routerMethod.updateOne(reply, id, request.body);
           } else {
-            const res = await routerMethod.dao.findAll({ where: { [OP.or]: [{ idNumber }, { mobile }] } });
+            const res = await routerMethod.dao.findAll({ where: { [Op.or]: [{ idNumber }, { mobile }] } });
             if (res.status && res.data.length) {
               return onRouteError(reply, { status: 200, message: '证件号或手机号已经提交过申请，请不要重复提交' });
             }

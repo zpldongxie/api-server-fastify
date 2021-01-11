@@ -3,7 +3,7 @@
  * @description: 个人会员
  * @author: zpl
  * @Date: 2020-08-17 18:35:54
- * @LastEditTime: 2021-01-11 14:29:50
+ * @LastEditTime: 2021-01-11 17:03:29
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -61,8 +61,9 @@ class MemberIndivic extends Model {
         comment: '英文名',
       },
       sex: {
-        type: DataTypes.TINYINT,
+        type: DataTypes.STRING(2),
         comment: '性别',
+        values: ['男', '女'],
       },
       maritalStatus: {
         type: DataTypes.STRING,
@@ -93,7 +94,7 @@ class MemberIndivic extends Model {
         type: DataTypes.TEXT,
         comment: '个人介绍',
       },
-      logonData: {
+      logonDate: {
         type: DataTypes.STRING,
         field: 'logon_data',
         comment: '注册日期',
@@ -102,6 +103,10 @@ class MemberIndivic extends Model {
         type: DataTypes.STRING,
         defaultValue: memberStatus.underReview,
         comment: '状态',
+      },
+      rejectDesc: {
+        type: DataTypes.STRING,
+        comment: '驳回原因',
       },
     }, {
       sequelize,

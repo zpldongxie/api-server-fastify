@@ -1,5 +1,5 @@
 const S = require('fluent-schema');
-const { memberStatus, idType } = require('../../dictionary');
+const { memberStatus, idType, sex } = require('../../dictionary');
 
 const bodyJsonSchema = S.object()
     .prop('id', S.string().format('uuid'))
@@ -35,7 +35,13 @@ const bodyJsonSchema = S.object()
             .maxLength(64)
             .description('英文名'),
     )
-    .prop('sex', S.string().description('性别'))
+    .prop(
+        'sex',
+        S.string()
+            .enum(Object.values(sex))
+            .default(sex.man)
+            .description('性别'),
+    )
     .prop('maritalStatus', S.string().description('婚姻状况'))
     .prop('website', S.string().description('个人网站'))
     .prop('homeAddress', S.string().description('家庭住址'))
@@ -66,6 +72,7 @@ const bodyJsonSchema = S.object()
             .default(memberStatus.underReview)
             .description('状态'),
     )
+    .prop('rejectDesc', S.string().description('驳回原因'))
     .required(['name', 'mobile', 'email']);
 
 module.exports = {
