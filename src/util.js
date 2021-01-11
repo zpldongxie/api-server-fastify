@@ -2,7 +2,7 @@
  * @description: 全局工具
  * @author: zpl
  * @Date: 2020-09-07 00:38:53
- * @LastEditTime: 2020-09-18 18:21:33
+ * @LastEditTime: 2021-01-11 17:52:28
  * @LastEditors: zpl
  */
 const path = require('path');
@@ -59,7 +59,19 @@ const convertChannelsToTree = (list, channels, parentId) => {
   }
 };
 
+/**
+ * 获取当前时间
+ *
+ * @return {*}
+ */
+const getCurrentDate = () => {
+  const tzoffset = (new Date()).getTimezoneOffset() * 60000;
+  const localISOTime = (new Date(Date.now() - tzoffset)).toISOString();
+  return localISOTime;
+};
+
 module.exports = {
   load,
   convertChannelsToTree,
+  getCurrentDate,
 };

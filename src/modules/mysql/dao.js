@@ -3,7 +3,7 @@
  * @author: zpl
  * @Date: 2020-08-09 09:28:40
  * @LastEditors: zpl
- * @LastEditTime: 2020-11-04 18:36:43
+ * @LastEditTime: 2021-01-11 17:26:22
  */
 const { Op } = require('sequelize');
 
@@ -96,8 +96,12 @@ class Dao {
    * @param {*} [include={}]
    * @return {*}
    */
-  async findOne(where = {}, include={}) {
-    const result = await this.Model.findOne({ where, include });
+  async findOne(where = {}, include) {
+    const opt = { where };
+    if (include) {
+      opt.include = include;
+    }
+    const result = await this.Model.findOne(opt);
     if (result) {
       return onSuccess(result, '查询成功');
     }

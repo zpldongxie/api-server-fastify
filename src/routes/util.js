@@ -2,7 +2,7 @@
  * @description:通用工具
  * @author: zpl
  * @Date: 2020-07-28 19:22:01
- * @LastEditTime: 2020-11-09 00:00:04
+ * @LastEditTime: 2021-01-11 17:24:27
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -16,11 +16,11 @@ const { Dao, transaction } = require('../modules/mysql/dao');
  * @param {string} [msg='请求成功']
  * @param {string} [code=200]
  */
-const onRouterSuccess = (reply, data = null, msg = '请求成功', code = 200) => {
+const onRouterSuccess = (reply, data = null, message = '请求成功', code = 200) => {
   reply.code(code).send({
     status: 'ok',
     data,
-    msg,
+    message,
   });
 };
 

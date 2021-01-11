@@ -2,7 +2,7 @@
  * @description: 业务字典
  * @author: zpl
  * @Date: 2021-01-02 22:25:09
- * @LastEditTime: 2021-01-05 10:33:07
+ * @LastEditTime: 2021-01-11 16:38:39
  * @LastEditors: zpl
  */
 // 审核状态
@@ -34,4 +34,10 @@ exports.serviceStatus = {
 // 证件类型
 exports.idType = {
   'IDCard': '身份证',
+};
+
+// 性别
+exports.sex = {
+  'man': '男',
+  'woman': '女',
 };
