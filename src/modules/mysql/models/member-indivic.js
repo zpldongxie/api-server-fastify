@@ -3,7 +3,7 @@
  * @description: 个人会员
  * @author: zpl
  * @Date: 2020-08-17 18:35:54
- * @LastEditTime: 2021-01-11 12:44:59
+ * @LastEditTime: 2021-01-11 14:29:50
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -25,6 +25,11 @@ class MemberIndivic extends Model {
    */
   static initNow(sequelize) {
     MemberIndivic.init({
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
       name: {
         type: DataTypes.STRING(64),
         allowNull: false,

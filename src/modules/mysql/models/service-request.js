@@ -3,7 +3,7 @@
  * @description: 服务申请表
  * @author: zpl
  * @Date: 2021-01-03 10:14:28
- * @LastEditTime: 2021-01-08 09:37:22
+ * @LastEditTime: 2021-01-11 14:40:59
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -25,6 +25,11 @@ class ServiceRequest extends Model {
    */
   static initNow(sequelize) {
     ServiceRequest.init({
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
       corporateName: {
         type: DataTypes.STRING,
         allowNull: false,

@@ -3,7 +3,7 @@
  * @description: 会员类型
  * @author: zpl
  * @Date: 2020-08-17 18:57:56
- * @LastEditTime: 2021-01-02 19:21:06
+ * @LastEditTime: 2021-01-11 14:40:02
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -24,6 +24,11 @@ class MemberType extends Model {
    */
   static initNow(sequelize) {
     MemberType.init({
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
       name: {
         type: DataTypes.STRING(64),
         allowNull: false,

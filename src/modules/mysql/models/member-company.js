@@ -3,7 +3,7 @@
  * @description: 企业会员
  * @author: zpl
  * @Date: 2020-08-17 18:35:54
- * @LastEditTime: 2021-01-11 12:28:46
+ * @LastEditTime: 2021-01-11 14:29:59
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -25,6 +25,11 @@ class MemberCompany extends Model {
    */
   static initNow(sequelize) {
     MemberCompany.init({
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
       corporateName: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -82,7 +87,7 @@ class MemberCompany extends Model {
       },
       status: {
         type: DataTypes.STRING,
-        defaultValue: memberStatus.underReview,
+        defaultValue: memberStatus.applying,
         comment: '状态',
       },
     }, {

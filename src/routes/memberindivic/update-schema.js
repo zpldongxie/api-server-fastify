@@ -2,7 +2,7 @@ const S = require('fluent-schema');
 const { memberStatus, idType } = require('../../dictionary');
 
 const bodyJsonSchema = S.object()
-    .prop('id', S.anyOf([S.string(), S.number()]))
+    .prop('id', S.string().format('uuid'))
     .prop(
         'name',
         S.string()

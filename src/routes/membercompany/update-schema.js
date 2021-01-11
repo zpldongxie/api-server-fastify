@@ -2,7 +2,7 @@ const S = require('fluent-schema');
 const { memberStatus } = require('../../dictionary');
 
 const bodyJsonSchema = S.object()
-    .prop('id', S.anyOf([S.string(), S.number()]))
+    .prop('id', S.string().format('uuid'))
     .prop('corporateName', S.string().description('公司名称'))
     .prop('tel', S.string().description('座机'))
     .prop(
