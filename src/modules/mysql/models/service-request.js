@@ -3,7 +3,7 @@
  * @description: 服务申请表
  * @author: zpl
  * @Date: 2021-01-03 10:14:28
- * @LastEditTime: 2021-01-03 15:31:32
+ * @LastEditTime: 2021-01-08 09:37:22
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -87,12 +87,12 @@ class ServiceRequest extends Model {
       },
       serviceDesc: {
         type: DataTypes.STRING,
-        comment: '用务描述，管理员选填，便于事后追溯',
+        comment: '服务描述，管理员选填，便于事后追溯',
       },
     }, {
       sequelize,
       modelName: 'ServiceRequest',
-      comment: '服务描述，可选，管理员填，便于事后追溯',
+      comment: '服务申请表',
     });
   }
 }

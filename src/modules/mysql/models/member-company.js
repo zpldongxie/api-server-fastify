@@ -3,7 +3,7 @@
  * @description: 企业会员
  * @author: zpl
  * @Date: 2020-08-17 18:35:54
- * @LastEditTime: 2021-01-02 22:39:17
+ * @LastEditTime: 2021-01-11 12:28:46
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -28,7 +28,7 @@ class MemberCompany extends Model {
       corporateName: {
         type: DataTypes.STRING,
         allowNull: false,
-        require: true,
+        unique: true,
         comment: '公司名称',
       },
       tel: {

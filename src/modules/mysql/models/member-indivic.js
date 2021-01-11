@@ -3,7 +3,7 @@
  * @description: 个人会员
  * @author: zpl
  * @Date: 2020-08-17 18:35:54
- * @LastEditTime: 2021-01-03 09:23:25
+ * @LastEditTime: 2021-01-11 12:44:59
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -36,13 +36,14 @@ class MemberIndivic extends Model {
       },
       idNumber: {
         type: DataTypes.STRING,
-        require: true,
+        allowNull: false,
+        unique: true,
         comment: '证件号码',
       },
       mobile: {
         type: DataTypes.STRING,
         allowNull: false,
-        require: true,
+        unique: true,
         comment: '手机',
       },
       email: {
