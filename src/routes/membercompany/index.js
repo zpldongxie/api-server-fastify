@@ -2,12 +2,14 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-11 15:28:22
+ * @LastEditTime: 2021-01-11 17:54:03
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
 const { Op } = require('sequelize');
 const { commonCatch, CommonMethod, onRouteError } = require('../util');
+const { memberStatus } = require('../../dictionary');
+const { getCurrentDate } = require('../../util');
 
 const routerBaseInfo = {
   modelName_U: 'MemberCompany',
@@ -17,6 +19,7 @@ const routerBaseInfo = {
   getListURL: '/api/getMemberCompanyList',
   putURL: '/api/membercompany',
   deleteURL: '/api/membercompanys',
+  auditURL: '/api/membercompanys/audit',
 };
 module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
@@ -121,6 +124,37 @@ module.exports = fp(async (server, opts, next) => {
             // 新增
             await routerMethod.create(reply, request.body);
           }
+        };
+
+        // 统一捕获异常
+        commonCatch(runFun, reply)();
+      },
+  );
+
+  // 审核
+  const auditSchema = require('./audit-schema');
+  server.post(routerBaseInfo.auditURL,
+      { schema: { ...auditSchema, tags: ['membercompany'], summary: '审核' } },
+      async (request, reply) => {
+      // 参数校验
+        const validate = ajv.compile(auditSchema.body.valueOf());
+        const valid = validate(request.body);
+        if (!valid) {
+          return reply.code(400).send(validate.errors);
+        }
+
+        // 执行方法
+        const runFun = async () => {
+          const { id, status } = request.body;
+          const res = await routerMethod.dao.findOne({ id });
+          if (!res.status) {
+            return onRouteError(reply, { status: 200, message: 'ID错误，请确认后重新提交' });
+          }
+          let logonDate = null;
+          if (res.data.status !== memberStatus.formalMember && status === memberStatus.formalMember) {
+            logonDate = getCurrentDate();
+          }
+          await routerMethod.updateOne(reply, id, { ...request.body, logonDate });
         };
 
         // 统一捕获异常
