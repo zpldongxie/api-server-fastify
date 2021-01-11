@@ -2,11 +2,12 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-11-04 17:59:04
+ * @LastEditTime: 2021-01-11 15:49:02
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
-const { commonCatch, CommonMethod } = require('../util');
+const { Op } = require('sequelize');
+const { commonCatch, CommonMethod, onRouteError } = require('../util');
 
 const routerBaseInfo = {
   modelName_U: 'ServiceRequest',
@@ -103,7 +104,26 @@ module.exports = fp(async (server, opts, next) => {
 
     // 执行方法
     const runFun = async () => {
-      await routerMethod.upsert(reply, request.body);
+      const { id, contactsMobile, demandType } = request.body;
+      if (id) {
+        // 编辑
+        const res = await routerMethod.dao.findAll({
+          where: { id: { [Op.not]: id }, contactsMobile, demandType, status: { [Op.not]: serviceStatus.finished } },
+        });
+        if (res.status && res.data.length) {
+          return onRouteError(reply, { status: 200, message: '该手机号已存在同类型未完成的服务申请' });
+        }
+        await routerMethod.updateOne(reply, id, request.body);
+      } else {
+        const res = await routerMethod.dao.findAll({
+          where: { contactsMobile, demandType, status: { [Op.not]: serviceStatus.finished } },
+        });
+        if (res.status && res.data.length) {
+          return onRouteError(reply, { status: 200, message: '该手机号已存在同类型未完成的服务申请' });
+        }
+        // 新增
+        await routerMethod.create(reply, request.body);
+      }
     };
 
     // 统一捕获异常

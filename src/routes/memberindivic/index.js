@@ -2,11 +2,12 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-07 16:24:12
+ * @LastEditTime: 2021-01-11 15:48:33
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
-const { commonCatch, CommonMethod } = require('../util');
+const { Op } = require('sequelize');
+const { commonCatch, CommonMethod, onRouteError } = require('../util');
 
 const routerBaseInfo = {
   modelName_U: 'MemberIndivic',
@@ -104,7 +105,30 @@ module.exports = fp(async (server, opts, next) => {
 
         // 执行方法
         const runFun = async () => {
-          await routerMethod.upsert(reply, request.body);
+          const { id, idNumber, mobile } = request.body;
+          if (id) {
+            // 编辑
+            const idNumberRes = await routerMethod.dao.findAll({
+              where: { id: { [Op.not]: id }, idNumber },
+            });
+            if (idNumberRes.status && idNumberRes.data.length) {
+              return onRouteError(reply, { status: 200, message: '证件号已经注册或正在申请' });
+            }
+            const mobileRes = await routerMethod.dao.findAll({
+              where: { id: { [Op.not]: id }, mobile },
+            });
+            if (mobileRes.status && mobileRes.data.length) {
+              return onRouteError(reply, { status: 200, message: '手机号已经注册或正在申请' });
+            }
+            await routerMethod.updateOne(reply, id, request.body);
+          } else {
+            const res = await routerMethod.dao.findAll({ where: { [OP.or]: [{ idNumber }, { mobile }] } });
+            if (res.status && res.data.length) {
+              return onRouteError(reply, { status: 200, message: '证件号或手机号已经提交过申请，请不要重复提交' });
+            }
+            // 新增
+            await routerMethod.create(reply, request.body);
+          }
         };
 
         // 统一捕获异常

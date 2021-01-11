@@ -2,11 +2,12 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-07 16:24:03
+ * @LastEditTime: 2021-01-11 15:28:22
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
-const { commonCatch, CommonMethod } = require('../util');
+const { Op } = require('sequelize');
+const { commonCatch, CommonMethod, onRouteError } = require('../util');
 
 const routerBaseInfo = {
   modelName_U: 'MemberCompany',
@@ -104,7 +105,22 @@ module.exports = fp(async (server, opts, next) => {
 
         // 执行方法
         const runFun = async () => {
-          await routerMethod.upsert(reply, request.body);
+          const { id, corporateName } = request.body;
+          if (id) {
+            // 编辑
+            const res = await routerMethod.dao.findAll({ where: { corporateName, id: { [Op.not]: id } } });
+            if (res.status && res.data.length) {
+              return onRouteError(reply, { status: 200, message: '该公司名称已经注册或正在申请' });
+            }
+            await routerMethod.updateOne(reply, id, request.body);
+          } else {
+            const res = await routerMethod.dao.findAll({ where: { corporateName } });
+            if (res.status && res.data.length) {
+              return onRouteError(reply, { status: 200, message: '该公司已经提交过申请，请不要重复提交' });
+            }
+            // 新增
+            await routerMethod.create(reply, request.body);
+          }
         };
 
         // 统一捕获异常
