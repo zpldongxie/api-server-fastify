@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-11 17:54:03
+ * @LastEditTime: 2021-01-12 09:10:51
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -111,13 +111,23 @@ module.exports = fp(async (server, opts, next) => {
           const { id, corporateName } = request.body;
           if (id) {
             // 编辑
-            const res = await routerMethod.dao.findAll({ where: { corporateName, id: { [Op.not]: id } } });
+            const res = await routerMethod.dao.findAll({
+              where: {
+                corporateName, id: { [Op.not]: id },
+                status: { [Op.not]: memberStatus.reject },
+              },
+            });
             if (res.status && res.data.length) {
               return onRouteError(reply, { status: 200, message: '该公司名称已经注册或正在申请' });
             }
             await routerMethod.updateOne(reply, id, request.body);
           } else {
-            const res = await routerMethod.dao.findAll({ where: { corporateName } });
+            const res = await routerMethod.dao.findAll({
+              where: {
+                corporateName,
+                status: { [Op.not]: memberStatus.reject },
+              },
+            });
             if (res.status && res.data.length) {
               return onRouteError(reply, { status: 200, message: '该公司已经提交过申请，请不要重复提交' });
             }
