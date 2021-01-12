@@ -2,13 +2,13 @@
  * @description rest接口，不做身份验证，其他系统使用的路由要加验证
  * @author: zpl
  * @Date: 2020-07-30 11:26:02
- * @LastEditTime: 2021-01-03 17:06:15
+ * @LastEditTime: 2021-01-12 17:28:29
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
 const { Op } = require('sequelize');
 const { serviceStatus } = require('../../dictionary');
-const { CommonMethod, commonCatch, onRouteError } = require('../util');
+const { CommonMethod, commonCatch, onRouterError } = require('../util');
 // const { queryByCid, queryAll } = require('../content/query-list-method');
 
 module.exports = fp(async (server, opts, next) => {
@@ -224,7 +224,7 @@ module.exports = fp(async (server, opts, next) => {
       const { TrainingId, mobile } = request.body;
       const res = await trainingRegMethod.dao.findAll({ where: { TrainingId, mobile } });
       if (res.status && res.data.length) {
-        return onRouteError(reply, { status: 200, message: '该手机号已经提交过申请，请不要重复提交' });
+        return onRouterError(reply, { status: 200, message: '该手机号已经提交过申请，请不要重复提交' });
       }
       await trainingRegMethod.create(reply, request.body);
     };
@@ -253,7 +253,7 @@ module.exports = fp(async (server, opts, next) => {
       const { corporateName } = request.body;
       const res = await memberCompanyMethod.dao.findAll({ where: { corporateName } });
       if (res.status && res.data.length) {
-        return onRouteError(reply, { status: 200, message: '该公司已经提交过申请，请不要重复提交' });
+        return onRouterError(reply, { status: 200, message: '该公司已经提交过申请，请不要重复提交' });
       }
       await memberCompanyMethod.create(reply, request.body);
     };
@@ -282,7 +282,7 @@ module.exports = fp(async (server, opts, next) => {
       const { mobile } = request.body;
       const res = await memberIndivicMethod.dao.findAll({ where: { mobile } });
       if (res.status && res.data.length) {
-        return onRouteError(reply, { status: 200, message: '该手机号已经提交过申请，请不要重复提交' });
+        return onRouterError(reply, { status: 200, message: '该手机号已经提交过申请，请不要重复提交' });
       }
       await memberIndivicMethod.create(reply, request.body);
     };
@@ -315,7 +315,7 @@ module.exports = fp(async (server, opts, next) => {
           },
       );
       if (res.status && res.data.length) {
-        return onRouteError(reply, { status: 200, message: '该手机号已经提交过申请，请不要重复提交' });
+        return onRouterError(reply, { status: 200, message: '该手机号已经提交过申请，请不要重复提交' });
       }
       await serviceRequestMethod.create(reply, request.body);
     };

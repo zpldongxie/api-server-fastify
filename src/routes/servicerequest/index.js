@@ -7,7 +7,7 @@
  */
 const fp = require('fastify-plugin');
 const { Op } = require('sequelize');
-const { commonCatch, CommonMethod, onRouteError } = require('../util');
+const { commonCatch, CommonMethod, onRouterError } = require('../util');
 
 const routerBaseInfo = {
   modelName_U: 'ServiceRequest',
@@ -111,7 +111,7 @@ module.exports = fp(async (server, opts, next) => {
           where: { id: { [Op.not]: id }, contactsMobile, demandType, status: { [Op.not]: serviceStatus.finished } },
         });
         if (res.status && res.data.length) {
-          return onRouteError(reply, { status: 200, message: '该手机号已存在同类型未完成的服务申请' });
+          return onRouterError(reply, { status: 200, message: '该手机号已存在同类型未完成的服务申请' });
         }
         await routerMethod.updateOne(reply, id, request.body);
       } else {
@@ -119,7 +119,7 @@ module.exports = fp(async (server, opts, next) => {
           where: { contactsMobile, demandType, status: { [Op.not]: serviceStatus.finished } },
         });
         if (res.status && res.data.length) {
-          return onRouteError(reply, { status: 200, message: '该手机号已存在同类型未完成的服务申请' });
+          return onRouterError(reply, { status: 200, message: '该手机号已存在同类型未完成的服务申请' });
         }
         // 新增
         await routerMethod.create(reply, request.body);

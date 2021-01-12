@@ -2,7 +2,7 @@
  * @description:通用工具
  * @author: zpl
  * @Date: 2020-07-28 19:22:01
- * @LastEditTime: 2021-01-11 17:24:27
+ * @LastEditTime: 2021-01-12 14:48:49
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -13,8 +13,8 @@ const { Dao, transaction } = require('../modules/mysql/dao');
  *
  * @param {*} reply
  * @param {*} [data=null]
- * @param {string} [msg='请求成功']
- * @param {string} [code=200]
+ * @param {string} [message='请求成功']
+ * @param {number} [code=200]
  */
 const onRouterSuccess = (reply, data = null, message = '请求成功', code = 200) => {
   reply.code(code).send({
@@ -30,7 +30,7 @@ const onRouterSuccess = (reply, data = null, message = '请求成功', code = 20
  * @param {*} reply
  * @param {*} err
  */
-const onRouteError = (reply, err) => {
+const onRouterError = (reply, err) => {
   console.log('====================================');
   console.debug(err);
   console.log('====================================');
@@ -74,7 +74,7 @@ const commonCatch = (method, reply) => {
           };
           break;
       }
-      onRouteError(reply, err);
+      onRouterError(reply, err);
     }
   };
 };
@@ -106,7 +106,7 @@ class CommonMethod {
     if (result.status) {
       onRouterSuccess(reply, result.data);
     } else {
-      onRouteError(reply, result.message);
+      onRouterError(reply, result.message);
     }
   }
 
@@ -121,7 +121,7 @@ class CommonMethod {
     if (result.status) {
       onRouterSuccess(reply, result.data);
     } else {
-      onRouteError(reply, result.message);
+      onRouterError(reply, result.message);
     }
   }
 
@@ -186,7 +186,7 @@ class CommonMethod {
     if (result.status) {
       onRouterSuccess(reply, result.data);
     } else {
-      onRouteError(reply, result.message);
+      onRouterError(reply, result.message);
     }
   }
 
@@ -202,7 +202,7 @@ class CommonMethod {
     if (result.status) {
       onRouterSuccess(reply, result.data, '创建成功', 201);
     } else {
-      onRouteError(reply, result.message);
+      onRouterError(reply, result.message);
     }
   }
 
@@ -218,7 +218,7 @@ class CommonMethod {
     if (result.status) {
       onRouterSuccess(reply, result.data, '更新成功', 201);
     } else {
-      onRouteError(reply, result.message);
+      onRouterError(reply, result.message);
     }
   }
 
@@ -234,7 +234,7 @@ class CommonMethod {
     if (result.status) {
       onRouterSuccess(reply, result.data, '更新成功', 201);
     } else {
-      onRouteError(reply, result.message);
+      onRouterError(reply, result.message);
     }
   }
 
@@ -250,7 +250,7 @@ class CommonMethod {
     if (result.status) {
       onRouterSuccess(reply, result.data, 201);
     } else {
-      onRouteError(reply, result.message);
+      onRouterError(reply, result.message);
     }
   }
 
@@ -266,14 +266,14 @@ class CommonMethod {
     if (result.status) {
       onRouterSuccess(reply, result.data, 204);
     } else {
-      onRouteError(reply, result.message);
+      onRouterError(reply, result.message);
     }
   }
 }
 
 module.exports = {
   onRouterSuccess,
-  onRouteError,
+  onRouterError,
   commonCatch,
   CommonMethod,
   transaction,

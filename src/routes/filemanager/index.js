@@ -2,7 +2,7 @@
  * @description: 上传功能
  * @author: zpl
  * @Date: 2020-10-13 17:39:11
- * @LastEditTime: 2020-10-21 14:34:17
+ * @LastEditTime: 2021-01-12 17:28:48
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -11,7 +11,7 @@ const path = require('path');
 const multer = require('fastify-multer');
 const dayjs = require('dayjs');
 
-const { commonCatch, onRouterSuccess, onRouteError } = require('../util');
+const { commonCatch, onRouterSuccess, onRouterError } = require('../util');
 const { viewList, removeFile } = require('../file_manager');
 
 /**
@@ -182,7 +182,7 @@ module.exports = fp(async (server, opts, next) => {
               },
               (err) => {
                 console.error(err);
-                onRouteError(reply, { status: 200 });
+                onRouterError(reply, { status: 200 });
               },
           );
         };

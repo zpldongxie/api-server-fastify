@@ -2,13 +2,13 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2020-11-08 21:28:33
+ * @LastEditTime: 2021-01-12 17:28:56
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
 const { Op } = require('sequelize');
 const request = require('request');
-const { commonCatch, CommonMethod, transaction, onRouterSuccess, onRouteError } = require('../util');
+const { commonCatch, CommonMethod, transaction, onRouterSuccess, onRouterError } = require('../util');
 const { Dao } = require('../../modules/mysql/dao');
 
 const routerBaseInfo = {
@@ -187,7 +187,7 @@ module.exports = fp(async (server, opts, next) => {
         }
         onRouterSuccess(reply, article);
       } else {
-        onRouteError(reply, '保存失败');
+        onRouterError(reply, '保存失败');
       }
     };
 
@@ -225,7 +225,7 @@ module.exports = fp(async (server, opts, next) => {
         }
         onRouterSuccess(reply);
       } else {
-        onRouteError(reply, '所选栏目无效');
+        onRouterError(reply, '所选栏目无效');
       }
     };
 
@@ -306,7 +306,7 @@ module.exports = fp(async (server, opts, next) => {
         const list = articles.filter((article) => !article.Channels || !article.Channels.length);
         onRouterSuccess(reply, { total: list.length, list });
       } else {
-        onRouteError(reply, '所选栏目无效');
+        onRouterError(reply, '所选栏目无效');
       }
     };
 
@@ -583,7 +583,7 @@ module.exports = fp(async (server, opts, next) => {
             if (error) {
               console.log('----旧栏目表查询失败----');
               console.error(error);
-              onRouteError(reply, error);
+              onRouterError(reply, error);
               return;
             }
             if (!error && response.statusCode == 200) {
@@ -598,7 +598,7 @@ module.exports = fp(async (server, opts, next) => {
             } else {
               console.log('----旧栏目表查询失败----');
               console.error(response);
-              onRouteError(reply, response);
+              onRouterError(reply, response);
               return;
             }
           });
