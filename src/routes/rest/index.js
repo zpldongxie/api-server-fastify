@@ -2,24 +2,30 @@
  * @description rest接口，不做身份验证，其他系统使用的路由要加验证
  * @author: zpl
  * @Date: 2020-07-30 11:26:02
- * @LastEditTime: 2021-01-12 17:28:29
+ * @LastEditTime: 2021-01-17 03:44:11
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
 const { Op } = require('sequelize');
+const { onRouterSuccess, onRouterError } = require('../../util');
+const ChannelMethod = require('../channel/method');
+const ArticleMethod = require('../article/method');
+const TrainingRegMethod = require('../trainingreg/method');
+const MemberCompanyMethod = require('../membercompany/method');
+const MemberIndivicMethod = require('../memberindivic/method');
+const ServiceRequestMethod = require('../servicerequest/method');
 const { serviceStatus } = require('../../dictionary');
-const { CommonMethod, commonCatch, onRouterError } = require('../util');
-// const { queryByCid, queryAll } = require('../content/query-list-method');
 
 module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
-  const channelMethod = new CommonMethod(mysqlModel.Channel);
-  const articleMethod = new CommonMethod(mysqlModel.Article);
-  const trainingRegMethod = new CommonMethod(mysqlModel.TrainingReg);
-  const memberCompanyMethod = new CommonMethod(mysqlModel.MemberCompany);
-  const memberIndivicMethod = new CommonMethod(mysqlModel.MemberIndivic);
-  const serviceRequestMethod = new CommonMethod(mysqlModel.ServiceRequest);
   const { ajv } = opts;
+  const channelMethod = new ChannelMethod(mysqlModel.Channel, ajv);
+  const articleMethod = new ArticleMethod(mysqlModel.Article, ajv);
+  const trainingRegMethod = new TrainingRegMethod(mysqlModel.TrainingReg, ajv);
+  const memberCompanyMethod = new MemberCompanyMethod(mysqlModel.MemberCompany, ajv);
+  const memberIndivicMethod = new MemberIndivicMethod(mysqlModel.MemberIndivic, ajv);
+  const serviceRequestMethod = new ServiceRequestMethod(mysqlModel.ServiceRequest, ajv);
+
 
   const querySchema = require('./query-content-list-schema');
   const getByIdSchema = require('./query-content-by-id-schema');
@@ -29,23 +35,172 @@ module.exports = fp(async (server, opts, next) => {
   const putServiceRequestSchema = require('./put-service-request-schema');
 
   /**
-   * 获取菜单
+   * 获取首页数据
    *
-   * @param {*} req
+   * @param {*} request
    * @param {*} reply
    */
-  const getMenu = async (req, reply) => {
-    const runFun = async () => {
-      channelMethod.findAll(
-          reply,
-          {
-            order: [['orderIndex', 'DESC']],
-          },
-      );
+  const getHomePageData = async (request, reply) => {
+    const that = articleMethod;
+    const getBanner = (settings) => {
+      const list = settings
+          .filter((setting) => setting.title.includes('banner'))
+          .sort((a, b) => a.title.localeCompare(b.title))
+          .map((setting) => ({
+            url: setting.link,
+            src: setting.pic,
+          }));
+      return list;
     };
 
-    // 统一捕获异常
-    commonCatch(runFun, reply)();
+    await (that.run(request, reply))(
+        async () => {
+          const { config: { ChannelModel, ArticleExtensionModel } } = reply.context;
+          // 配置
+          const settings = [];
+          // 轮播图
+          const bannerList = getBanner(settings);
+          // 推荐轮播
+          const recomListRes = await articleMethod.dbMethod.queryList({
+            where: {
+              'pubStatus': '已发布',
+              'isRecom': true,
+            },
+            sorter: {
+              'orderIndex': 'desc',
+              'conDate': 'desc',
+            },
+            current: 1,
+            pageSize: 6,
+            attributes: {
+              exclude: ['mainCon'],
+            },
+            include: [
+              {
+                model: ChannelModel,
+                attributes: ['id', 'name', 'enName'],
+              },
+              {
+                model: ArticleExtensionModel,
+                attributes: ['title', 'info', 'remark'],
+              },
+            ],
+          },
+          true);
+          let recomList = [];
+          if (recomListRes.status) {
+            recomList = recomListRes.data.list;
+          }
+          // 协会动态
+          const associationNewsList = [];
+          // tab页
+          const newsTabList = [];
+          // 省内动态
+          const sndt = {
+            nav: { 'id': 17, 'name': '省内动态', 'enName': 'sndt' },
+            list: [],
+          };
+          newsTabList.push(sndt);
+          // 国内动态
+          const gndt = {
+            nav: { 'id': 18, 'name': '国内动态', 'enName': 'gndt' },
+            list: [],
+          };
+          newsTabList.push(gndt);
+          // 国际动态
+          const gjdt = {
+            nav: { 'id': 19, 'name': '国际动态', 'enName': 'gjdt' },
+            list: [],
+          };
+          newsTabList.push(gjdt);
+          // 培训入口
+          const trainingEntranceList = [];
+          // 产品列表
+          const productsList = [];
+
+          return {
+            status: 1,
+            data: { bannerList, recomList, associationNewsList, newsTabList, trainingEntranceList, productsList },
+          };
+        },
+    );
+  };
+
+  /**
+   * 获取头条文章列表
+   *
+   * @param {*} request
+   * @param {*} reply
+   */
+  const getHeadList = async (request, reply) => {
+    const that = articleMethod;
+    await (that.run(request, reply))(
+        async () => {
+          const { config: { ChannelModel, ArticleExtensionModel } } = reply.context;
+          const where = {
+            'pubStatus': '已发布',
+            'isHead': true,
+          };
+          const sorter = {
+            'orderIndex': 'desc',
+            'conDate': 'desc',
+          };
+          const attributes = {
+            exclude: ['mainCon'],
+          };
+          const include = [
+            {
+              model: ChannelModel,
+              attributes: ['id', 'name', 'enName'],
+            },
+            {
+              model: ArticleExtensionModel,
+              attributes: ['title', 'info', 'remark'],
+            },
+          ];
+          const res = that.dbMethod.queryList({ where, sorter, current: 1, pageSize: 6, attributes, include }, true);
+          return res;
+        },
+    );
+  };
+
+  /**
+   * 获取推荐文章列表
+   *
+   * @param {*} request
+   * @param {*} reply
+   */
+  const getRecomList = async (request, reply) => {
+    const that = articleMethod;
+    await (that.run(request, reply))(
+        async () => {
+          const { config: { ChannelModel, ArticleExtensionModel } } = reply.context;
+
+          const where = {
+            'pubStatus': '已发布',
+            'isRecom': true,
+          };
+          const sorter = {
+            'orderIndex': 'desc',
+            'conDate': 'desc',
+          };
+          const attributes = {
+            exclude: ['mainCon'],
+          };
+          const include = [
+            {
+              model: ChannelModel,
+              attributes: ['id', 'name', 'enName'],
+            },
+            {
+              model: ArticleExtensionModel,
+              attributes: ['title', 'info', 'remark'],
+            },
+          ];
+          const res = that.dbMethod.queryList({ where, sorter, current: 1, pageSize: 6, attributes, include }, true);
+          return res;
+        },
+    );
   };
 
   /**
@@ -100,78 +255,6 @@ module.exports = fp(async (server, opts, next) => {
           },
           current, pageSize, sorter, null, include, attributes,
       );
-    };
-
-    // 统一捕获异常
-    commonCatch(runFun, reply)();
-  };
-
-  /**
-   * 获取头条文章列表
-   *
-   * @param {*} req
-   * @param {*} reply
-   */
-  const getHeadList = async (req, reply) => {
-    const runFun = async () => {
-      const where = {
-        'pubStatus': '已发布',
-        'isHead': true,
-      };
-      const sorter = {
-        'orderIndex': 'desc',
-        'conDate': 'desc',
-      };
-      const attributes = {
-        exclude: ['mainCon'],
-      };
-      const include = [
-        {
-          model: mysqlModel.Channel,
-          attributes: ['id', 'name', 'enName'],
-        },
-        {
-          model: mysqlModel.ArticleExtension,
-          attributes: ['title', 'info', 'remark'],
-        },
-      ];
-      articleMethod.queryList(reply, where, 1, 6, sorter, null, include, attributes);
-    };
-
-    // 统一捕获异常
-    commonCatch(runFun, reply)();
-  };
-
-  /**
-   * 获取推荐文章列表
-   *
-   * @param {*} req
-   * @param {*} reply
-   */
-  const getRecomList = async (req, reply) => {
-    const runFun = async () => {
-      const where = {
-        'pubStatus': '已发布',
-        'isRecom': true,
-      };
-      const sorter = {
-        'orderIndex': 'desc',
-        'conDate': 'desc',
-      };
-      const attributes = {
-        exclude: ['mainCon'],
-      };
-      const include = [
-        {
-          model: mysqlModel.Channel,
-          attributes: ['id', 'name', 'enName'],
-        },
-        {
-          model: mysqlModel.ArticleExtension,
-          attributes: ['title', 'info', 'remark'],
-        },
-      ];
-      articleMethod.queryList(reply, where, 1, 6, sorter, null, include, attributes);
     };
 
     // 统一捕获异常
@@ -354,7 +437,17 @@ module.exports = fp(async (server, opts, next) => {
   server.get(
       '/rest/menu',
       { schema: { tags: ['rest'], summary: '获取导航菜单' } },
-      getMenu,
+      (request, reply) => channelMethod.getAll(request, reply),
+  );
+
+  // 获取首页数据
+  server.get(
+      '/rest/getHomePageData',
+      {
+        schema: { tags: ['rest'], summary: '获取首页数据' },
+        config: { ChannelModel: mysqlModel.Channel, ArticleExtensionModel: mysqlModel.ArticleExtension },
+      },
+      (request, reply) => getHomePageData(request, reply),
   );
 
   // 按条件获取发布的文章列表

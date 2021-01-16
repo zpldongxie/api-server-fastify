@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-16 22:42:15
+ * @LastEditTime: 2021-01-17 02:23:00
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -53,7 +53,9 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const res = await that.dbMethod.findAll(request.params);
+          const where = {};
+          const order = [['orderIndex', 'DESC']];
+          const res = await that.dbMethod.findAll({ where, order }, true);
           return res;
         },
     );
