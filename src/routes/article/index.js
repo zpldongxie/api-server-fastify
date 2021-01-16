@@ -2,14 +2,12 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-12 17:28:56
+ * @LastEditTime: 2021-01-14 17:34:51
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
-const { Op } = require('sequelize');
-const request = require('request');
-const { commonCatch, CommonMethod, transaction, onRouterSuccess, onRouterError } = require('../util');
-const { Dao } = require('../../modules/mysql/dao');
+const CommonMethod = require('../commonMethod');
+const Method = require('./method');
 
 const routerBaseInfo = {
   modelName_U: 'Article',
@@ -29,290 +27,10 @@ module.exports = fp(async (server, opts, next) => {
   const ChannelModel = mysqlModel.Channel;
   const ArticleExtensionModel = mysqlModel.ArticleExtension;
   const { ajv } = opts;
-  const routerMethod = new CommonMethod(CurrentModel);
-  const articleDao = new Dao(CurrentModel);
-  const channelDao = new Dao(ChannelModel);
-  const articleExtensionDao = new Dao(ArticleExtensionModel);
+  const method = new Method(CurrentModel, ajv);
+  const channelDBMethod = new Method(ChannelModel, ajv).dbMethod;
+  const articleExtensionDBMethod = new Method(ArticleExtensionModel, ajv).dbMethod;
 
-  /**
-   * 根据ID获取单个文章
-   *
-   * @param {*} request
-   * @param {*} reply
-   */
-  const getById = async (request, reply) => {
-    const runFun = async () => {
-      const id = request.params.id;
-      const include = [
-        {
-          model: mysqlModel.Channel,
-          attributes: ['id', 'name'],
-        },
-        {
-          model: mysqlModel.ArticleExtension,
-          attributes: ['id', 'title', 'info', 'remark'],
-        },
-      ];
-      routerMethod.findOne(reply, id, include);
-    };
-
-    // 统一捕获异常
-    commonCatch(runFun, reply)();
-  };
-
-  /**
-   * 获取所有文章
-   *
-   * @param {*} request
-   * @param {*} reply
-   */
-  const getAll = async (request, reply) => {
-    const runFun = async () => {
-      const conditions = {
-        attributes: {
-          exclude: ['mainCon'],
-        },
-        include: [
-          {
-            model: mysqlModel.Channel,
-            attributes: ['id', 'name'],
-          },
-          {
-            model: mysqlModel.ArticleExtension,
-            attributes: ['id', 'title', 'info', 'remark'],
-          },
-        ],
-      };
-      routerMethod.findAll(reply, conditions);
-    };
-
-    // 统一捕获异常
-    commonCatch(runFun, reply)();
-  };
-
-  /**
-   * 根据条件获取文章列表
-   *
-   * @param {*} request
-   * @param {*} reply
-   * @return {*}
-   */
-  const queryList = async (request, reply) => {
-    const validate = ajv.compile(queryListSchema.body.valueOf());
-    const valid = validate(request.body);
-    if (!valid) {
-      return reply.code(400).send(validate.errors);
-    }
-
-    const runFun = async () => {
-      const {
-        current,
-        pageSize,
-        sorter = {},
-        filter,
-        channelId,
-        ...where
-      } = request.body;
-
-      if (!where.hasOwnProperty('pubStatus')) {
-        where.pubStatus = { [Op.not]: '已删除' };
-      }
-      if (!sorter.hasOwnProperty('conDate')) {
-        sorter.conDate = 'desc';
-      }
-      const include = [
-        {
-          model: mysqlModel.Channel,
-          attributes: ['id', 'name'],
-        },
-        {
-          model: mysqlModel.ArticleExtension,
-          attributes: ['id', 'title', 'info', 'remark'],
-        },
-      ];
-      const attributes = {
-        exclude: ['mainCon'],
-      };
-      if (channelId) {
-        include[0].where = {
-          id: channelId,
-        };
-      }
-      routerMethod.queryList(
-          reply, where, current, pageSize, sorter, filter, include, attributes,
-      );
-    };
-
-    // 统一捕获异常
-    commonCatch(runFun, reply)();
-  };
-
-  /**
-   * 新增或更新文章
-   *
-   * @param {*} request
-   * @param {*} reply
-   * @return {*}
-   */
-  const upsert = async (request, reply) => {
-    // 参数校验
-    const validate = ajv.compile(updateSchema.body.valueOf());
-    const valid = validate(request.body);
-    if (!valid) {
-      return reply.code(400).send(validate.errors);
-    }
-
-    // 执行方法
-    const runFun = async () => {
-      const params = {
-        approvalStatus: '无需审核',
-        pubStatus: '草稿',
-        ...request.body,
-      };
-      const result = await articleDao.upsert(params, { include: [ArticleExtensionModel] });
-      const cResult = await channelDao.findSome({ where: { id: { [Op.in]: params.Channels } } });
-      if (!!result.status) {
-        const article = result.data;
-        const eResult = await articleExtensionDao.findSome({ where: { ArticleId: article.id } });
-        if (eResult.status) {
-          articleExtensionDao.deleteSome(eResult.data.list.map((e)=>e.id));
-        }
-        const articleExtensions = request.body.ArticleExtensions || [];
-        for (let i = 0; i < articleExtensions.length; i++) {
-          const extension = articleExtensions[i];
-          await articleExtensionDao.upsert({ ...extension, ArticleId: article.id });
-        }
-        if (cResult.status) {
-          await article.setChannels(cResult.data.list.map((c)=>c.id));
-        }
-        onRouterSuccess(reply, article);
-      } else {
-        onRouterError(reply, '保存失败');
-      }
-    };
-
-    // 统一捕获异常
-    commonCatch(runFun, reply)();
-  };
-
-  /**
-   * 批量移动文章
-   *
-   * @param {*} request
-   * @param {*} reply
-   * @return {*}
-   */
-  const moveTo = async (request, reply) => {
-    // 参数校验
-    const validate = ajv.compile(moveToSchema.body.valueOf());
-    const valid = validate(request.body);
-    if (!valid) {
-      return reply.code(400).send(validate.errors);
-    }
-
-    // 执行方法
-    const runFun = async () => {
-      const { ids, cIds } = request.body;
-      // TODO: 没有做栏目类型校验
-      const aResult = await articleDao.findSome({ where: { id: { [Op.in]: ids } } });
-      const cResult = await channelDao.findSome({ where: { id: { [Op.in]: cIds } } });
-      if (aResult.status && cResult.status) {
-        const channelIds = cResult.data.list.map((c)=>c.id);
-        const articles = aResult.data.list;
-        for (let i = 0; i < articles.length; i++) {
-          const article = articles[i];
-          await article.setChannels(channelIds);
-        }
-        onRouterSuccess(reply);
-      } else {
-        onRouterError(reply, '所选栏目无效');
-      }
-    };
-
-    // 统一捕获异常
-    commonCatch(runFun, reply)();
-  };
-
-  /**
-   * 批量设置文章属性
-   *
-   * @param {*} request
-   * @param {*} reply
-   * @return {*}
-   */
-  const setAttr = async (request, reply) => {
-    // 参数校验
-    const validate = ajv.compile(setAttributSchema.body.valueOf());
-    const valid = validate(request.body);
-    if (!valid) {
-      return reply.code(400).send(validate.errors);
-    }
-
-    // 执行方法
-    const runFun = async () => {
-      const { ids, attr } = request.body;
-      routerMethod.updateMany(reply, ids, attr);
-    };
-
-    // 统一捕获异常
-    commonCatch(runFun, reply)();
-  };
-
-  /**
-   * 批量删除文章
-   *
-   * @param {*} request
-   * @param {*} reply
-   * @return {*}
-   */
-  const remove = async (request, reply) => {
-    const validate = ajv.compile(deleteSchema.body.valueOf());
-    const valid = validate(request.body);
-    if (!valid) {
-      return reply.code(400).send(validate.errors);
-    }
-
-    const runFun = async () => {
-      const ids = request.body.ids;
-      await routerMethod.delete(reply, ids);
-    };
-
-    // 统一捕获异常
-    commonCatch(runFun, reply)();
-  };
-
-  /**
-   * 查找无归属文章
-   *
-   * @param {*} request
-   * @param {*} reply
-   * @return {*}
-   */
-  const findNoAttributionArticle = async (request, reply) => {
-    // 执行方法
-    const runFun = async () => {
-      const conditions = {
-        attributes: {
-          exclude: ['mainCon'],
-        },
-        include: {
-          model: mysqlModel.Channel,
-          attributes: ['id', 'name'],
-        },
-      };
-      const aResult = await articleDao.findAll(conditions);
-      if (aResult.status) {
-        const articles = aResult.data;
-        const list = articles.filter((article) => !article.Channels || !article.Channels.length);
-        onRouterSuccess(reply, { total: list.length, list });
-      } else {
-        onRouterError(reply, '所选栏目无效');
-      }
-    };
-
-    // 统一捕获异常
-    commonCatch(runFun, reply)();
-  };
 
   /*
   *                        _oo0oo_
@@ -344,38 +62,67 @@ module.exports = fp(async (server, opts, next) => {
   const getByIdSchema = require('./query-by-id-schema');
   server.get(
       routerBaseInfo.getURL,
-      { schema: { ...getByIdSchema, tags: ['article'], summary: '根据ID获取单个文章' } },
-      getById,
+      {
+        schema: { ...getByIdSchema, tags: ['article'], summary: '根据ID获取单个' },
+        config: {
+          ChannelModel,
+          ArticleExtensionModel,
+        },
+      },
+      (request, reply) => method.getById(request, reply),
   );
 
   // 获取所有
   server.get(
       routerBaseInfo.getAllURL,
-      { schema: { tags: ['article'], summary: '获取所有文章' } },
-      getAll,
+      {
+        schema: { tags: ['article'], summary: '获取所有' },
+        config: {
+          ChannelModel,
+          ArticleExtensionModel,
+        },
+      },
+      (request, reply) => method.getAll(request, reply),
   );
 
   // 根据条件获取列表
   const queryListSchema = require('./query-list-schema');
   server.post(
       routerBaseInfo.getListURL,
-      { schema: { ...queryListSchema, tags: ['article'], summary: '根据条件获取文章列表' } },
-      queryList,
+      {
+        schema: { ...queryListSchema, tags: ['article'], summary: '根据条件获取列表' },
+        config: {
+          ChannelModel,
+          ArticleExtensionModel,
+        },
+      },
+      (request, reply) => method.queryList(request, reply),
   );
 
   // 新增或更新
   const updateSchema = require('./update-schema');
   server.put(routerBaseInfo.putURL,
-      { schema: { ...updateSchema, tags: ['article'], summary: '新增或更新文章' } },
-      upsert,
+      {
+        schema: { ...updateSchema, tags: ['article'], summary: '新增或更新' },
+        config: {
+          channelDBMethod,
+          articleExtensionDBMethod,
+        },
+      },
+      (request, reply) => method.upsert(request, reply),
   );
 
   // 批量移动文章
   const moveToSchema = require('./move-to-schema');
   server.put(
       routerBaseInfo.moveToURL,
-      { schema: { ...moveToSchema, tags: ['article'], summary: '批量移动文章' } },
-      moveTo,
+      {
+        schema: { ...moveToSchema, tags: ['article'], summary: '批量移动文章' },
+        config: {
+          channelDBMethod,
+        },
+      },
+      (request, reply) => method.moveTo(request, reply),
   );
 
   // 批量设置单个属性
@@ -383,26 +130,31 @@ module.exports = fp(async (server, opts, next) => {
   server.put(
       routerBaseInfo.setAttributURL,
       { schema: { ...setAttributSchema, tags: ['article'], summary: '批量设置文章属性' } },
-      setAttr,
+      (request, reply) => method.setAttr(request, reply),
   );
 
   // 删除
   const deleteSchema = require('./delete-schema');
   server.delete(
       routerBaseInfo.deleteURL,
-      { schema: { ...deleteSchema, tags: ['article'], summary: '批量删除文章' } },
-      remove,
+      { schema: { ...deleteSchema, tags: ['article'], summary: '批量删除' } },
+      (request, reply) => method.remove(request, reply),
   );
 
   // 查找无归属文章
   server.get(
       routerBaseInfo.findNoAttributionURL,
-      { schema: { tags: ['article'], summary: '查找无归属文章' } },
-      findNoAttributionArticle,
+      {
+        schema: { tags: ['article'], summary: '查找无归属文章' },
+        config: {
+          ChannelModel,
+        },
+      },
+      (request, reply) => method.findNoAttributionArticle(request, reply),
   );
 
   // TODO: 后期删除
-  const trans = transaction(server.sequelize);
+  const trans = CommonMethod.transaction(server.sequelize);
   server.post(
       '/api/updateDatabase',
       { schema: { tags: ['article'], summary: '从旧文章表向新文章表同步数据，同一个库' } },
@@ -518,7 +270,7 @@ module.exports = fp(async (server, opts, next) => {
               default:
                 channelName = '未分类';
             }
-            const cResult = await channelDao.findSome({ where: { name: channelName } });
+            const cResult = await channelDBMethod.queryList({ where: { name: channelName } });
             for (const content of contentList) {
               const {
                 // eslint-disable-next-line no-unused-vars

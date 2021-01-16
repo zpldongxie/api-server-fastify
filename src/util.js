@@ -2,11 +2,89 @@
  * @description: 全局工具
  * @author: zpl
  * @Date: 2020-09-07 00:38:53
- * @LastEditTime: 2021-01-11 17:52:28
+ * @LastEditTime: 2021-01-16 22:23:58
  * @LastEditors: zpl
  */
 const path = require('path');
 const fs = require('fs');
+const localize = require('ajv-i18n');
+
+/**
+ * 统一正常响应处理
+ *
+ * @param {*} reply
+ * @param {*} [data=null]
+ * @param {string} [message='请求成功']
+ * @param {number} [code=200]
+ */
+const onRouterSuccess = (reply, data = null, message = '请求成功', code = 200) => {
+  reply.code(code).send({
+    status: 'ok',
+    data,
+    message,
+  });
+};
+
+/**
+ * 统一异常响应处理
+ *
+ * @param {*} reply
+ * @param {*} err
+ */
+const onRouterError = (reply, err) => {
+  const code = err.status || 500;
+  const message = err.message || 'Internal Server Error';
+  const resBody = {
+    status: 'error',
+    message,
+  };
+  reply.code(code).send(resBody);
+};
+
+/**
+ * 转换错误信息
+ *
+ * @param {*} error
+ * @return {*}
+ */
+const convertCatchInfo = (error) => {
+  const {
+    message,
+    original={},
+    validation,
+  } = error;
+  const { sqlMessage } = original;
+  const err = {
+    status: 200,
+  };
+  if (typeof error === 'string') {
+    // 直接错误描述
+    err.message = error;
+  } else if (validation) {
+    // 数据验证错误
+    localize.zh(validation);
+    err.message = validation;
+  } else if (sqlMessage) {
+    // sql错误
+    err.message = sqlMessage;
+  } else if (message) {
+    switch (message) {
+      case 'Validation error':
+        console.log('进来一个枯怪的分支。。。');
+        // 数据验证错误
+        err.message = error.errors[0].message;
+        break;
+      default:
+        // 未分类错误
+        err.message = message;
+    }
+  } else {
+    // 其他格式错误
+    err.message = 'Internal Server Error';
+  }
+  return err;
+};
+
 /**
  * 按指定位置读取model文件
  *
@@ -71,6 +149,9 @@ const getCurrentDate = () => {
 };
 
 module.exports = {
+  onRouterSuccess,
+  onRouterError,
+  convertCatchInfo,
   load,
   convertChannelsToTree,
   getCurrentDate,

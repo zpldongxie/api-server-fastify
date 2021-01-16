@@ -2,7 +2,7 @@
  * @description:通用工具
  * @author: zpl
  * @Date: 2020-07-28 19:22:01
- * @LastEditTime: 2021-01-12 14:48:49
+ * @LastEditTime: 2021-01-13 18:39:59
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -31,18 +31,8 @@ const onRouterSuccess = (reply, data = null, message = '请求成功', code = 20
  * @param {*} err
  */
 const onRouterError = (reply, err) => {
-  console.log('====================================');
-  console.debug(err);
-  console.log('====================================');
   const code = err.status || 500;
-  const { sqlMessage } = err.original || {};
-  const message = sqlMessage || (
-    typeof err === 'string' ?
-      err :
-      code === 500 ?
-        'Internal Server Error' :
-        err.message || 'Internal Server Error'
-  );
+  const message = err.message || 'Internal Server Error';
   const resBody = {
     status: 'error',
     message,
@@ -69,7 +59,7 @@ const commonCatch = (method, reply) => {
         case 'Validation error':
           // 数据库验证错误
           err = {
-            status: 422,
+            status: 200,
             message: error.errors[0].message,
           };
           break;
@@ -77,6 +67,47 @@ const commonCatch = (method, reply) => {
       onRouterError(reply, err);
     }
   };
+};
+
+/**
+ * 转换错误信息
+ *
+ * @param {*} error
+ * @return {*}
+ */
+const getCatchInfo = (error) => {
+  console.log('====================================');
+  console.debug(error);
+  console.log('====================================');
+  const {
+    message,
+    original={},
+  } = error;
+  const { sqlMessage } = original;
+  const err = {
+    status: 200,
+  };
+  if (typeof error === 'string') {
+    // 直接错误描述
+    err.message = error;
+  } else if (sqlMessage) {
+    // sql错误
+    err.message = sqlMessage;
+  } else if (message) {
+    switch (message) {
+      case 'Validation error':
+        // 数据验证错误
+        err.message = error.errors[0].message;
+        break;
+      default:
+        // 未分类错误
+        err.message = message;
+    }
+  } else {
+    // 其他格式错误
+    err.message = 'Internal Server Error';
+  }
+  return err;
 };
 
 /**
@@ -275,6 +306,7 @@ module.exports = {
   onRouterSuccess,
   onRouterError,
   commonCatch,
+  getCatchInfo,
   CommonMethod,
   transaction,
 };
