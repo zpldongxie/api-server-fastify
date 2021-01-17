@@ -2,7 +2,7 @@
  * @description: 所有路由方法的抽象对象
  * @author: zpl
  * @Date: 2021-01-12 12:23:11
- * @LastEditTime: 2021-01-16 23:00:42
+ * @LastEditTime: 2021-01-17 20:55:17
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -114,7 +114,7 @@ class DatabaseMethod {
     if (attributes) {
       opt.attributes = attributes;
     }
-    if (include && Object.keys(include).length) {
+    if (include && include.length) {
       opt.include = include;
     }
 

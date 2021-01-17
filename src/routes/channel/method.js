@@ -2,9 +2,10 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-17 02:23:00
+ * @LastEditTime: 2021-01-17 22:23:52
  * @LastEditors: zpl
  */
+const { Op, col } = require('sequelize');
 const CommonMethod = require('../commonMethod');
 
 /**
@@ -36,7 +37,18 @@ class Method extends CommonMethod {
     await (that.run(request, reply))(
         async () => {
           const id = request.params.id;
-          const res = await that.dbMethod.findById(id);
+          const include = [{
+            model: ChannelSettingModule,
+            on: {
+              channel_id: {
+                [Op.eq]: col('Channel.id'),
+              },
+            },
+            attributes: {
+              exclude: ['ChannelId'],
+            },
+          }];
+          const res = await that.dbMethod.findById(id, include);
           return res;
         },
     );
@@ -53,9 +65,22 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
+          const { config: { ChannelSettingModule } } = reply.context;
           const where = {};
           const order = [['orderIndex', 'DESC']];
-          const res = await that.dbMethod.findAll({ where, order }, true);
+          const include = [{
+            model: ChannelSettingModule,
+            on: {
+              channel_id: {
+                [Op.eq]: col('Channel.id'),
+              },
+            },
+            attributes: {
+              exclude: ['ChannelId'],
+            },
+            // attributes: ['id', 'title', 'descStr', 'pic', 'video', 'link', 'type'],
+          }];
+          const res = await that.dbMethod.findAll({ where, order, include }, true);
           return res;
         },
     );
@@ -72,6 +97,7 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
+          const { config: { ChannelSettingModule } } = reply.context;
           const {
             current,
             pageSize,
@@ -80,7 +106,17 @@ class Method extends CommonMethod {
             ...where
           } = request.body;
           const attributes = {};
-          const include = {};
+          const include = [{
+            model: ChannelSettingModule,
+            on: {
+              channel_id: {
+                [Op.eq]: col('Channel.id'),
+              },
+            },
+            attributes: {
+              exclude: ['ChannelId'],
+            },
+          }];
           const res = await that.dbMethod.queryList({
             where,
             filter,

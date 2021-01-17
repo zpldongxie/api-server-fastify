@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-16 22:42:05
+ * @LastEditTime: 2021-01-17 20:55:52
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -53,6 +53,39 @@ class Method extends CommonMethod {
             },
           ];
           const res = await that.dbMethod.findById(id, include);
+          return res;
+        },
+    );
+  }
+
+  /**
+   * 根据ID获取单个
+   *
+   * @param {*} request
+   * @param {*} reply
+   * @memberof Method
+   */
+  async findOne(request, reply) {
+    const that = this;
+    await (that.run(request, reply))(
+        async () => {
+          const {
+            config: {
+              ChannelModel, ArticleExtensionModel,
+            },
+          } = reply.context;
+          const where = request.params;
+          const include = [
+            {
+              model: ChannelModel,
+              attributes: ['id', 'name'],
+            },
+            {
+              model: ArticleExtensionModel,
+              attributes: ['id', 'title', 'info', 'remark'],
+            },
+          ];
+          const res = await that.dbMethod.findOne({ where, include });
           return res;
         },
     );
@@ -334,10 +367,10 @@ class Method extends CommonMethod {
             attributes: {
               exclude: ['mainCon'],
             },
-            include: {
+            include: [{
               model: ChannelModel,
               attributes: ['id', 'name'],
-            },
+            }],
           };
           const res = await that.dbMethod.findAll(conditions);
           const { status } = res;

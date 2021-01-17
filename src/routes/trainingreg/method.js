@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-16 22:54:31
+ * @LastEditTime: 2021-01-17 20:06:20
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -123,9 +123,19 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const info = rerquest.body;
-          const include = [];
-          const res = await that.dbMethod.create(info, { include });
+          // const { config: { TrainingModel } } = reply.context;
+          const { TrainingId, mobile, ...info } = request.body;
+          const trRes = that.dbMethod.findOne({ where: { TrainingId, mobile } });
+          if (trRes.status) {
+            return {
+              status: 0,
+              message: '该手机号已经提交过申请，请不要重复提交',
+            };
+          }
+          // const include = [{
+          //   model: TrainingModel,
+          // }];
+          const res = await that.dbMethod.create({ ...info, TrainingId, mobile });
           return res;
         },
     );
@@ -142,8 +152,20 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const { id, ...info } = request.body;
-          const res = await that.dbMethod.updateOne(id, info);
+          const { id, TrainingId, mobile, ...info } = request.body;
+          const trRes = that.dbMethod.findOne({
+            where: {
+              TrainingId, mobile,
+              id: { [Op.not]: id },
+            },
+          });
+          if (trRes.status) {
+            return {
+              status: 0,
+              message: '该手机号已经提交过申请',
+            };
+          }
+          const res = await that.dbMethod.updateOne(id, { ...info, TrainingId, mobile });
           return res;
         },
     );

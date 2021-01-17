@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-12 20:30:42
+ * @LastEditTime: 2021-01-17 20:46:32
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -20,6 +20,7 @@ const routerBaseInfo = {
 module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
   const CurrentModel = mysqlModel[routerBaseInfo.modelName_U];
+  const ChannelSettingModule = mysqlModel.ChannelSetting;
   const { ajv } = opts;
   const method = new Method(CurrentModel, ajv);
 
@@ -56,6 +57,7 @@ module.exports = fp(async (server, opts, next) => {
       routerBaseInfo.getURL,
       {
         schema: { ...getByIdSchema, tags: ['channel'], summary: '根据ID获取单个' },
+        config: { ChannelSettingModule },
       },
       (request, reply) => method.getById(request, reply),
   );
@@ -63,7 +65,10 @@ module.exports = fp(async (server, opts, next) => {
   // 获取所有
   server.get(
       routerBaseInfo.getAllURL,
-      { schema: { tags: ['channel'], summary: '获取所有' } },
+      {
+        schema: { tags: ['channel'], summary: '获取所有' },
+        config: { ChannelSettingModule },
+      },
       (request, reply) => method.getAll(request, reply),
   );
 
@@ -71,7 +76,10 @@ module.exports = fp(async (server, opts, next) => {
   const queryListSchema = require('./query-list-schema');
   server.post(
       routerBaseInfo.getListURL,
-      { schema: { ...queryListSchema, tags: ['channel'], summary: '根据条件获取列表' } },
+      {
+        schema: { ...queryListSchema, tags: ['channel'], summary: '根据条件获取列表' },
+        config: { ChannelSettingModule },
+      },
       (request, reply) => method.queryList(request, reply),
   );
 

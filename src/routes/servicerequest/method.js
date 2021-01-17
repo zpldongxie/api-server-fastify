@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-16 22:55:06
+ * @LastEditTime: 2021-01-17 20:21:29
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -114,7 +114,7 @@ class Method extends CommonMethod {
           if (res.status && res.data.length) {
             return {
               status: 0,
-              message: '该手机号已存在同类型未完成的服务申请',
+              message: '该手机号已存在同类型未完成的服务申请，请不要重复提交',
             };
           }
           const createRes = await that.dbMethod.create(info, { include });
