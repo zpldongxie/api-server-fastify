@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-16 22:42:50
+ * @LastEditTime: 2021-01-18 12:58:10
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -53,7 +53,11 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const res = await that.dbMethod.findAll(request.params);
+          const res = await that.dbMethod.findAll({
+            attributes: {
+              exclude: ['ChannelId'],
+            },
+          }, true);
           return res;
         },
     );
@@ -77,7 +81,9 @@ class Method extends CommonMethod {
             filter,
             ...where
           } = request.body;
-          const attributes = {};
+          const attributes = {
+            exclude: ['ChannelId'],
+          };
           const include = {};
           const res = await that.dbMethod.queryList({
             where,
@@ -88,6 +94,29 @@ class Method extends CommonMethod {
             attributes,
             include,
           });
+          return res;
+        },
+    );
+  }
+
+  /**
+   * 获取全局公共配置
+   *
+   * @param {*} request
+   * @param {*} reply
+   * @memberof Method
+   */
+  async getCommonSettings(request, reply) {
+    const that = this;
+    await (that.run(request, reply))(
+        async () => {
+          const where = {
+            channel_id: null,
+          };
+          const attributes = {
+            exclude: ['ChannelId'],
+          };
+          const res = await that.dbMethod.findAll({ where, attributes }, true);
           return res;
         },
     );

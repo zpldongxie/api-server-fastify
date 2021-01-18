@@ -255,6 +255,12 @@ module.exports = fp(async (server, opts, next) => {
   );
 
   server.get(
+      '/rest/getCommonSettings',
+      { schema: { tags: ['rest'], summary: '获取全局公共配置' } },
+      (request, reply) => channelSettingMethod.getCommonSettings(request, reply),
+  );
+
+  server.get(
       '/rest/getHomePageData',
       {
         schema: { tags: ['rest'], summary: '获取首页数据' },
