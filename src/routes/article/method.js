@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-17 20:55:52
+ * @LastEditTime: 2021-01-18 16:59:29
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -111,6 +111,11 @@ class Method extends CommonMethod {
             attributes: {
               exclude: ['mainCon'],
             },
+            order: [
+              ['isRecom', 'DESC'],
+              ['orderIndex', 'DESC'],
+              ['conDate', 'DESC'],
+            ],
             include: [
               {
                 model: ChannelModel,
@@ -152,9 +157,12 @@ class Method extends CommonMethod {
           if (!where.hasOwnProperty('pubStatus')) {
             where.pubStatus = { [Op.not]: '已删除' };
           }
-          if (!sorter.hasOwnProperty('conDate')) {
-            sorter.conDate = 'desc';
-          }
+          const defaultSoter = {
+            'isHead': 'DESC',
+            'isRecom': 'DESC',
+            'orderIndex': 'DESC',
+            'conDate': 'DESC',
+          };
           const attributes = {
             exclude: ['mainCon'],
           };
@@ -176,7 +184,7 @@ class Method extends CommonMethod {
           const res = await that.dbMethod.queryList({
             where,
             filter,
-            sorter,
+            sorter: { ...defaultSoter, ...sorter },
             current,
             pageSize,
             attributes,

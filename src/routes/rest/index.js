@@ -2,13 +2,13 @@
  * @description rest接口，不做身份验证，其他系统使用的路由要加验证
  * @author: zpl
  * @Date: 2020-07-30 11:26:02
- * @LastEditTime: 2021-01-17 20:43:59
+ * @LastEditTime: 2021-01-18 16:42:30
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
-const { Op } = require('sequelize');
-const { onRouterSuccess, onRouterError } = require('../../util');
+// const { Op } = require('sequelize');
 const ChannelMethod = require('../channel/method');
+const ChannelSettingMethod = require('../channelsetting/method');
 const ArticleMethod = require('../article/method');
 const TrainingRegMethod = require('../trainingreg/method');
 const MemberCompanyMethod = require('../membercompany/method');
@@ -19,6 +19,7 @@ module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
   const { ajv } = opts;
   const channelMethod = new ChannelMethod(mysqlModel.Channel, ajv);
+  const channelSettingMethod = new ChannelSettingMethod(mysqlModel.ChannelSetting, ajv);
   const articleMethod = new ArticleMethod(mysqlModel.Article, ajv);
   const trainingRegMethod = new TrainingRegMethod(mysqlModel.TrainingReg, ajv);
   const memberCompanyMethod = new MemberCompanyMethod(mysqlModel.MemberCompany, ajv);
@@ -57,13 +58,17 @@ module.exports = fp(async (server, opts, next) => {
           const { config: { ChannelModel, ArticleExtensionModel } } = reply.context;
           // 配置
           const settings = [];
+
           // 轮播图
           const bannerList = getBanner(settings);
-          // 推荐轮播
-          const recomListRes = await articleMethod.dbMethod.queryList({
+
+          // 头条轮播
+
+          let headList = [];
+          const headListRes = await articleMethod.dbMethod.queryList({
             where: {
               'pubStatus': '已发布',
-              'isRecom': true,
+              'isHead': true,
             },
             sorter: {
               'orderIndex': 'desc',
@@ -86,12 +91,31 @@ module.exports = fp(async (server, opts, next) => {
             ],
           },
           true);
-          let recomList = [];
-          if (recomListRes.status) {
-            recomList = recomListRes.data.list;
+          if (headListRes.status) {
+            headList = headListRes.data.list;
           }
+
           // 协会动态
-          const associationNewsList = [];
+          let associationNewsList = [];
+          const acnRes = await articleMethod.dbMethod.queryList({
+            where: {
+              'pubStatus': '已发布',
+            },
+            order: [
+              ['isRecom', 'DESC'],
+              ['orderIndex', 'DESC'],
+              ['conDate', 'DESC'],
+            ],
+            include: [{
+              model: mysqlModel.Channel,
+              where: { enName: 'xkdt' },
+            }],
+            pageSize: 5,
+          });
+          if (acnRes.status) {
+            associationNewsList = acnRes.data.list;
+          }
+
           // tab页
           const newsTabList = [];
           // 省内动态
@@ -99,27 +123,97 @@ module.exports = fp(async (server, opts, next) => {
             nav: { 'id': 17, 'name': '省内动态', 'enName': 'sndt' },
             list: [],
           };
+          const sndtRes = await articleMethod.dbMethod.queryList({
+            where: {
+              'pubStatus': '已发布',
+            },
+            order: [
+              ['isRecom', 'DESC'],
+              ['orderIndex', 'DESC'],
+              ['conDate', 'DESC'],
+            ],
+            include: [{
+              model: mysqlModel.Channel,
+              where: { enName: 'sndt' },
+            }],
+            pageSize: 6,
+          });
+          if (sndtRes.status) {
+            sndt.list = sndtRes.data.list;
+          }
           newsTabList.push(sndt);
           // 国内动态
           const gndt = {
             nav: { 'id': 18, 'name': '国内动态', 'enName': 'gndt' },
             list: [],
           };
+          const gndtRes = await articleMethod.dbMethod.queryList({
+            where: {
+              'pubStatus': '已发布',
+            },
+            order: [
+              ['isRecom', 'DESC'],
+              ['orderIndex', 'DESC'],
+              ['conDate', 'DESC'],
+            ],
+            include: [{
+              model: mysqlModel.Channel,
+              where: { enName: 'gndt' },
+            }],
+            pageSize: 6,
+          });
+          if (gndtRes.status) {
+            gndt.list = gndtRes.data.list;
+          }
           newsTabList.push(gndt);
           // 国际动态
           const gjdt = {
             nav: { 'id': 19, 'name': '国际动态', 'enName': 'gjdt' },
             list: [],
           };
+          const gjdtRes = await articleMethod.dbMethod.queryList({
+            where: {
+              'pubStatus': '已发布',
+            },
+            order: [
+              ['isRecom', 'DESC'],
+              ['orderIndex', 'DESC'],
+              ['conDate', 'DESC'],
+            ],
+            include: [{
+              model: mysqlModel.Channel,
+              where: { enName: 'gjdt' },
+            }],
+            pageSize: 6,
+          });
+          if (gjdtRes.status) {
+            gjdt.list = gjdtRes.data.list;
+          }
           newsTabList.push(gjdt);
           // 培训入口
-          const trainingEntranceList = [];
-          // 产品列表
-          const productsList = [];
+          let trainingEntranceList = [];
+          const traregRes = await articleMethod.dbMethod.queryList({
+            where: {
+              'pubStatus': '已发布',
+              'isRecom': 1,
+            },
+            order: [
+              ['orderIndex', 'DESC'],
+              ['conDate', 'DESC'],
+            ],
+            include: [{
+              model: mysqlModel.Channel,
+              where: { keyWord: '培训' },
+            }],
+            pageSize: 2,
+          });
+          if (traregRes.status) {
+            trainingEntranceList = traregRes.data.list;
+          }
 
           return {
             status: 1,
-            data: { bannerList, recomList, associationNewsList, newsTabList, trainingEntranceList, productsList },
+            data: { bannerList, headList, associationNewsList, newsTabList, trainingEntranceList },
           };
         },
     );
@@ -151,7 +245,6 @@ module.exports = fp(async (server, opts, next) => {
   *            佛祖保佑       永不宕机     永无BUG
   */
 
-  // 获取菜单
   server.get(
       '/rest/menu',
       {
@@ -161,7 +254,6 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => channelMethod.getAll(request, reply),
   );
 
-  // 获取首页数据
   server.get(
       '/rest/getHomePageData',
       {
@@ -171,7 +263,6 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => getHomePageData(request, reply),
   );
 
-  // 按条件获取发布的文章列表
   server.post(
       '/rest/getPubList',
       {
@@ -185,7 +276,6 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => articleMethod.queryList(request, reply),
   );
 
-  // 获取头条文章列表
   server.get(
       '/rest/headList',
       {
@@ -199,7 +289,6 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => articleMethod.getById(request, reply),
   );
 
-  // 获取推荐文章列表
   server.get(
       '/rest/recomList',
       {
@@ -213,7 +302,6 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => articleMethod.queryList(request, reply),
   );
 
-  // 按ID获取文章内容
   server.get(
       '/rest/content/:id',
       {
@@ -228,14 +316,12 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => articleMethod.findOne(request, reply),
   );
 
-  // 培训报名
   server.put(
       '/rest/training/reg',
       { schema: { ...trainingregSchema, tags: ['rest'], summary: '培训报名' } },
       (request, reply) => trainingRegMethod.create(request, reply),
   );
 
-  // 企业会员注册
   server.put(
       '/rest/memberCompany/reg',
       {
@@ -245,7 +331,6 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => memberCompanyMethod.create(request, reply),
   );
 
-  // 个人会员注册
   server.put(
       '/rest/memberIndivic/reg',
       {
@@ -255,7 +340,6 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => memberIndivicMethod.create(request, reply),
   );
 
-  // 发起服务申请
   server.put(
       '/rest/putServiceRequest',
       { schema: { ...putServiceRequestSchema, tags: ['rest'], summary: '发起服务申请' } },
