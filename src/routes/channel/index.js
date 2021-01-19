@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-17 20:46:32
+ * @LastEditTime: 2021-01-19 16:40:41
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -13,6 +13,7 @@ const routerBaseInfo = {
   modelName_L: 'channel',
   getURL: '/api/channel/:id',
   getAllURL: '/api/channels',
+  getOnFilterURL: '/api/channels/:filter',
   getListURL: '/api/getChannelList',
   putURL: '/api/channel',
   deleteURL: '/api/channels',
@@ -51,7 +52,6 @@ module.exports = fp(async (server, opts, next) => {
   *            佛祖保佑       永不宕机     永无BUG
   */
 
-  // 根据ID获取单个
   const getByIdSchema = require('./query-by-id-schema');
   server.get(
       routerBaseInfo.getURL,
@@ -62,7 +62,6 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => method.getById(request, reply),
   );
 
-  // 获取所有
   server.get(
       routerBaseInfo.getAllURL,
       {
@@ -72,7 +71,16 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => method.getAll(request, reply),
   );
 
-  // 根据条件获取列表
+  const keywordFilterSchema = require('./keyword-filter-schema');
+  server.get(
+      routerBaseInfo.getOnFilterURL,
+      {
+        schema: { ...keywordFilterSchema, tags: ['channel'], summary: '关键字过滤查找栏目' },
+        config: { ChannelSettingModule },
+      },
+      (request, reply) => method.getOnFilter(request, reply),
+  );
+
   const queryListSchema = require('./query-list-schema');
   server.post(
       routerBaseInfo.getListURL,
@@ -83,14 +91,12 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => method.queryList(request, reply),
   );
 
-  // 新增或更新
   const updateSchema = require('./update-schema');
   server.put(routerBaseInfo.putURL,
       { schema: { ...updateSchema, tags: ['channel'], summary: '新增或更新' } },
       (request, reply) => method.upsert(request, reply),
   );
 
-  // 删除
   const deleteSchema = require('./delete-schema');
   server.delete(
       routerBaseInfo.deleteURL,

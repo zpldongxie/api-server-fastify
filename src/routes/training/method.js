@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-16 19:18:59
+ * @LastEditTime: 2021-01-19 17:34:39
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -35,8 +35,13 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
+          const { config: { ChannelModel } } = reply.context;
           const id = request.params.id;
-          const res = await that.dbMethod.findById(id);
+          const include = [{
+            model: ChannelModel,
+            attributes: ['id', 'name'],
+          }];
+          const res = await that.dbMethod.findById(id, include);
           return res;
         },
     );
@@ -53,7 +58,12 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const res = await that.dbMethod.findAll(request.params);
+          const { config: { ChannelModel } } = reply.context;
+          const include = [{
+            model: ChannelModel,
+            attributes: ['id', 'name'],
+          }];
+          const res = await that.dbMethod.findAll({ include });
           return res;
         },
     );
@@ -70,6 +80,7 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
+          const { config: { ChannelModel } } = reply.context;
           const {
             current,
             pageSize,
@@ -78,7 +89,10 @@ class Method extends CommonMethod {
             ...where
           } = request.body;
           const attributes = {};
-          const include = [];
+          const include = [{
+            model: ChannelModel,
+            attributes: ['id', 'name'],
+          }];
           const res = await that.dbMethod.queryList({
             where,
             filter,

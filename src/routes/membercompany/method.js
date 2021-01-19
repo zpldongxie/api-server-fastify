@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-16 22:42:30
+ * @LastEditTime: 2021-01-19 16:17:02
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -203,7 +203,7 @@ class Method extends CommonMethod {
     await (that.run(request, reply))(
         async () => {
           const { id, status } = request.body;
-          const res = await that.dbMethod.findById({ id });
+          const res = await that.dbMethod.findById(id);
           if (!res.status) {
             return {
               status: 0,
