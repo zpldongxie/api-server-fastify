@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-16 21:58:16
+ * @LastEditTime: 2021-01-19 16:12:42
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -15,7 +15,7 @@ const routerBaseInfo = {
   getAllURL: '/api/membercompanys',
   getListURL: '/api/getMemberCompanyList',
   putURL: '/api/membercompany',
-  auditURL: '/api/membercompanys/audit',
+  auditURL: '/api/membercompany/audit',
   deleteURL: '/api/membercompanys',
 };
 module.exports = fp(async (server, opts, next) => {
@@ -93,7 +93,7 @@ module.exports = fp(async (server, opts, next) => {
 
   // 审核
   const auditSchema = require('./audit-schema');
-  server.post(routerBaseInfo.auditURL,
+  server.put(routerBaseInfo.auditURL,
       { schema: { ...auditSchema, tags: ['membercompany'], summary: '审核' } },
       (request, reply) => method.audit(request, reply),
   );

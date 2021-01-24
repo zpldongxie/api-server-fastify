@@ -2,7 +2,7 @@
  * @description: 数据库初始数据
  * @author: zpl
  * @Date: 2020-07-26 22:19:42
- * @LastEditTime: 2020-10-16 15:21:07
+ * @LastEditTime: 2021-01-19 10:36:26
  * @LastEditors: zpl
  */
 exports.userGroupList = [{
@@ -41,9 +41,13 @@ exports.userList = [{
 }];
 
 exports.memberTypeList = [{
-  name: 'vip会员',
+  name: '副理事长单位',
 }, {
-  name: '普通会员',
+  name: '理事单位',
+}, {
+  name: '单位会员',
+}, {
+  name: '个人会员',
 }];
 
 exports.sysConfig = [{

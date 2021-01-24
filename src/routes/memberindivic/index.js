@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-16 21:58:00
+ * @LastEditTime: 2021-01-19 16:06:51
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -15,7 +15,7 @@ const routerBaseInfo = {
   getAllURL: '/api/memberindivics',
   getListURL: '/api/getMemberIndivicList',
   putURL: '/api/memberindivic',
-  auditURL: '/api/membercompanys/audit',
+  auditURL: '/api/memberindivic/audit',
   deleteURL: '/api/memberindivics',
 };
 module.exports = fp(async (server, opts, next) => {

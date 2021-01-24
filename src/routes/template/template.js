@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-12 20:30:42
+ * @LastEditTime: 2021-01-19 16:37:00
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -50,7 +50,6 @@ module.exports = fp(async (server, opts, next) => {
   *            佛祖保佑       永不宕机     永无BUG
   */
 
-  // 根据ID获取单个
   const getByIdSchema = require('./query-by-id-schema');
   server.get(
       routerBaseInfo.getURL,
@@ -60,14 +59,12 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => method.getById(request, reply),
   );
 
-  // 获取所有
   server.get(
       routerBaseInfo.getAllURL,
       { schema: { tags: ['currentModelName'], summary: '获取所有' } },
       (request, reply) => method.getAll(request, reply),
   );
 
-  // 根据条件获取列表
   const queryListSchema = require('./query-list-schema');
   server.post(
       routerBaseInfo.getListURL,
@@ -75,14 +72,12 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => method.queryList(request, reply),
   );
 
-  // 新增或更新
   const updateSchema = require('./update-schema');
   server.put(routerBaseInfo.putURL,
       { schema: { ...updateSchema, tags: ['currentModelName'], summary: '新增或更新' } },
       (request, reply) => method.upsert(request, reply),
   );
 
-  // 删除
   const deleteSchema = require('./delete-schema');
   server.delete(
       routerBaseInfo.deleteURL,

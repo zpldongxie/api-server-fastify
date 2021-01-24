@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-17 20:21:29
+ * @LastEditTime: 2021-01-22 15:05:08
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -106,7 +106,7 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const info = rerquest.body;
+          const info = request.body;
           const { contactsMobile, demandType } = info;
           const res = await that.dbMethod.findAll({
             where: { contactsMobile, demandType, status: { [Op.not]: serviceStatus.finished } },
@@ -117,7 +117,7 @@ class Method extends CommonMethod {
               message: '该手机号已存在同类型未完成的服务申请，请不要重复提交',
             };
           }
-          const createRes = await that.dbMethod.create(info, { include });
+          const createRes = await that.dbMethod.create(info);
           return createRes;
         },
     );
@@ -159,12 +159,12 @@ class Method extends CommonMethod {
    */
   async upsert(request, reply) {
     const that = this;
-    await (that.run(request, reply))(
-        async () => {
-          const res = await that.dbMethod.upsert(request.body);
-          return res;
-        },
-    );
+    const { id } = request.body;
+    if (id) {
+      that.update(request, reply);
+    } else {
+      that.create(request, reply);
+    }
   }
 
   /**

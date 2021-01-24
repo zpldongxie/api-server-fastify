@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-17 22:23:52
+ * @LastEditTime: 2021-01-19 16:44:35
  * @LastEditors: zpl
  */
 const { Op, col } = require('sequelize');
@@ -81,6 +81,27 @@ class Method extends CommonMethod {
             // attributes: ['id', 'title', 'descStr', 'pic', 'video', 'link', 'type'],
           }];
           const res = await that.dbMethod.findAll({ where, order, include }, true);
+          return res;
+        },
+    );
+  }
+
+  /**
+   * 关键字过滤查找栏目
+   *
+   * @param {*} request
+   * @param {*} reply
+   * @memberof Method
+   */
+  async getOnFilter(request, reply) {
+    const that = this;
+    await (that.run(request, reply))(
+        async () => {
+          const { filter } = request.params;
+          const where = filter ? { keyWord: { [Op.substring]: filter } } : {};
+          const order = [['orderIndex', 'DESC']];
+          const attributes = ['id', 'name', 'keyWord'];
+          const res = await that.dbMethod.findAll({ where, order, attributes }, true);
           return res;
         },
     );
