@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-12 20:30:42
+ * @LastEditTime: 2021-01-28 10:26:39
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -12,6 +12,7 @@ const routerBaseInfo = {
   modelName_U: 'MemberType',
   modelName_L: 'membertype',
   getURL: '/api/membertype/:id',
+  getByName: '/api/membertype/byName/:name',
   getAllURL: '/api/membertypes',
   getListURL: '/api/getMemberTypeList',
   putURL: '/api/membertype',
@@ -58,6 +59,16 @@ module.exports = fp(async (server, opts, next) => {
         schema: { ...getByIdSchema, tags: ['membertype'], summary: '根据ID获取单个' },
       },
       (request, reply) => method.getById(request, reply),
+  );
+
+  // 根据名称获取单个
+  const getByNameSchema = require('./query-by-name-schema');
+  server.get(
+      routerBaseInfo.getByName,
+      {
+        schema: { ...getByNameSchema, tags: ['membertype'], summary: '根据名称获取单个' },
+      },
+      (request, reply) => method.getByName(request, reply),
   );
 
   // 获取所有

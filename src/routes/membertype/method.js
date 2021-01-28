@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-16 19:18:59
+ * @LastEditTime: 2021-01-28 10:26:22
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -37,6 +37,24 @@ class Method extends CommonMethod {
         async () => {
           const id = request.params.id;
           const res = await that.dbMethod.findById(id);
+          return res;
+        },
+    );
+  }
+
+  /**
+   * 根据名称获取单个
+   *
+   * @param {*} request
+   * @param {*} reply
+   * @memberof Method
+   */
+  async getByName(request, reply) {
+    const that = this;
+    await (that.run(request, reply))(
+        async () => {
+          const name = request.params.name;
+          const res = await that.dbMethod.findOne({ where: { name } });
           return res;
         },
     );
