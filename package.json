@@ -33,6 +33,7 @@
     "fastify-swagger": "^3.2.0",
     "fluent-schema": "^1.0.4",
     "mysql2": "^2.2.5",
+    "nodemailer": "^6.4.17",
     "request": "^2.88.2",
     "sequelize": "^6.3.5"
   }

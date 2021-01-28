@@ -2,12 +2,15 @@
  * @description: 全局工具
  * @author: zpl
  * @Date: 2020-09-07 00:38:53
- * @LastEditTime: 2021-01-16 22:23:58
+ * @LastEditTime: 2021-01-27 17:38:02
  * @LastEditors: zpl
  */
 const path = require('path');
 const fs = require('fs');
 const localize = require('ajv-i18n');
+
+const emailHeadImg = require('./assets/emailHeadImg');
+const emailFooterLogo = require('./assets/emailFooterLogo');
 
 /**
  * 统一正常响应处理
@@ -148,6 +151,61 @@ const getCurrentDate = () => {
   return localISOTime;
 };
 
+/**
+ * 套用标准email模板
+ *
+ * @param {*} context
+ * @return {*}
+ */
+const getEmailHtml = (context) => {
+  return `
+  <div style="width: 600px; margin: 10px auto;">
+    <div class="header"></div>
+    <div class="body">
+      <img
+        src=${emailHeadImg}
+        alt=""
+        srcset=""
+      />
+      <div
+        class="con"
+        style="
+          position: relative;
+          background-color: #fff;
+          width: 560px;
+          margin: -105px auto 0;
+          min-height: 300px;
+          padding: 40px;
+          font-size: 15px;
+          line-height: 1.5em;
+          box-sizing: border-box;
+        "
+      >
+        ${context}
+      </div>
+    </div>
+    <div
+      class="footer"
+      style="
+        border-top: 2px solid #4c8447;
+        border-bottom: 10px solid #4c8447;
+        font-size: 14px;
+        padding: 20px;
+      "
+    >
+      <div style="display: inline-block; width: 350px; line-height: 1.9em; vertical-align: middle;">
+        <div>联系我们</div>
+        <div>电话：029-8885-9176</div>
+        <div>地址：西安市高新区茶张路一号省信息化中心17层</div>
+      </div>
+      <div style="display: inline-block; width: 200px; text-align: right; vertical-align: middle;">
+        <img src=${emailFooterLogo} alt="" srcset="">
+      </div>
+    </div>
+  </div>
+  `;
+};
+
 module.exports = {
   onRouterSuccess,
   onRouterError,
@@ -155,4 +213,5 @@ module.exports = {
   load,
   convertChannelsToTree,
   getCurrentDate,
+  getEmailHtml,
 };

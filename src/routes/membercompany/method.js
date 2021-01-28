@@ -2,13 +2,15 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-19 16:17:02
+ * @LastEditTime: 2021-01-27 18:00:20
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
 const CommonMethod = require('../commonMethod');
 const { memberStatus } = require('../../dictionary');
-const { getCurrentDate } = require('../../util');
+const { getCurrentDate, getEmailHtml } = require('../../util');
+
+const { firstResoveTemplate, rejectTemplate, formalMemberTemplate, disableTemplate } = require('./email-template');
 
 /**
  * 路由用到的方法
@@ -202,6 +204,7 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
+          const { config: { sysConfigModel, nodemailer } } = reply.context;
           const { id, status } = request.body;
           const res = await that.dbMethod.findById(id);
           if (!res.status) {
@@ -215,6 +218,53 @@ class Method extends CommonMethod {
             logonDate = getCurrentDate();
           }
           const updateRes = await that.dbMethod.updateOne(id, { ...request.body, logonDate });
+          if (updateRes.status) {
+            const currentRes = await that.dbMethod.findById(id);
+            const from = await sysConfigModel.findOne({ where: { name: 'from', group: '邮箱' } });
+            const current = currentRes.data;
+            let html = '';
+            switch (status) {
+              case memberStatus.firstPass:
+                // 初审通过
+                html = firstResoveTemplate;
+                break;
+              case memberStatus.reject:
+                // 审核不通过
+                html = rejectTemplate;
+                break;
+              case memberStatus.formalMember:
+                // 成为正式会员
+                html = formalMemberTemplate;
+                break;
+              case memberStatus.disable:
+                // 禁用
+                html = disableTemplate;
+                break;
+            }
+            html = html.replace('%name%', current.corporateName);
+            const now = new Date(getCurrentDate());
+            html = html.replace('%date%', `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日`);
+            html = html.replace('%rejectDesc%', current.rejectDesc);
+            html = getEmailHtml(html);
+            if (html !== '') {
+              try {
+                await nodemailer.sendMail({
+                  from: from.value,
+                  to: current.email,
+                  subject: '陕西省信息网络安全协会单位会员状态变更提醒',
+                  html,
+                });
+                const sendEmailStatus = getCurrentDate();
+                await that.dbMethod.updateOne(id, { sendEmailStatus });
+              } catch (e) {
+                await that.dbMethod.updateOne(id, { sendEmailStatus: '发送失败' });
+                return {
+                  status: 0,
+                  message: '邮件发送失败',
+                };
+              }
+            }
+          }
           return updateRes;
         },
     );

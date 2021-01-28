@@ -2,12 +2,14 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-22 15:05:08
+ * @LastEditTime: 2021-01-27 19:00:12
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
 const CommonMethod = require('../commonMethod');
 const { serviceStatus } = require('../../dictionary');
+
+const { acceptTemplate, rejectTemplate, inServiceTemplate, finishedTemplate } = require('./email-template');
 
 /**
  * 路由用到的方法
@@ -165,6 +167,85 @@ class Method extends CommonMethod {
     } else {
       that.create(request, reply);
     }
+  }
+
+  /**
+   * 审核
+   *
+   * @param {*} request
+   * @param {*} reply
+   * @memberof Method
+   */
+  async audit(request, reply) {
+    const that = this;
+    await (that.run(request, reply))(
+        async () => {
+          const { config: { sysConfigModel, nodemailer } } = reply.context;
+          const { id, ...props } = request.body;
+          const res = await that.dbMethod.findById(id);
+          if (!res.status) {
+            return {
+              status: 0,
+              message: 'ID错误，请确认后重新提交',
+            };
+          }
+          const updateRes = await that.dbMethod.updateOne(id, props);
+          if (updateRes.status) {
+            const currentRes = await that.dbMethod.findById(id);
+            const from = await sysConfigModel.findOne({ where: { name: 'from', group: '邮箱' } });
+            const current = currentRes.data;
+            let html = '';
+            switch (status) {
+              case serviceStatus.accept:
+              // 接受申请
+                html = acceptTemplate;
+                break;
+              case serviceStatus.reject:
+              // 拒绝申请
+                html = rejectTemplate;
+                break;
+              case serviceStatus.inService:
+              // 服务中
+                html = inServiceTemplate;
+                break;
+              case serviceStatus.finished:
+              // 服务完成
+                html = finishedTemplate;
+                break;
+            }
+            html = html.replace('%name%', current.corporateName);
+            const { createdAt } = current;
+            html = html.replace(
+                '%createdAt%',
+                `${createdAt.getFullYear()}年${createdAt.getMonth() + 1}月${createdAt.getDate()}日`,
+            );
+            html = html.replace('%demandType%', current.demandType);
+            const now = new Date(getCurrentDate());
+            html = html.replace('%date%', `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`);
+            html = html.replace('%rejectDesc%', current.rejectDesc);
+            html = getEmailHtml(html);
+            if (html !== '') {
+              try {
+                await nodemailer.sendMail({
+                  from: from.value,
+                  to: current.email,
+                  subject: '陕西省信息网络安全协会服务申请回执',
+                  html,
+                });
+                const sendEmailStatus = getCurrentDate();
+                await that.dbMethod.updateOne(id, { sendEmailStatus });
+              } catch (e) {
+                await that.dbMethod.updateOne(id, { sendEmailStatus: '发送失败' });
+                return {
+                  status: 0,
+                  message: '邮件发送失败',
+                };
+              }
+            }
+          }
+          return updateRes;
+        },
+    );
   }
 
   /**

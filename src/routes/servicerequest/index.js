@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-12 20:30:42
+ * @LastEditTime: 2021-01-27 14:27:37
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -15,11 +15,13 @@ const routerBaseInfo = {
   getAllURL: '/api/servicerequests',
   getListURL: '/api/getServiceRequestList',
   putURL: '/api/servicerequest',
+  auditURL: '/api/servicerequest/audit',
   deleteURL: '/api/servicerequests',
 };
 module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
   const CurrentModel = mysqlModel[routerBaseInfo.modelName_U];
+  const sysConfigModel = mysqlModel.SysConfig;
   const { ajv } = opts;
   const method = new Method(CurrentModel, ajv);
 
@@ -80,6 +82,16 @@ module.exports = fp(async (server, opts, next) => {
   server.put(routerBaseInfo.putURL,
       { schema: { ...updateSchema, tags: ['servicerequest'], summary: '新增或更新' } },
       (request, reply) => method.upsert(request, reply),
+  );
+
+  // 审核
+  const auditSchema = require('./audit-schema');
+  server.put(routerBaseInfo.auditURL,
+      {
+        schema: { ...auditSchema, tags: ['servicerequest'], summary: '审核' },
+        config: { sysConfigModel, nodemailer: server.nodemailer },
+      },
+      (request, reply) => method.audit(request, reply),
   );
 
   // 删除

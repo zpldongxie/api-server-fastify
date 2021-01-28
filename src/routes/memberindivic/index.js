@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-19 16:06:51
+ * @LastEditTime: 2021-01-27 13:43:34
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -22,6 +22,7 @@ module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
   const CurrentModel = mysqlModel[routerBaseInfo.modelName_U];
   const MemberTypeModel = mysqlModel.MemberType;
+  const sysConfigModel = mysqlModel.SysConfig;
   const { ajv } = opts;
   const method = new Method(CurrentModel, ajv);
 
@@ -97,7 +98,10 @@ module.exports = fp(async (server, opts, next) => {
   // 审核
   const auditSchema = require('./audit-schema');
   server.put(routerBaseInfo.auditURL,
-      { schema: { ...auditSchema, tags: ['memberindivic'], summary: '审核' } },
+      {
+        schema: { ...auditSchema, tags: ['memberindivic'], summary: '审核' },
+        config: { sysConfigModel, nodemailer: server.nodemailer },
+      },
       (request, reply) => method.audit(request, reply),
   );
 
