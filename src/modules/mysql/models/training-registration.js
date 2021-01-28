@@ -2,7 +2,7 @@
  * @description: 安全培训报名
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2021-01-02 19:22:05
+ * @LastEditTime: 2021-01-27 13:56:10
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -51,6 +51,11 @@ class TrainingReg extends Model {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
         comment: '是否审核通过',
+      },
+      sendEmailStatus: {
+        type: DataTypes.STRING,
+        defaultValue: '未发送',
+        comment: '邮件发送状态，未发送|发送失败|发送成功时间',
       },
       signInTime: {
         type: DataTypes.DATEONLY,

@@ -3,7 +3,7 @@
  * @description: 个人会员
  * @author: zpl
  * @Date: 2020-08-17 18:35:54
- * @LastEditTime: 2021-01-12 09:19:36
+ * @LastEditTime: 2021-01-27 13:56:27
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -105,6 +105,11 @@ class MemberIndivic extends Model {
       rejectDesc: {
         type: DataTypes.STRING,
         comment: '驳回原因',
+      },
+      sendEmailStatus: {
+        type: DataTypes.STRING,
+        defaultValue: '未发送',
+        comment: '邮件发送状态，未发送|发送失败|发送成功时间',
       },
     }, {
       sequelize,

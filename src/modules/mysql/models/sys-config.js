@@ -2,7 +2,7 @@
  * @description: 系统配置表
  * @author: zpl
  * @Date: 2020-10-14 21:31:40
- * @LastEditTime: 2021-01-02 19:21:22
+ * @LastEditTime: 2021-01-26 12:40:02
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -42,6 +42,11 @@ class SysConfig extends Model {
         type: DataTypes.STRING,
         defaultValue: '',
         comment: '配置说明',
+      },
+      group: {
+        type: DataTypes.STRING,
+        defaultValue: '默认',
+        comment: '分组',
       },
     }, {
       sequelize,

@@ -92,10 +92,15 @@ class MemberCompany extends Model {
         type: DataTypes.STRING,
         comment: '驳回原因',
       },
+      sendEmailStatus: {
+        type: DataTypes.STRING,
+        defaultValue: '未发送',
+        comment: '邮件发送状态，未发送|发送失败|发送成功时间',
+      },
     }, {
       sequelize,
       modelName: 'MemberCompany',
-      comment: '企业会员',
+      comment: '单位会员',
     });
   }
 
