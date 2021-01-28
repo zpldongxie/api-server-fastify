@@ -39,12 +39,14 @@ const ajv = new Ajv({
   useDefaults: true,
   coerceTypes: true,
 });
+// 全局异常捕捉
 fastify.setErrorHandler((error, request, reply) => {
   console.log('-----捕捉到错误了-----');
   console.warn(error);
   const err = convertCatchInfo(error);
   onRouterError(reply, err);
 });
+
 // 挂载路由
 const routeDir = path.resolve(__dirname, './routes');
 load(routeDir, (name, model) => {

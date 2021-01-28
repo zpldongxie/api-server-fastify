@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-16 23:02:49
+ * @LastEditTime: 2021-01-25 15:55:37
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -72,7 +72,7 @@ module.exports = fp(async (server, opts, next) => {
           include: [{ model: UserGroup }],
         });
         const { status, data } = res;
-        console.log('user', data);
+        console.log(data.name, ' 正在登录');
         if (status) {
           const token = server.jwt.sign({ id: data.id });
           const authors = data.UserGroups.map((g) => g.tag);

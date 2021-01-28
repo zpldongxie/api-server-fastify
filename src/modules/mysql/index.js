@@ -2,7 +2,7 @@
  * @description: mySql
  * @author: zpl
  * @Date: 2020-07-25 14:47:25
- * @LastEditTime: 2020-12-21 10:21:42
+ * @LastEditTime: 2021-01-25 15:53:34
  * @LastEditors: zpl
  */
 
@@ -18,6 +18,7 @@ module.exports = fp(async (fastify, opts, next) => {
     dialect,
     pool,
     operatorsAliases: false, // 仍可通过传入 operators map 至 operatorsAliases 的方式来使用字符串运算符，但会返回弃用警告
+    logging: false,
   });
 
   try {
