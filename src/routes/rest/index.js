@@ -331,7 +331,7 @@ module.exports = fp(async (server, opts, next) => {
   server.put(
       '/rest/memberCompany/reg',
       {
-        schema: { ...memberCompanyRegSchema, tags: ['rest'], summary: '企业会员注册' },
+        schema: { ...memberCompanyRegSchema, tags: ['rest'], summary: '单位会员注册' },
         config: { MemberTypeModel: mysqlModel.MemberType },
       },
       (request, reply) => memberCompanyMethod.create(request, reply),

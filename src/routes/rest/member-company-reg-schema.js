@@ -1,8 +1,8 @@
 /*
- * @description: 企业会员注册请求数据校验
+ * @description: 单位会员注册请求数据校验
  * @author: zpl
  * @Date: 2021-01-02 22:47:35
- * @LastEditTime: 2021-01-03 09:16:45
+ * @LastEditTime: 2021-01-27 18:01:25
  * @LastEditors: zpl
  */
 const S = require('fluent-schema');
@@ -26,7 +26,7 @@ const bodyJsonSchema = S.object()
     )
     .prop('industry', S.string().description('所属行业'))
     .prop('legalPerson', S.string().description('法人'))
-    .prop('website', S.string().description('企业网站'))
+    .prop('website', S.string().description('单位网站'))
     .prop('address', S.string().description('地址'))
     .prop(
         'zipCode',

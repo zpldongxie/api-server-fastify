@@ -21,7 +21,7 @@ const bodyJsonSchema = S.object()
     )
     .prop('industry', S.string().description('所属行业'))
     .prop('legalPerson', S.string().description('法人'))
-    .prop('website', S.string().description('企业网站'))
+    .prop('website', S.string().description('单位网站'))
     .prop('address', S.string().description('地址'))
     .prop(
         'zipCode',

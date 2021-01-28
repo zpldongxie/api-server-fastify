@@ -19,7 +19,7 @@ const bodyJsonSchema = S.object()
             .maxLength(6)
             .description('邮编'),
     )
-    .prop('website', S.string().description('企业网站'))
+    .prop('website', S.string().description('单位网站'))
     .prop('contacts', S.string().description('联系人'))
     .prop(
         'contactsMobile',

@@ -1,16 +1,16 @@
 /* eslint-disable new-cap */
 /*
- * @description: 企业会员
+ * @description: 单位会员
  * @author: zpl
  * @Date: 2020-08-17 18:35:54
- * @LastEditTime: 2021-01-12 09:19:17
+ * @LastEditTime: 2021-01-27 18:00:45
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
 const { memberStatus } = require('../../../dictionary');
 
 /**
-   * 企业会员
+   * 单位会员
    *
    * @class MemberCompany
    * @extends {Model}
@@ -65,7 +65,7 @@ class MemberCompany extends Model {
       },
       website: {
         type: DataTypes.STRING,
-        comment: '企业网站',
+        comment: '单位网站',
       },
       address: {
         type: DataTypes.STRING,

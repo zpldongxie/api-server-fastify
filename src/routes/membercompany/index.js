@@ -57,7 +57,7 @@ module.exports = fp(async (server, opts, next) => {
   server.get(
       routerBaseInfo.getURL,
       {
-        schema: { ...getByIdSchema, tags: ['membercompany'], summary: '根据ID获取单个企业会员' },
+        schema: { ...getByIdSchema, tags: ['membercompany'], summary: '根据ID获取单个单位会员' },
         config: { MemberTypeModel },
       },
       (request, reply) => method.getById(request, reply),
@@ -66,7 +66,7 @@ module.exports = fp(async (server, opts, next) => {
   // 获取所有
   server.get(
       routerBaseInfo.getAllURL,
-      { schema: { tags: ['membercompany'], summary: '获取所有企业会员' } },
+      { schema: { tags: ['membercompany'], summary: '获取所有单位会员' } },
       (request, reply) => method.getAll(request, reply),
   );
 
@@ -75,7 +75,7 @@ module.exports = fp(async (server, opts, next) => {
   server.post(
       routerBaseInfo.getListURL,
       {
-        schema: { ...queryListSchema, tags: ['membercompany'], summary: '根据条件获取企业会员列表' },
+        schema: { ...queryListSchema, tags: ['membercompany'], summary: '根据条件获取单位会员列表' },
         config: { MemberTypeModel },
       },
       (request, reply) => method.queryList(request, reply),
@@ -85,7 +85,7 @@ module.exports = fp(async (server, opts, next) => {
   const updateSchema = require('./update-schema');
   server.put(routerBaseInfo.putURL,
       {
-        schema: { ...updateSchema, tags: ['membercompany'], summary: '新增或更新企业会员' },
+        schema: { ...updateSchema, tags: ['membercompany'], summary: '新增或更新单位会员' },
         config: { MemberTypeModel },
       },
       (request, reply) => method.upsert(request, reply),
@@ -102,7 +102,7 @@ module.exports = fp(async (server, opts, next) => {
   const deleteSchema = require('./delete-schema');
   server.delete(
       routerBaseInfo.deleteURL,
-      { schema: { ...deleteSchema, tags: ['membercompany'], summary: '批量删除企业会员' } },
+      { schema: { ...deleteSchema, tags: ['membercompany'], summary: '批量删除单位会员' } },
       (request, reply) => method.remove(request, reply),
   );
 

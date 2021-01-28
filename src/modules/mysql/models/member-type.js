@@ -54,7 +54,7 @@ class MemberType extends Model {
    * @memberof MemberType
    */
   static reateAssociation(sequelize) {
-    // 会员类型 - 企业会员， 一对多
+    // 会员类型 - 单位会员， 一对多
     MemberType.hasMany(sequelize.models['MemberCompany']);
     // 会员类型 - 个人会员， 一对多
     MemberType.hasMany(sequelize.models['MemberIndivic']);
