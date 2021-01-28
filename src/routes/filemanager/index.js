@@ -2,7 +2,7 @@
  * @description: 上传功能
  * @author: zpl
  * @Date: 2020-10-13 17:39:11
- * @LastEditTime: 2021-01-12 17:28:48
+ * @LastEditTime: 2021-01-26 12:16:40
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -11,7 +11,7 @@ const path = require('path');
 const multer = require('fastify-multer');
 const dayjs = require('dayjs');
 
-const { commonCatch, onRouterSuccess, onRouterError } = require('../util');
+const { onRouterSuccess, onRouterError } = require('../../util');
 const { viewList, removeFile } = require('../file_manager');
 
 /**
@@ -74,8 +74,8 @@ const getPreHandler = (config, getSysConfig) => {
         cb(new Error('上传类型错误'));
       } else if (!extList.find((ext) => ext === currentExt)) {
         cb(new Error('文件格式不正确'));
-      } else if ((req.headers['content-length']-210) > (size * 1024)) {
-        console.log('source size: ' + (req.headers['content-length']-210));
+      } else if ((req.headers['content-length'] - 210) > (size * 1024)) {
+        console.log('source size: ' + (req.headers['content-length'] - 210));
         console.log(size * 1024);
         cb(new Error('文件大小超过限制'));
       } else {
@@ -142,20 +142,15 @@ module.exports = fp(async (server, opts, next) => {
           return reply.code(400).send(validate.errors);
         }
 
-        const runFun = async () => {
-          const { currentPath } = request.body;
-          const sysConfig = await getSysConfig();
-          const baseUrl = sysConfig.base_url;
-          const absPath = path.resolve(opts.config.get('uploadRootPath'), currentPath);
-          const list = viewList(absPath);
-          list.forEach((f) => {
-            f.url = `${baseUrl}uploads/${currentPath}/${f.name}`;
-          });
-          onRouterSuccess(reply, list);
-        };
-
-        // 统一捕获异常
-        commonCatch(runFun, reply)();
+        const { currentPath } = request.body;
+        const sysConfig = await getSysConfig();
+        const baseUrl = sysConfig.base_url;
+        const absPath = path.resolve(opts.config.get('uploadRootPath'), currentPath);
+        const list = viewList(absPath);
+        list.forEach((f) => {
+          f.url = `${baseUrl}uploads/${currentPath}/${f.name}`;
+        });
+        onRouterSuccess(reply, list);
       },
   );
 
@@ -171,24 +166,19 @@ module.exports = fp(async (server, opts, next) => {
           return reply.code(400).send(validate.errors);
         }
 
-        const runFun = async () => {
-          const { filePath, fileName } = request.body;
-          const tempPath = `${filePath}/${fileName}`;
-          const absPath = path.resolve(opts.config.get('uploadRootPath'), tempPath);
-          removeFile(
-              absPath,
-              () => {
-                onRouterSuccess(reply);
-              },
-              (err) => {
-                console.error(err);
-                onRouterError(reply, { status: 200 });
-              },
-          );
-        };
-
-        // 统一捕获异常
-        commonCatch(runFun, reply)();
+        const { filePath, fileName } = request.body;
+        const tempPath = `${filePath}/${fileName}`;
+        const absPath = path.resolve(opts.config.get('uploadRootPath'), tempPath);
+        removeFile(
+            absPath,
+            () => {
+              onRouterSuccess(reply);
+            },
+            (err) => {
+              console.error(err);
+              onRouterError(reply, { status: 200 });
+            },
+        );
       },
   );
 });
