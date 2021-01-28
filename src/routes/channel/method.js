@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-19 16:44:35
+ * @LastEditTime: 2021-01-28 10:20:04
  * @LastEditors: zpl
  */
 const { Op, col } = require('sequelize');
@@ -80,7 +80,7 @@ class Method extends CommonMethod {
             },
             // attributes: ['id', 'title', 'descStr', 'pic', 'video', 'link', 'type'],
           }];
-          const res = await that.dbMethod.findAll({ where, order, include }, true);
+          const res = await that.dbMethod.findAll({ where, order, include });
           return res;
         },
     );
@@ -101,7 +101,7 @@ class Method extends CommonMethod {
           const where = filter ? { keyWord: { [Op.substring]: filter } } : {};
           const order = [['orderIndex', 'DESC']];
           const attributes = ['id', 'name', 'keyWord'];
-          const res = await that.dbMethod.findAll({ where, order, attributes }, true);
+          const res = await that.dbMethod.findAll({ where, order, attributes });
           return res;
         },
     );

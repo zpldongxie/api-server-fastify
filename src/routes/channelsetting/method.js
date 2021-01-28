@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-18 12:58:10
+ * @LastEditTime: 2021-01-28 10:20:20
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -57,7 +57,7 @@ class Method extends CommonMethod {
             attributes: {
               exclude: ['ChannelId'],
             },
-          }, true);
+          });
           return res;
         },
     );
@@ -116,7 +116,7 @@ class Method extends CommonMethod {
           const attributes = {
             exclude: ['ChannelId'],
           };
-          const res = await that.dbMethod.findAll({ where, attributes }, true);
+          const res = await that.dbMethod.findAll({ where, attributes });
           return res;
         },
     );

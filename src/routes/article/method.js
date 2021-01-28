@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-18 16:59:29
+ * @LastEditTime: 2021-01-28 10:19:50
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -249,7 +249,7 @@ class Method extends CommonMethod {
           };
           const res = {};
           const result = await that.dbMethod.upsert(params);
-          const cResult = await channelDBMethod.queryList({ where: { id: { [Op.in]: params.Channels } } }, true);
+          const cResult = await channelDBMethod.queryList({ where: { id: { [Op.in]: params.Channels } } });
           if (!!result.status) {
             const article = result.data;
             const eResult = await articleExtensionDBMethod.queryList({ where: { ArticleId: article.id } });
@@ -300,7 +300,7 @@ class Method extends CommonMethod {
           const { ids, cIds } = request.body;
           // TODO: 没有做栏目类型校验
           const aResult = await that.dbMethod.queryList({ where: { id: { [Op.in]: ids } } });
-          const cResult = await channelDBMethod.queryList({ where: { id: { [Op.in]: cIds } } }, true);
+          const cResult = await channelDBMethod.queryList({ where: { id: { [Op.in]: cIds } } });
           if (aResult.status && cResult.status) {
             const channelIds = cResult.data.list.map((c)=>c.id);
             const articles = aResult.data.list;
