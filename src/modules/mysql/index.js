@@ -2,7 +2,7 @@
  * @description: mySql
  * @author: zpl
  * @Date: 2020-07-25 14:47:25
- * @LastEditTime: 2021-01-25 15:53:34
+ * @LastEditTime: 2021-02-01 08:59:35
  * @LastEditors: zpl
  */
 
@@ -12,7 +12,7 @@ const { Sequelize } = require('sequelize');
 const { loadModel, buildRoute } = require('./framework/loader');
 
 module.exports = fp(async (fastify, opts, next) => {
-  const { host, database, user, password, dialect, pool, needCreatTable } = opts;
+  const { host, database, user, password, dialect, pool, needCreatTable, dropOldTable } = opts;
   const sequelize = new Sequelize(database, user, password, {
     host,
     dialect,
@@ -24,10 +24,9 @@ module.exports = fp(async (fastify, opts, next) => {
   try {
     await sequelize.authenticate();
     console.log('Connection has been established successfully.');
-    await loadModel(sequelize, needCreatTable, database);
+    await loadModel(sequelize, needCreatTable, dropOldTable, database);
     await buildRoute(sequelize.models);
 
-    console.log('--------start init -----------');
     const initResult = await require('./init-data')(sequelize.models);
     console.log('数据库初始化执行结果：');
     console.log(initResult);

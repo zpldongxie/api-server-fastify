@@ -2,7 +2,7 @@
  * @description: 邮件相关路由
  * @author: zpl
  * @Date: 2021-01-26 11:28:51
- * @LastEditTime: 2021-01-26 19:41:51
+ * @LastEditTime: 2021-01-29 18:22:43
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -61,9 +61,10 @@ module.exports = fp(async (server, opts, next) => {
 
   const editSettingsSchema = require('./edit-settings-schema');
   server.post(
-      '/email/editSettings',
+      '/api/email/editSettings',
       { schema: { ...editSettingsSchema, tags: ['邮件'], summary: '修改邮箱配置' } },
       async (request, reply) => {
+        console.log('email editSettings begin');
         const { host, port, user, pass, from } = request.body;
         await sysConfigModel.update({ value: host }, { where: { name: 'host', group: '邮箱' } });
         await sysConfigModel.update({ value: port }, { where: { name: 'port', group: '邮箱' } });
@@ -88,11 +89,12 @@ module.exports = fp(async (server, opts, next) => {
 
   const sendmailSchema = require('./sendmail-schema');
   server.post(
-      '/mail/send',
+      '/api/mail/send',
       {
         schema: { ...sendmailSchema, tags: ['邮件'], summary: '发送邮件' },
       },
       async (request, reply) => {
+        console.log('email send begin');
         const { mailTo, subject, text, html } = request.body;
         const from = await sysConfigModel.findOne({ where: { name: 'from', group: '邮箱' } });
         const info = await server.nodemailer.sendMail({

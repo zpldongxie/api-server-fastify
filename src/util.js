@@ -2,7 +2,7 @@
  * @description: 全局工具
  * @author: zpl
  * @Date: 2020-09-07 00:38:53
- * @LastEditTime: 2021-01-27 17:38:02
+ * @LastEditTime: 2021-02-03 14:34:45
  * @LastEditors: zpl
  */
 const path = require('path');
@@ -206,6 +206,65 @@ const getEmailHtml = (context) => {
   `;
 };
 
+/**
+ * 计算插入数据的排序值，可以插到尾部，不可插到头部
+ *
+ * @param {*} startOrderIndex 前一条记录的排序值，不能为null
+ * @param {*} endOrderIndex 后一条记录的排序值，可以为null
+ * @return {Number | null} 新序号
+ */
+const getInsertOrderIndex = (startOrderIndex, endOrderIndex) => {
+  console.log('-----getInsertOrderIndex-----');
+  console.log(startOrderIndex, endOrderIndex);
+  /**
+   * 获取小数长度
+   *
+   * @param {*} loanRate
+   * @return {*}
+   */
+  const getFloatLength = (loanRate) => {
+    const x = String(loanRate).indexOf('.') + 1; // 小数点的位置
+    const y = x ? String(loanRate).length - x : 0; // 小数的位数
+    return y;
+  };
+  /**
+   * 判断两数是否连续
+   *
+   * @param {*} x
+   * @param {*} y
+   * @return {*}
+   */
+  const isSuccessive = (x, y) => {
+    const xLength = getFloatLength(x);
+    const yLength = getFloatLength(y);
+    const xNum = x * Math.pow(10, xLength);
+    const yNum = y * Math.pow(10, yLength);
+    if (Math.abs(xNum - yNum) === 1) {
+      return true;
+    }
+    return false;
+  };
+
+  // 不能向前面插入
+  if (typeof startOrderIndex === 'undefined' || startOrderIndex === null) {
+    return null;
+  }
+  // 插入到最后面
+  if (endOrderIndex === null) {
+    return Math.ceil(startOrderIndex + 10);
+  }
+  let newIndex = (startOrderIndex + endOrderIndex) / 2;
+  const newLength = getFloatLength(newIndex);
+  const startLength = getFloatLength(startOrderIndex);
+  const endLength = getFloatLength(endOrderIndex);
+  // 前后序号不相邻且新序号位数变长则进位
+  if (!isSuccessive(startOrderIndex, endOrderIndex) && newLength > startLength && newLength > endLength) {
+    newIndex = Math.round(newIndex * Math.pow(10, newLength-1)) / Math.pow(10, newLength-1);
+  }
+
+  return newIndex;
+};
+
 module.exports = {
   onRouterSuccess,
   onRouterError,
@@ -214,4 +273,5 @@ module.exports = {
   convertChannelsToTree,
   getCurrentDate,
   getEmailHtml,
+  getInsertOrderIndex,
 };

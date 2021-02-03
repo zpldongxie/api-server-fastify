@@ -1,8 +1,9 @@
+/* eslint-disable new-cap */
 /*
  * @description: 安全培训报名
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2021-01-27 13:56:10
+ * @LastEditTime: 2021-01-30 18:09:20
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -29,12 +30,13 @@ class TrainingReg extends Model {
         primaryKey: true,
       },
       name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(4),
         allowNull: false,
         comment: '姓名',
       },
       mobile: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(11),
+        allowNull: false,
         comment: '手机',
       },
       email: {
@@ -53,19 +55,18 @@ class TrainingReg extends Model {
         comment: '是否审核通过',
       },
       sendEmailStatus: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(25),
         defaultValue: '未发送',
         comment: '邮件发送状态，未发送|发送失败|发送成功时间',
       },
       signInTime: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.DATE,
         comment: '签到时间',
       },
       // '报名时间'就是创建时间
     }, {
       sequelize,
       modelName: 'TrainingReg',
-      tableName: 'training_reg',
       comment: '安全培训报名',
     });
   }
@@ -78,7 +79,7 @@ class TrainingReg extends Model {
    * @memberof TrainingReg
    */
   static reateAssociation(sequelize) {
-    // 培训 - 培训报名， 一对多
+    // 培训报名 - 培训， 多对一
     TrainingReg.belongsTo(sequelize.models['Training']);
   }
 }

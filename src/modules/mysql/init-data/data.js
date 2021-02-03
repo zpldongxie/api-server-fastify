@@ -2,9 +2,10 @@
  * @description: 数据库初始数据
  * @author: zpl
  * @Date: 2020-07-26 22:19:42
- * @LastEditTime: 2021-01-28 09:25:00
+ * @LastEditTime: 2021-02-03 14:53:49
  * @LastEditors: zpl
  */
+// 用户组
 exports.userGroupList = [{
   name: '管理员',
   tag: 'admin',
@@ -16,6 +17,7 @@ exports.userGroupList = [{
   tag: 'guest',
 }];
 
+// 用户
 exports.userList = [{
   loginName: 'admin',
   password: 'waxh1234',
@@ -40,6 +42,26 @@ exports.userList = [{
   group: '用户',
 }];
 
+// 栏目类型
+exports.channelTypeList = [{
+  name: '主页',
+}, {
+  name: '文章列表',
+}, {
+  name: '图片列表',
+}, {
+  name: '图文列表',
+}, {
+  name: '视频列表',
+}, {
+  name: '单篇文章',
+}, {
+  name: '外部链接',
+}, {
+  name: '安全培训',
+}];
+
+// 会员类别
 exports.memberTypeList = [{
   name: '副理事长单位',
 }, {
@@ -50,6 +72,7 @@ exports.memberTypeList = [{
   name: '个人会员',
 }];
 
+// 系统配置
 exports.sysConfig = [{
   name: 'base_url',
   value: 'http://www.snains.cn/upload/',

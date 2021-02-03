@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-27 18:00:20
+ * @LastEditTime: 2021-01-28 16:09:15
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -122,6 +122,7 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
+          console.log('membercompany audit begin');
           const { config: { MemberTypeModel } } = reply.context;
           const { corporateName } = request.body;
           const res = await that.dbMethod.findAll({
@@ -157,6 +158,7 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
+          console.log('membercompany update begin');
           const { id, corporateName, ...info } = request.body;
           const res = await that.dbMethod.findAll({
             where: {
@@ -204,6 +206,7 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
+          console.log('membercompany audit begin');
           const { config: { sysConfigModel, nodemailer } } = reply.context;
           const { id, status } = request.body;
           const res = await that.dbMethod.findById(id);
@@ -257,6 +260,7 @@ class Method extends CommonMethod {
                 const sendEmailStatus = getCurrentDate();
                 await that.dbMethod.updateOne(id, { sendEmailStatus });
               } catch (e) {
+                console.warn(e);
                 await that.dbMethod.updateOne(id, { sendEmailStatus: '发送失败' });
                 return {
                   status: 0,

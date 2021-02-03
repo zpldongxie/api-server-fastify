@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-17 20:06:20
+ * @LastEditTime: 2021-02-03 11:07:36
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -80,6 +80,7 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
+          const { config: { ChannelModule, TrainingModule } } = reply.context;
           const {
             current,
             pageSize,
@@ -199,7 +200,8 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const ids = request.body.ids;
+          console.log('trainingreg remove begin');
+          const { ids } = request.body;
           const res = await that.dbMethod.delete(ids);
           return res;
         },

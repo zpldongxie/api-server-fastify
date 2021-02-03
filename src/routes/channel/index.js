@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-19 16:40:41
+ * @LastEditTime: 2021-02-03 12:56:40
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -16,11 +16,14 @@ const routerBaseInfo = {
   getOnFilterURL: '/api/channels/:filter',
   getListURL: '/api/getChannelList',
   putURL: '/api/channel',
+  putShowStatusURL: '/api/channel/showStatus',
+  moveURL: '/api/channel/move',
   deleteURL: '/api/channels',
 };
 module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
   const CurrentModel = mysqlModel[routerBaseInfo.modelName_U];
+  const ChannelTypeModule = mysqlModel.ChannelType;
   const ChannelSettingModule = mysqlModel.ChannelSetting;
   const { ajv } = opts;
   const method = new Method(CurrentModel, ajv);
@@ -57,7 +60,7 @@ module.exports = fp(async (server, opts, next) => {
       routerBaseInfo.getURL,
       {
         schema: { ...getByIdSchema, tags: ['channel'], summary: '根据ID获取单个' },
-        config: { ChannelSettingModule },
+        config: { ChannelTypeModule, ChannelSettingModule },
       },
       (request, reply) => method.getById(request, reply),
   );
@@ -66,7 +69,7 @@ module.exports = fp(async (server, opts, next) => {
       routerBaseInfo.getAllURL,
       {
         schema: { tags: ['channel'], summary: '获取所有' },
-        config: { ChannelSettingModule },
+        config: { ChannelTypeModule, ChannelSettingModule },
       },
       (request, reply) => method.getAll(request, reply),
   );
@@ -76,7 +79,7 @@ module.exports = fp(async (server, opts, next) => {
       routerBaseInfo.getOnFilterURL,
       {
         schema: { ...keywordFilterSchema, tags: ['channel'], summary: '关键字过滤查找栏目' },
-        config: { ChannelSettingModule },
+        config: { ChannelTypeModule, ChannelSettingModule },
       },
       (request, reply) => method.getOnFilter(request, reply),
   );
@@ -86,7 +89,7 @@ module.exports = fp(async (server, opts, next) => {
       routerBaseInfo.getListURL,
       {
         schema: { ...queryListSchema, tags: ['channel'], summary: '根据条件获取列表' },
-        config: { ChannelSettingModule },
+        config: { ChannelTypeModule, ChannelSettingModule },
       },
       (request, reply) => method.queryList(request, reply),
   );
@@ -95,6 +98,18 @@ module.exports = fp(async (server, opts, next) => {
   server.put(routerBaseInfo.putURL,
       { schema: { ...updateSchema, tags: ['channel'], summary: '新增或更新' } },
       (request, reply) => method.upsert(request, reply),
+  );
+
+  const setShowStatusSchema = require('./set-showstatus-schema');
+  server.put(routerBaseInfo.putShowStatusURL,
+      { schema: { ...setShowStatusSchema, tags: ['channel'], summary: '设置显示状态' } },
+      (request, reply) => method.setShowStatus(request, reply),
+  );
+
+  const moveSchema = require('./move-schema');
+  server.post(routerBaseInfo.moveURL,
+      { schema: { ...moveSchema, tags: ['channel'], summary: '移动栏目' } },
+      (request, reply) => method.move(request, reply),
   );
 
   const deleteSchema = require('./delete-schema');

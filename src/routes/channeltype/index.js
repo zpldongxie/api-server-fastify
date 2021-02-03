@@ -2,20 +2,20 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-12 20:30:42
+ * @LastEditTime: 2021-01-19 16:37:00
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
 const Method = require('./method');
 
 const routerBaseInfo = {
-  modelName_U: 'ContentDetail',
-  modelName_L: 'contentdetail',
-  getURL: '/api/contentdetail/:id',
-  getAllURL: '/api/contentdetails',
-  getListURL: '/api/getContentDetailList',
-  putURL: '/api/contentdetail',
-  deleteURL: '/api/contentdetails',
+  modelName_U: 'ChannelType',
+  modelName_L: 'channeltype',
+  getURL: '/api/channeltype/:id',
+  getAllURL: '/api/channeltypes',
+  getListURL: '/api/getChannelTypeList',
+  putURL: '/api/channeltype',
+  deleteURL: '/api/channeltypes',
 };
 module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
@@ -50,43 +50,38 @@ module.exports = fp(async (server, opts, next) => {
   *            佛祖保佑       永不宕机     永无BUG
   */
 
-  // 根据ID获取单个
   const getByIdSchema = require('./query-by-id-schema');
   server.get(
       routerBaseInfo.getURL,
       {
-        schema: { ...getByIdSchema, tags: ['contentdetail'], summary: '根据ID获取单个' },
+        schema: { ...getByIdSchema, tags: ['channeltype'], summary: '根据ID获取单个' },
       },
       (request, reply) => method.getById(request, reply),
   );
 
-  // 获取所有
   server.get(
       routerBaseInfo.getAllURL,
-      { schema: { tags: ['contentdetail'], summary: '获取所有' } },
+      { schema: { tags: ['channeltype'], summary: '获取所有' } },
       (request, reply) => method.getAll(request, reply),
   );
 
-  // 根据条件获取列表
   const queryListSchema = require('./query-list-schema');
   server.post(
       routerBaseInfo.getListURL,
-      { schema: { ...queryListSchema, tags: ['contentdetail'], summary: '根据条件获取列表' } },
+      { schema: { ...queryListSchema, tags: ['channeltype'], summary: '根据条件获取列表' } },
       (request, reply) => method.queryList(request, reply),
   );
 
-  // 新增或更新
   const updateSchema = require('./update-schema');
   server.put(routerBaseInfo.putURL,
-      { schema: { ...updateSchema, tags: ['contentdetail'], summary: '新增或更新' } },
+      { schema: { ...updateSchema, tags: ['channeltype'], summary: '新增或更新' } },
       (request, reply) => method.upsert(request, reply),
   );
 
-  // 删除
   const deleteSchema = require('./delete-schema');
   server.delete(
       routerBaseInfo.deleteURL,
-      { schema: { ...deleteSchema, tags: ['contentdetail'], summary: '批量删除' } },
+      { schema: { ...deleteSchema, tags: ['channeltype'], summary: '批量删除' } },
       (request, reply) => method.remove(request, reply),
   );
 

@@ -3,7 +3,7 @@
  * @description: 文章内容
  * @author: zpl
  * @Date: 2020-07-28 10:16:12
- * @LastEditTime: 2021-01-02 18:36:08
+ * @LastEditTime: 2021-02-03 11:41:22
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -30,19 +30,18 @@ class Article extends Model {
         primaryKey: true,
       },
       title: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         allowNull: false,
         comment: '标题',
       },
       subtitle: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         defaultValue: '',
         comment: '副标题',
       },
       keyWord: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(20),
         defaultValue: '',
-        field: 'key_word',
         comment: '关键词',
       },
       summary: {
@@ -64,98 +63,72 @@ class Article extends Model {
       source: {
         // eslint-disable-next-line new-cap
         type: DataTypes.STRING(64),
-        defaultValue: '',
+        defaultValue: '本站原创',
         comment: '来源',
       },
-      conDate: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        field: 'con_date',
-        comment: '时间',
-      },
       isHead: {
-        // eslint-disable-next-line new-cap
-        type: DataTypes.TINYINT(1),
-        allowNull: false,
-        defaultValue: 0,
-        field: 'is_head',
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
         comment: '是否头条',
       },
       isRecom: {
-        // eslint-disable-next-line new-cap
-        type: DataTypes.TINYINT(1),
-        allowNull: false,
-        defaultValue: 0,
-        field: 'is_recom',
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
         comment: '是否推荐',
       },
       orderIndex: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+        type: DataTypes.DOUBLE,
         defaultValue: 0,
-        field: 'order_index',
         comment: '排序值',
       },
       canComment: {
-        // eslint-disable-next-line new-cap
-        type: DataTypes.TINYINT(1),
-        allowNull: false,
-        defaultValue: 0,
-        field: 'can_comment',
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
         comment: '允许评论',
       },
       commentStartTime: {
-        type: DataTypes.STRING,
-        defaultValue: '',
-        field: 'comment_start_time',
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
         comment: '评论开始时间',
       },
       commentEndTime: {
-        type: DataTypes.STRING,
-        defaultValue: '',
-        field: 'comment_end_time',
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
         comment: '评论结束时间',
       },
       contentType: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(10),
         allowNull: false,
-        field: 'content_type',
         comment: '内容类型',
       },
       mainCon: {
         type: DataTypes.TEXT,
         defaultValue: '',
-        field: 'main_con',
         comment: '文章内容',
       },
       mainPic: {
         type: DataTypes.STRING,
         defaultValue: '',
-        field: 'main_pic',
         comment: '图片文章内容',
       },
       mainVideo: {
         type: DataTypes.STRING,
         defaultValue: '',
-        field: 'main_video',
         comment: '视频文章内容',
       },
       mainUrl: {
         type: DataTypes.STRING,
         defaultValue: '',
-        field: 'main_url',
         comment: '链接文章内容',
       },
       approvalStatus: {
         type: DataTypes.ENUM('无需审核', '待审核', '通过', '驳回'),
-        allowNull: false,
-        field: 'approval_status',
+        defaultValue: '无需审核',
         comment: '审核状态',
       },
       pubStatus: {
         type: DataTypes.ENUM('草稿', '已发布', '已删除'),
-        allowNull: false,
-        field: 'pub_status',
+        defaultValue: '草稿',
         comment: '发布状态',
       },
     }, {
@@ -174,9 +147,9 @@ class Article extends Model {
    */
   static reateAssociation(sequelize) {
     // 栏目 - 文章， 多对多
-    Article.belongsToMany(sequelize.models['Channel'], { through: 'article_channel' });
+    Article.belongsToMany(sequelize.models['Channel'], { through: 'ChannelAtricle' });
     // 文章 - 扩展，一对多
-    Article.Extensions = Article.hasMany(sequelize.models['ArticleExtension']);
+    Article.Extensions = Article.hasMany(sequelize.models['ArticleExtension'], { onDelete: 'CASCADE' });
   }
 }
 

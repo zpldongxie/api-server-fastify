@@ -2,8 +2,9 @@ const S = require('fluent-schema');
 
 const bodyJsonSchema = S.object()
     .prop('id', S.string().format('uuid'))
-    .required(['id']);
+    .prop('afterId', S.string().format('uuid'))
+    .required(['id', 'afterId']);
 
 module.exports = {
-  params: bodyJsonSchema,
+  body: bodyJsonSchema,
 };

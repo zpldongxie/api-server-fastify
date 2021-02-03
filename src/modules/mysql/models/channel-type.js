@@ -1,30 +1,29 @@
 /* eslint-disable new-cap */
 /*
- * @description: 用户组
+ * @description: 栏目类型
  * @author: zpl
- * @Date: 2020-07-26 14:30:44
- * @LastEditTime: 2021-02-03 11:11:29
+ * @Date: 2021-02-01 11:52:44
+ * @LastEditTime: 2021-02-03 11:08:12
  * @LastEditors: zpl
  */
-// const sequelize = require('../connect');
 const { Model, DataTypes } = require('sequelize');
 
 /**
- * 用户组
- *
- * @class UserGroup
- * @extends {Model}
- */
-class UserGroup extends Model {
+   * 栏目类型
+   *
+   * @class ChannelType
+   * @extends {Model}
+   */
+class ChannelType extends Model {
   /**
    * 初始化，统一暴露给index，保证所有model使用同一sequelize实例
    *
    * @static
    * @param {*} sequelize
-   * @memberof UserGroup
+   * @memberof ChannelType
    */
   static initNow(sequelize) {
-    UserGroup.init({
+    ChannelType.init({
       id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
@@ -33,17 +32,11 @@ class UserGroup extends Model {
       name: {
         type: DataTypes.STRING(64),
         allowNull: false,
-        unique: true,
         comment: '名称',
       },
-      tag: {
-        type: DataTypes.STRING(20),
-        allowNull: false,
-        unique: true,
-        comment: '分组英文标记，可用于前台判断身份',
-      },
-      desc: {
-        type: DataTypes.STRING,
+      descStr: {
+        type: DataTypes.STRING(100),
+        defaultValue: '',
         comment: '描述',
       },
       orderIndex: {
@@ -52,9 +45,8 @@ class UserGroup extends Model {
       },
     }, {
       sequelize,
-      modelName: 'UserGroup',
-      timestamps: false,
-      comment: '用户组',
+      modelName: 'ChannelType',
+      comment: '栏目类型',
     });
   }
 
@@ -63,12 +55,12 @@ class UserGroup extends Model {
    *
    * @static
    * @param {*} sequelize
-   * @memberof UserGroup
+   * @memberof ChannelType
    */
   static reateAssociation(sequelize) {
-    // 用户组 - 用户， 多对多
-    UserGroup.belongsToMany(sequelize.models['User'], { through: 'UserGroupUser' });
+    // 栏目类型 - 栏目， 一对多
+    ChannelType.hasMany(sequelize.models['Channel']);
   }
 }
 
-module.exports = UserGroup;
+module.exports = ChannelType;

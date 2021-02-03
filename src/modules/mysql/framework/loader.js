@@ -2,7 +2,7 @@
  * @description:
  * @author: zpl
  * @Date: 2020-07-29 22:16:11
- * @LastEditTime: 2021-01-11 12:35:15
+ * @LastEditTime: 2021-02-01 09:00:14
  * @LastEditors: zpl
  */
 
@@ -16,9 +16,10 @@ const { load } = require('../../../util');
  *
  * @param {*} sequelize
  * @param {*} needCreatTable
+ * @param {*} dropOldTable
  * @param {*} database
  */
-const loadModel = async (sequelize, needCreatTable, database) => {
+const loadModel = async (sequelize, needCreatTable, dropOldTable, database) => {
   const initFunList = [];
   const reateAssociationList = [];
   const url = path.resolve(__dirname, '../models');
@@ -37,9 +38,13 @@ const loadModel = async (sequelize, needCreatTable, database) => {
     const reateAssociation = reateAssociationList[i];
     await reateAssociation(sequelize);
   }
-  // 创建表
+  // 根据模型创建表
   if (needCreatTable) {
     console.log('===============数据库表创建开始===============');
+    if (dropOldTable) {
+      await sequelize.drop();
+      console.log('所有表已删除!');
+    }
     await sequelize.sync({ match: new RegExp('^' + database + '$') });
     console.log('===============数据库表创建结束===============');
   }
@@ -59,7 +64,7 @@ const buildRoute = async (models) => {
   });
 
   // 例外，不自动生成文件的model
-  const exception = ['content_detail_channel', 'article_channel', 'user-group-user'];
+  const exception = ['ChannelAtricle', 'UserGroupUser'];
 
   // 遍历modules
   Object.keys(models)

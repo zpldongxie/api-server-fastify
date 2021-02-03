@@ -39,6 +39,7 @@ const bodyJsonSchema = S.object()
             .description('状态'),
     )
     .prop('rejectDesc', S.string().description('驳回原因'))
+    .prop('MemberTypeId', S.string().description('类型ID'))
     .required(['corporateName', 'tel', 'email', 'contacts', 'contactsMobile']);
 
 module.exports = {

@@ -3,7 +3,7 @@
  * @description: 会员类型
  * @author: zpl
  * @Date: 2020-08-17 18:57:56
- * @LastEditTime: 2021-01-11 14:40:02
+ * @LastEditTime: 2021-02-03 11:09:37
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -32,11 +32,16 @@ class MemberType extends Model {
       name: {
         type: DataTypes.STRING(64),
         allowNull: false,
+        unique: true,
         comment: '类型名称',
       },
       descStr: {
         type: DataTypes.STRING,
         comment: '描述',
+      },
+      orderIndex: {
+        type: DataTypes.DOUBLE,
+        comment: '排序值',
       },
     }, {
       sequelize,

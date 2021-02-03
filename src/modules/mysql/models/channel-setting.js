@@ -1,8 +1,9 @@
+/* eslint-disable new-cap */
 /*
  * @description: 栏目配置
  * @author: zpl
  * @Date: 2020-07-28 10:42:50
- * @LastEditTime: 2021-01-02 19:17:34
+ * @LastEditTime: 2021-01-30 15:22:01
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -24,13 +25,11 @@ class ChannelSetting extends Model {
   static initNow(sequelize) {
     ChannelSetting.init({
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
       },
       title: {
-        // eslint-disable-next-line new-cap
         type: DataTypes.STRING(64),
         allowNull: false,
         comment: '标题',
@@ -38,7 +37,6 @@ class ChannelSetting extends Model {
       descStr: {
         type: DataTypes.STRING,
         defaultValue: '',
-        field: 'desc_str',
         comment: '内容',
       },
       pic: {
@@ -54,26 +52,22 @@ class ChannelSetting extends Model {
       link: {
         type: DataTypes.STRING,
         defaultValue: '',
-        comment: '链接',
+        comment: '普通链接',
       },
       type: {
         type: DataTypes.STRING,
         defaultValue: '',
-        comment: '配置类型，如，pic:图片配置，url:链接配置，desc:文字配置，data:视频配置',
+        comment: '配置类型，如，pic:图片配置，url:链接配置，desc:文字配置，video:视频配置',
       },
-      createTime: {
-        type: DataTypes.STRING,
+      group: {
+        type: DataTypes.STRING(10),
         defaultValue: '',
-        field: 'create_time',
-        comment: '栏目配置',
+        comment: '分组',
       },
     }, {
       sequelize,
       modelName: 'ChannelSetting',
-      tableName: 'channel_setting',
-      // TODO: 等完全从java后台切换过来后，这个属性要移除
-      timestamps: false,
-      indexes: [{ unique: true, fields: ['id'] }],
+      comment: '栏目配置',
     });
   }
 
@@ -86,7 +80,7 @@ class ChannelSetting extends Model {
    */
   static reateAssociation(sequelize) {
     // 栏目 - 栏目配置， 一对多
-    ChannelSetting.belongsTo(sequelize.models['Channel'], { foreignKey: { name: 'channel_id' } });
+    ChannelSetting.belongsTo(sequelize.models['Channel']);
   }
 }
 

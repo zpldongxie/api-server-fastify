@@ -4,10 +4,10 @@ db:
   pass: "ysp@1234"
 
 mysql:
-  host: "localhost"
+  host: "117.34.74.241"
   database: "websiteManager"
   user: "root"
-  password: "10isp.com!a"
+  password: "fe741f398fc5010b"
   dialect: 'mysql'
   pool:
     max: 5

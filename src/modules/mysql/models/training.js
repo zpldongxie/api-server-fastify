@@ -1,8 +1,9 @@
+/* eslint-disable new-cap */
 /*
  * @description: 安全培训
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2021-01-02 19:23:23
+ * @LastEditTime: 2021-02-01 10:09:59
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -29,13 +30,13 @@ class Training extends Model {
         primaryKey: true,
       },
       title: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         unique: true,
         allowNull: false,
         comment: '培训标题',
       },
       subTitle: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         defaultValue: '',
         comment: '培训副标题',
       },
@@ -50,7 +51,7 @@ class Training extends Model {
         comment: '报名截止时间',
       },
       trainingMethod: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(20),
         allowNull: false,
         comment: '培训方式',
       },
@@ -72,7 +73,6 @@ class Training extends Model {
     }, {
       sequelize,
       modelName: 'Training',
-      tableName: 'training',
       comment: '安全培训',
     });
   }
@@ -85,10 +85,10 @@ class Training extends Model {
    * @memberof Training
    */
   static reateAssociation(sequelize) {
-    // 栏目 - 培训， 一对多
+    // 培训 - 栏目， 多对一
     Training.belongsTo(sequelize.models['Channel']);
     // 培训 - 培训报名， 一对多
-    Training.hasMany(sequelize.models['TrainingReg']);
+    Training.hasMany(sequelize.models['TrainingReg'], { onDelete: 'CASCADE' });
   }
 }
 

@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-14 23:49:32
+ * @LastEditTime: 2021-01-16 22:55:43
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -78,7 +78,7 @@ class Method extends CommonMethod {
             ...where
           } = request.body;
           const attributes = {};
-          const include = {};
+          const include = [];
           const res = await that.dbMethod.queryList({
             where,
             filter,
@@ -88,6 +88,43 @@ class Method extends CommonMethod {
             attributes,
             include,
           });
+          return res;
+        },
+    );
+  }
+
+  /**
+   * 新增
+   *
+   * @param {*} request
+   * @param {*} reply
+   * @memberof Method
+   */
+  async create(request, reply) {
+    const that = this;
+    await (that.run(request, reply))(
+        async () => {
+          const info = rerquest.body;
+          const include = [];
+          const res = await that.dbMethod.create(info, { include });
+          return res;
+        },
+    );
+  }
+
+  /**
+   * 更新
+   *
+   * @param {*} request
+   * @param {*} reply
+   * @memberof Method
+   */
+  async update(request, reply) {
+    const that = this;
+    await (that.run(request, reply))(
+        async () => {
+          const { id, ...info } = request.body;
+          const res = await that.dbMethod.updateOne(id, info);
           return res;
         },
     );

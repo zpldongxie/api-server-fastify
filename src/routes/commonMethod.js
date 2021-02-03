@@ -2,7 +2,7 @@
  * @description: 所有路由方法的抽象对象
  * @author: zpl
  * @Date: 2021-01-12 12:23:11
- * @LastEditTime: 2021-01-28 10:18:50
+ * @LastEditTime: 2021-02-03 14:24:27
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -183,7 +183,7 @@ class DatabaseMethod {
     if (sorter && Object.keys(sorter).length) {
       for (const key in sorter) {
         if (sorter.hasOwnProperty(key)) {
-          const value = sorter[key].includes('asc') ? 'ASC' : 'DESC';
+          const value = sorter[key].toLowerCase().includes('asc') ? 'ASC' : 'DESC';
           conditions.order.push([key, value]);
         }
       }
@@ -306,6 +306,17 @@ class DatabaseMethod {
       return this.onSuccess(num, '删除成功');
     }
     return this.onError('删除失败');
+  }
+
+  /**
+   * 清空表
+   *
+   * @memberof DatabaseMethod
+   */
+  async destroy() {
+    await this.Model.destroy({
+      where: {},
+    });
   }
 }
 

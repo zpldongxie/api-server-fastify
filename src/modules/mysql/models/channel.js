@@ -1,8 +1,9 @@
+/* eslint-disable new-cap */
 /*
  * @description: 栏目
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2021-01-02 19:18:47
+ * @LastEditTime: 2021-02-03 11:09:05
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -24,32 +25,23 @@ class Channel extends Model {
   static initNow(sequelize) {
     Channel.init({
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
       },
       name: {
-        // eslint-disable-next-line new-cap
         type: DataTypes.STRING(64),
         allowNull: false,
         comment: '栏目标题',
       },
       enName: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
+        unique: true,
         allowNull: false,
-        field: 'en_name',
         comment: '英文名',
       },
-      channelType: {
-        type: DataTypes.STRING,
-        comment: '栏目类型',
-        allowNull: false,
-        field: 'channel_type',
-      },
       parentId: {
-        type: DataTypes.INTEGER,
-        field: 'parent_id',
+        type: DataTypes.UUID,
         comment: '父栏目ID',
         references: {
           model: Channel,
@@ -57,53 +49,37 @@ class Channel extends Model {
         },
       },
       keyWord: {
-        type: DataTypes.STRING,
-        field: 'key_word',
+        type: DataTypes.STRING(20),
+        defaultValue: '',
         comment: '关键字',
       },
       descStr: {
-        type: DataTypes.STRING,
-        field: 'desc_str',
+        type: DataTypes.STRING(100),
+        defaultValue: '',
         comment: '描述',
       },
-      isShow: {
-        // eslint-disable-next-line new-cap
+      showStatus: {
         type: DataTypes.TINYINT(1),
         defaultValue: 0,
-        allowNull: false,
-        field: 'is_show',
-        comment: '是否显示',
+        comment: '显示状态，可根据业务自行设置不同显示状态',
       },
       url: {
         type: DataTypes.STRING,
         comment: '链接',
       },
       orderIndex: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
+        type: DataTypes.DOUBLE,
         defaultValue: 0,
-        field: 'order_index',
         comment: '排序值',
       },
       settingExtend: {
-        type: DataTypes.TINYINT,
-        defaultValue: 0,
-        field: 'setting_extend',
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
         comment: '是否继承设置',
-      },
-      // FIXME: 等完全从java后台切换过来后，这个属性要移除
-      createTime: {
-        type: DataTypes.STRING,
-        field: 'create_time',
-        comment: '创建时间',
       },
     }, {
       sequelize,
       modelName: 'Channel',
-      tableName: 'channel',
-      // FIXME: 等完全从java后台切换过来后，这个属性要移除
-      timestamps: false,
-      indexes: [{ unique: true, fields: ['id'] }],
       comment: '栏目',
     });
   }
@@ -116,24 +92,16 @@ class Channel extends Model {
    * @memberof Channel
    */
   static reateAssociation(sequelize) {
+    // 栏目 - 栏目类型， 多对一
+    Channel.belongsTo(sequelize.models['ChannelType']);
     // 栏目 - 文章， 多对多
-    Channel.belongsToMany(sequelize.models['Article'], { through: 'article_channel' });
-    Channel.belongsToMany(sequelize.models['ContentDetail'], {
-      through: 'content_detail_channel',
-      foreignKey: 'channel_id',
-    });
+    Channel.belongsToMany(sequelize.models['Article'], { through: 'ChannelAtricle' });
 
     // 栏目 - 栏目配置， 一对多
-    Channel.hasMany(sequelize.models['ChannelSetting']);
+    Channel.hasMany(sequelize.models['ChannelSetting'], { onDelete: 'CASCADE' });
     // 栏目 - 培训， 一对多
-    Channel.hasMany(sequelize.models['Training']);
+    Channel.hasMany(sequelize.models['Training'], { onDelete: 'CASCADE' });
   }
 }
 
 module.exports = Channel;
-
-// module.exports = (sequelize) => {
-
-
-//   return Channel;
-// };

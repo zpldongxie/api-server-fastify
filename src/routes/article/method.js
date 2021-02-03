@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-28 10:19:50
+ * @LastEditTime: 2021-02-03 11:45:03
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -114,7 +114,6 @@ class Method extends CommonMethod {
             order: [
               ['isRecom', 'DESC'],
               ['orderIndex', 'DESC'],
-              ['conDate', 'DESC'],
             ],
             include: [
               {
@@ -161,7 +160,6 @@ class Method extends CommonMethod {
             'isHead': 'DESC',
             'isRecom': 'DESC',
             'orderIndex': 'DESC',
-            'conDate': 'DESC',
           };
           const attributes = {
             exclude: ['mainCon'],

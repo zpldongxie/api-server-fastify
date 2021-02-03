@@ -4,19 +4,22 @@ db:
   pass: "ysp@1234"
 
 mysql:
-  host: "www.snains.cn"
-  database: "websiteManager"
+  host: "117.34.73.162"
+  database: "websiteManager_new"
   user: "root"
-  password: "10isp.com!a"
+  password: "Ysp@1234"
   dialect: 'mysql'
   pool:
     max: 5
     min: 0
     acquie: 30000
     idle: 10000
+  # 同步模型到数据库
   needCreatTable: false
+  # 同步前清空所有旧表
+  dropOldTable: false
 
-oldManager: "http://www.snains.cn:9000"
+oldManager: "http://www.snains.cn:8000"
 
 # fs.mkdir不能一次创建多级目录，必须确保上一级目录已经存在
 uploadRootPath: "/usr/share/nginx/html/uploads/"

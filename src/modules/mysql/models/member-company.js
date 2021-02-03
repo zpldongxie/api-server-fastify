@@ -3,7 +3,7 @@
  * @description: 单位会员
  * @author: zpl
  * @Date: 2020-08-17 18:35:54
- * @LastEditTime: 2021-01-27 18:00:45
+ * @LastEditTime: 2021-01-30 17:12:51
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -31,12 +31,12 @@ class MemberCompany extends Model {
         primaryKey: true,
       },
       corporateName: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         allowNull: false,
         comment: '公司名称',
       },
       tel: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(15),
         allowNull: false,
         comment: '座机',
       },
@@ -46,7 +46,7 @@ class MemberCompany extends Model {
         comment: '邮箱',
       },
       contacts: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(4),
         allowNull: false,
         comment: '联系人',
       },
@@ -56,15 +56,15 @@ class MemberCompany extends Model {
         comment: '联系人手机',
       },
       industry: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(20),
         comment: '所属行业',
       },
       legalPerson: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(4),
         comment: '法人',
       },
       website: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         comment: '单位网站',
       },
       address: {
@@ -80,20 +80,27 @@ class MemberCompany extends Model {
         comment: '公司简介',
       },
       logonDate: {
-        type: DataTypes.STRING,
+        type: DataTypes.DATE,
         comment: '注册日期',
       },
       status: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM,
+        values: [
+          memberStatus.applying,
+          memberStatus.firstPass,
+          memberStatus.formalMember,
+          memberStatus.reject,
+          memberStatus.disable,
+        ],
         defaultValue: memberStatus.applying,
         comment: '状态',
       },
       rejectDesc: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         comment: '驳回原因',
       },
       sendEmailStatus: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(25),
         defaultValue: '未发送',
         comment: '邮件发送状态，未发送|发送失败|发送成功时间',
       },

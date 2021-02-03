@@ -1,8 +1,9 @@
+/* eslint-disable new-cap */
 /*
  * @description: 用户
  * @author: zpl
  * @Date: 2020-07-25 15:10:09
- * @LastEditTime: 2021-01-02 19:24:06
+ * @LastEditTime: 2021-01-31 19:37:15
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -24,37 +25,37 @@ class User extends Model {
   static initNow(sequelize) {
     User.init({
       id: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
-        autoIncrement: true,
       },
       loginName: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(20),
         allowNull: false,
         unique: true,
+        comment: '登录名',
       },
       password: {
-        // eslint-disable-next-line new-cap
         type: DataTypes.STRING(64),
         is: /^[0-9a-f]{64}$/i,
+        comment: '密码',
       },
       name: {
-        // eslint-disable-next-line new-cap
         type: DataTypes.STRING(64),
-        comment: '姓名',
         allowNull: false,
+        comment: '姓名',
       },
       sex: {
-        type: DataTypes.STRING,
-        comment: '性别',
+        type: DataTypes.ENUM,
         values: ['男', '女'],
+        comment: '性别',
       },
       mobile: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(11),
         comment: '手机',
       },
       email: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         allowNull: false,
         comment: '邮箱',
       },
@@ -62,25 +63,17 @@ class User extends Model {
         type: DataTypes.STRING,
         comment: '备注',
       },
-      verification_code: {
-        type: DataTypes.STRING,
+      verificationCode: {
+        type: DataTypes.STRING(20),
         comment: '验证码',
       },
       status: {
         type: DataTypes.INTEGER,
         comment: '状态,1为启用，0为未启用',
       },
-      // TODO: 等完全从java后台切换过来后，这两个属性要移除
-      last_edit_time: {
-        type: DataTypes.STRING,
-      },
-      create_time: {
-        type: DataTypes.STRING,
-      },
     }, {
       sequelize,
       modelName: 'User',
-      tableName: 'user',
       comment: '用户',
     });
   }
@@ -94,76 +87,8 @@ class User extends Model {
    */
   static reateAssociation(sequelize) {
     // 用户 - 用户组， 多对多
-    User.belongsToMany(sequelize.models['UserGroup'], {
-      through: 'user-group-user',
-      foreignKey: 'user_id',
-    });
+    User.belongsToMany(sequelize.models['UserGroup'], { through: 'UserGroupUser' });
   }
 }
 
 module.exports = User;
-// exports.User = User;
-// module.exports = (sequelize) => {
-//   User.init({
-//     id: {
-//       type: DataTypes.BIGINT,
-//       primaryKey: true,
-//       autoIncrement: true,
-//     },
-//     loginName: {
-//       type: DataTypes.STRING,
-//       allowNull: false,
-//       unique: true,
-//     },
-//     password: {
-//       // eslint-disable-next-line new-cap
-//       type: DataTypes.STRING(64),
-//       is: /^[0-9a-f]{64}$/i,
-//     },
-//     name: {
-//       // eslint-disable-next-line new-cap
-//       type: DataTypes.STRING(64),
-//       comment: '姓名',
-//       allowNull: false,
-//     },
-//     sex: {
-//       type: DataTypes.STRING,
-//       comment: '性别',
-//       values: ['男', '女'],
-//     },
-//     mobile: {
-//       type: DataTypes.STRING,
-//       comment: '手机',
-//     },
-//     email: {
-//       type: DataTypes.STRING,
-//       allowNull: false,
-//       comment: '邮箱',
-//     },
-//     remark: {
-//       type: DataTypes.STRING,
-//       comment: '备注',
-//     },
-//     verification_code: {
-//       type: DataTypes.STRING,
-//       comment: '验证码',
-//     },
-//     status: {
-//       type: DataTypes.INTEGER,
-//       comment: '状态,1为启用，0为未启用',
-//     },
-//     // TODO: 等完全从java后台切换过来后，这两个属性要移除
-//     last_edit_time: {
-//       type: DataTypes.STRING,
-//     },
-//     create_time: {
-//       type: DataTypes.STRING,
-//     },
-//   }, {
-//     sequelize,
-//     modelName: 'User',
-//     tableName: 'user',
-//   });
-
-//   return User;
-// };

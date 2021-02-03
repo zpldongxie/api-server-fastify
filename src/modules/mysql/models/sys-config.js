@@ -1,8 +1,9 @@
+/* eslint-disable new-cap */
 /*
  * @description: 系统配置表
  * @author: zpl
  * @Date: 2020-10-14 21:31:40
- * @LastEditTime: 2021-01-26 12:40:02
+ * @LastEditTime: 2021-01-30 17:50:36
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -28,7 +29,7 @@ class SysConfig extends Model {
         primaryKey: true,
       },
       name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(20),
         unique: true,
         allowNull: false,
         comment: '配置名称',
@@ -40,11 +41,10 @@ class SysConfig extends Model {
       },
       descStr: {
         type: DataTypes.STRING,
-        defaultValue: '',
         comment: '配置说明',
       },
       group: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(10),
         defaultValue: '默认',
         comment: '分组',
       },

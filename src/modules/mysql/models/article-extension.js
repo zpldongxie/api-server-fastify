@@ -3,7 +3,7 @@
  * @description: 文章扩展信息
  * @author: zpl
  * @Date: 2020-07-28 10:16:12
- * @LastEditTime: 2021-01-02 19:17:17
+ * @LastEditTime: 2021-01-30 14:08:10
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -30,7 +30,7 @@ class ArticleExtension extends Model {
         primaryKey: true,
       },
       title: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         allowNull: false,
         comment: '标题',
       },
@@ -40,7 +40,7 @@ class ArticleExtension extends Model {
         comment: '内容',
       },
       remark: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(100),
         defaultValue: '',
         comment: '备注',
       },

@@ -2,7 +2,7 @@
  * @description: 初始化数据库
  * @author: zpl
  * @Date: 2020-07-27 12:40:11
- * @LastEditTime: 2021-01-19 10:45:48
+ * @LastEditTime: 2021-02-01 12:41:56
  * @LastEditors: zpl
  */
 
@@ -70,6 +70,34 @@ const initUser = async (UserGroupModel, UserModel, dataList) => {
 };
 
 /**
+ * 初始化栏目类型
+ *
+ * @param {*} ChannelTypeModel 栏目类型模型
+ * @param {*} dataList 栏目类型初始数据
+ * @return {Array} 操作结果
+ */
+const initChannelType = async (ChannelTypeModel, dataList) => {
+  const result = [];
+  try {
+    for (const channelType of dataList) {
+      await ChannelTypeModel.create(channelType);
+      console.log(`channelType: ${channelType.name}，创建成功。`);
+      result.push(`channelType: ${channelType.name}，创建成功。`);
+    }
+  } catch (err) {
+    const { errors } = err;
+    if (errors && errors.length) {
+      const { message } = errors[0];
+      console.error(`数据库执行失败： ${message}`);
+      result.push(`数据库执行失败： ${message}`);
+    }
+    console.error(`系统异常，channelType创建失败： ${err}`);
+    result.push(`系统异常，channelType创建失败： ${err}`);
+  }
+  return result;
+};
+
+/**
  * 初始化会员类型
  *
  * @param {*} MemberTypeModel 会员类型模型
@@ -132,28 +160,30 @@ const initSysConfig = async (SysConfigModel, dataList) => {
  * @return {Array} 执行结果
  */
 module.exports = async (models) => {
-  const { UserGroup, User, MemberType, SysConfig } = models;
-  const { userList, userGroupList, memberTypeList, sysConfig } = require('./data');
+  const { UserGroup, User, ChannelType, MemberType, SysConfig } = models;
+  const { userList, userGroupList, channelTypeList, memberTypeList, sysConfig } = require('./data');
   let returnResult = [];
 
   const userGroups = await UserGroup.findAll();
   if (userGroups && userGroups.length) return ['无需初始化'];
 
   console.log('-----------------------------------------------');
-  console.log('---------------初始化数据库 开始---------------');
+  console.log('---------------初始化数据 开始---------------');
   console.log('-----------------------------------------------');
 
   console.log('1. 初始化用户组...');
   returnResult = returnResult.concat(await initUserGroup(UserGroup, userGroupList));
   console.log('2. 初始化用户...');
   returnResult = returnResult.concat(await initUser(UserGroup, User, userList));
-  console.log('3. 初始化会员类型...');
+  console.log('2. 初始化栏目类型...');
+  returnResult = returnResult.concat(await initChannelType(ChannelType, channelTypeList));
+  console.log('4. 初始化会员类型...');
   returnResult = returnResult.concat(await initMemberType(MemberType, memberTypeList));
-  console.log('4. 初始化系统配置...');
+  console.log('5. 初始化系统配置...');
   returnResult = returnResult.concat(await initSysConfig(SysConfig, sysConfig));
 
   console.log('-----------------------------------------------');
-  console.log('---------------初始化数据库 结束---------------');
+  console.log('---------------初始化数据 结束---------------');
   console.log('-----------------------------------------------');
 
   return returnResult;

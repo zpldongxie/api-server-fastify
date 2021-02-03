@@ -2,13 +2,13 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-27 17:59:43
+ * @LastEditTime: 2021-02-02 12:40:27
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
 const CommonMethod = require('../commonMethod');
 const { memberStatus } = require('../../dictionary');
-const { getCurrentDate } = require('../../util');
+const { getCurrentDate, getEmailHtml } = require('../../util');
 
 const { firstResoveTemplate, rejectTemplate, formalMemberTemplate, disableTemplate } = require('./email-template');
 
@@ -84,6 +84,7 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
+          console.log('memberindivic queryList begin');
           const { config: { MemberTypeModel } } = reply.context;
           const {
             current,
@@ -122,6 +123,8 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
+          console.log('memberindivic create begin');
+          const { config: { MemberTypeModel } } = reply.context;
           const { idNumber, mobile } = request.body;
           const res = await that.dbMethod.findAll({
             where: {
@@ -135,7 +138,11 @@ class Method extends CommonMethod {
               message: '证件号或手机号已经提交过申请，请不要重复提交',
             };
           }
-          const createRes = await that.dbMethod.create(request.body);
+          const include = [{
+            model: MemberTypeModel,
+            attributes: ['id', 'name'],
+          }];
+          const createRes = await that.dbMethod.create(request.body, { include });
           return createRes;
         },
     );
@@ -152,6 +159,7 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
+          console.log('memberindivic update begin');
           const { id, idNumber, mobile, ...info } = request.body;
           const idNumberRes = await that.dbMethod.findAll({
             where: {
@@ -194,9 +202,9 @@ class Method extends CommonMethod {
     const that = this;
     const { id } = request.body;
     if (id) {
-      that.update(request, reply);
+      await that.update(request, reply);
     } else {
-      this.create(request, reply);
+      await this.create(request, reply);
     }
   }
 
@@ -211,6 +219,7 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
+          console.log('memberindivic audit begin');
           const { config: { sysConfigModel, nodemailer } } = reply.context;
           const { id, status } = request.body;
           const res = await that.dbMethod.findById(id);

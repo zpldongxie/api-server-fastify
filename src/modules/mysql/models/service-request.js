@@ -3,7 +3,7 @@
  * @description: 服务申请表
  * @author: zpl
  * @Date: 2021-01-03 10:14:28
- * @LastEditTime: 2021-01-27 13:55:52
+ * @LastEditTime: 2021-01-30 17:12:09
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -31,12 +31,12 @@ class ServiceRequest extends Model {
         primaryKey: true,
       },
       corporateName: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         allowNull: false,
         comment: '公司名称',
       },
       tel: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(15),
         allowNull: false,
         comment: '座机',
       },
@@ -55,10 +55,10 @@ class ServiceRequest extends Model {
       },
       website: {
         type: DataTypes.STRING,
-        comment: '企业网站',
+        comment: '单位网站',
       },
       contacts: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(4),
         allowNull: false,
         comment: '联系人',
       },
@@ -68,19 +68,24 @@ class ServiceRequest extends Model {
         comment: '联系人手机',
       },
       demandType: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.STRING(20),
         require: true,
         comment: '需求类型',
       },
       requestDesc: {
         type: DataTypes.STRING,
-        allowNull: false,
         require: true,
         comment: '需求描述',
       },
       status: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM,
+        values: [
+          serviceStatus.underReview,
+          serviceStatus.accept,
+          serviceStatus.reject,
+          serviceStatus.inService,
+          serviceStatus.finished,
+        ],
         defaultValue: serviceStatus.underReview,
         comment: '状态（申请中 | 接受申请 | 拒绝申请 | 服务中 | 服务完成）',
       },
@@ -89,7 +94,7 @@ class ServiceRequest extends Model {
         comment: '拒绝原因',
       },
       sendEmailStatus: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(25),
         defaultValue: '未发送',
         comment: '邮件发送状态，未发送|发送失败|发送成功时间',
       },
@@ -100,7 +105,7 @@ class ServiceRequest extends Model {
     }, {
       sequelize,
       modelName: 'ServiceRequest',
-      comment: '服务申请表',
+      comment: '服务申请',
     });
   }
 }

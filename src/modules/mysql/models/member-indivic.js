@@ -3,7 +3,7 @@
  * @description: 个人会员
  * @author: zpl
  * @Date: 2020-08-17 18:35:54
- * @LastEditTime: 2021-01-27 13:56:27
+ * @LastEditTime: 2021-01-30 18:07:21
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -31,21 +31,22 @@ class MemberIndivic extends Model {
         primaryKey: true,
       },
       name: {
-        type: DataTypes.STRING(64),
+        type: DataTypes.STRING(4),
         allowNull: false,
         comment: '姓名',
       },
       idType: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(10),
+        allowNull: false,
         comment: '证件类型',
       },
       idNumber: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(20),
         allowNull: false,
         comment: '证件号码',
       },
       mobile: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(11),
         allowNull: false,
         comment: '手机',
       },
@@ -59,12 +60,12 @@ class MemberIndivic extends Model {
         comment: '英文名',
       },
       sex: {
-        type: DataTypes.STRING(2),
-        comment: '性别',
+        type: DataTypes.ENUM,
         values: ['男', '女'],
+        comment: '性别',
       },
       maritalStatus: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(2),
         comment: '婚姻状况',
       },
       website: {
@@ -80,7 +81,7 @@ class MemberIndivic extends Model {
         comment: '邮编',
       },
       profession: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(20),
         comment: '职业',
       },
       birthday: {
@@ -93,21 +94,28 @@ class MemberIndivic extends Model {
         comment: '个人介绍',
       },
       logonDate: {
-        type: DataTypes.STRING,
+        type: DataTypes.DATE,
         field: 'logon_data',
         comment: '注册日期',
       },
       status: {
-        type: DataTypes.STRING,
-        defaultValue: memberStatus.underReview,
+        type: DataTypes.ENUM,
+        values: [
+          memberStatus.applying,
+          memberStatus.firstPass,
+          memberStatus.formalMember,
+          memberStatus.reject,
+          memberStatus.disable,
+        ],
+        defaultValue: memberStatus.applying,
         comment: '状态',
       },
       rejectDesc: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         comment: '驳回原因',
       },
       sendEmailStatus: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(25),
         defaultValue: '未发送',
         comment: '邮件发送状态，未发送|发送失败|发送成功时间',
       },
