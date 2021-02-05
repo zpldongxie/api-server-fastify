@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-02-03 12:56:40
+ * @LastEditTime: 2021-02-04 09:36:54
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -13,7 +13,8 @@ const routerBaseInfo = {
   modelName_L: 'channel',
   getURL: '/api/channel/:id',
   getAllURL: '/api/channels',
-  getOnFilterURL: '/api/channels/:filter',
+  getByShowStatusURL: '/api/channels/show/:showStatus',
+  getByTypeURL: '/api/channels/type/:typeName',
   getListURL: '/api/getChannelList',
   putURL: '/api/channel',
   putShowStatusURL: '/api/channel/showStatus',
@@ -74,14 +75,24 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => method.getAll(request, reply),
   );
 
-  const keywordFilterSchema = require('./keyword-filter-schema');
+  const showFilterSchema = require('./show-filter-schema');
   server.get(
-      routerBaseInfo.getOnFilterURL,
+      routerBaseInfo.getByShowStatusURL,
       {
-        schema: { ...keywordFilterSchema, tags: ['channel'], summary: '关键字过滤查找栏目' },
+        schema: { ...showFilterSchema, tags: ['channel'], summary: '显示状态过滤查找栏目' },
         config: { ChannelTypeModule, ChannelSettingModule },
       },
-      (request, reply) => method.getOnFilter(request, reply),
+      (request, reply) => method.getByShowStatus(request, reply),
+  );
+
+  const typeFilterSchema = require('./type-filter-schema');
+  server.get(
+      routerBaseInfo.getByTypeURL,
+      {
+        schema: { ...typeFilterSchema, tags: ['channel'], summary: '栏目类型名称过滤查找栏目' },
+        config: { ChannelTypeModule, ChannelSettingModule },
+      },
+      (request, reply) => method.getByTypeName(request, reply),
   );
 
   const queryListSchema = require('./query-list-schema');

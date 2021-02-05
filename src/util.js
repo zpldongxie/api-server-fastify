@@ -2,7 +2,7 @@
  * @description: 全局工具
  * @author: zpl
  * @Date: 2020-09-07 00:38:53
- * @LastEditTime: 2021-02-03 14:34:45
+ * @LastEditTime: 2021-02-04 10:11:11
  * @LastEditors: zpl
  */
 const path = require('path');
@@ -215,7 +215,6 @@ const getEmailHtml = (context) => {
  */
 const getInsertOrderIndex = (startOrderIndex, endOrderIndex) => {
   console.log('-----getInsertOrderIndex-----');
-  console.log(startOrderIndex, endOrderIndex);
   /**
    * 获取小数长度
    *
@@ -237,8 +236,9 @@ const getInsertOrderIndex = (startOrderIndex, endOrderIndex) => {
   const isSuccessive = (x, y) => {
     const xLength = getFloatLength(x);
     const yLength = getFloatLength(y);
-    const xNum = x * Math.pow(10, xLength);
-    const yNum = y * Math.pow(10, yLength);
+    const maxLength = xLength > yLength ? xLength : yLength;
+    const xNum = x * Math.pow(10, maxLength);
+    const yNum = y * Math.pow(10, maxLength);
     if (Math.abs(xNum - yNum) === 1) {
       return true;
     }

@@ -2,7 +2,7 @@
  * @description: 所有路由方法的抽象对象
  * @author: zpl
  * @Date: 2021-01-12 12:23:11
- * @LastEditTime: 2021-02-03 14:24:27
+ * @LastEditTime: 2021-02-05 15:13:09
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
