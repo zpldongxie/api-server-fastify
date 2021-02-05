@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-27 19:00:12
+ * @LastEditTime: 2021-02-05 14:04:12
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -163,9 +163,9 @@ class Method extends CommonMethod {
     const that = this;
     const { id } = request.body;
     if (id) {
-      that.update(request, reply);
+      await that.update(request, reply);
     } else {
-      that.create(request, reply);
+      await that.create(request, reply);
     }
   }
 

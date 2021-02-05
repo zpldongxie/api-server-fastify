@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-02-03 11:07:36
+ * @LastEditTime: 2021-02-03 16:05:52
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -86,6 +86,7 @@ class Method extends CommonMethod {
             pageSize,
             sorter,
             filter,
+            attributes,
             ...where
           } = request.body;
           if (!sorter.hasOwnProperty('createdAt')) {
