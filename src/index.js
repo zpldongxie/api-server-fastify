@@ -1,6 +1,4 @@
-const sourceMapSupport = require('source-map-support');
-
-sourceMapSupport.install();
+require('source-map-support').install();
 
 const fastify = require('fastify')();
 const path = require('path');
