@@ -3,7 +3,7 @@
  * @description: 安全培训报名
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2021-01-30 18:09:20
+ * @LastEditTime: 2021-02-03 16:33:49
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -30,7 +30,7 @@ class TrainingReg extends Model {
         primaryKey: true,
       },
       name: {
-        type: DataTypes.STRING(4),
+        type: DataTypes.STRING(20),
         allowNull: false,
         comment: '姓名',
       },

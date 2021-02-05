@@ -3,7 +3,7 @@
  * @description: 栏目配置
  * @author: zpl
  * @Date: 2020-07-28 10:42:50
- * @LastEditTime: 2021-01-30 15:22:01
+ * @LastEditTime: 2021-02-05 16:07:11
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -58,6 +58,11 @@ class ChannelSetting extends Model {
         type: DataTypes.STRING,
         defaultValue: '',
         comment: '配置类型，如，pic:图片配置，url:链接配置，desc:文字配置，video:视频配置',
+      },
+      orderIndex: {
+        type: DataTypes.DOUBLE,
+        defaultValue: 0,
+        comment: '排序值',
       },
       group: {
         type: DataTypes.STRING(10),

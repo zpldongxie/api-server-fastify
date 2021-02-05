@@ -3,7 +3,7 @@
  * @description: 个人会员
  * @author: zpl
  * @Date: 2020-08-17 18:35:54
- * @LastEditTime: 2021-01-30 18:07:21
+ * @LastEditTime: 2021-02-03 16:33:33
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -31,7 +31,7 @@ class MemberIndivic extends Model {
         primaryKey: true,
       },
       name: {
-        type: DataTypes.STRING(4),
+        type: DataTypes.STRING(20),
         allowNull: false,
         comment: '姓名',
       },

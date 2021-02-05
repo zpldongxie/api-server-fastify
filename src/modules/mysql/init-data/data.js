@@ -2,7 +2,7 @@
  * @description: 数据库初始数据
  * @author: zpl
  * @Date: 2020-07-26 22:19:42
- * @LastEditTime: 2021-02-03 14:53:49
+ * @LastEditTime: 2021-02-04 11:53:34
  * @LastEditors: zpl
  */
 // 用户组
@@ -45,31 +45,43 @@ exports.userList = [{
 // 栏目类型
 exports.channelTypeList = [{
   name: '主页',
+  orderIndex: 0,
 }, {
   name: '文章列表',
+  orderIndex: 5,
 }, {
   name: '图片列表',
+  orderIndex: 10,
 }, {
   name: '图文列表',
+  orderIndex: 15,
 }, {
   name: '视频列表',
+  orderIndex: 20,
 }, {
   name: '单篇文章',
+  orderIndex: 25,
 }, {
   name: '外部链接',
+  orderIndex: 30,
 }, {
   name: '安全培训',
+  orderIndex: 35,
 }];
 
 // 会员类别
 exports.memberTypeList = [{
   name: '副理事长单位',
+  orderIndex: 5,
 }, {
   name: '理事单位',
+  orderIndex: 10,
 }, {
   name: '单位会员',
+  orderIndex: 15,
 }, {
   name: '个人会员',
+  orderIndex: 20,
 }];
 
 // 系统配置
