@@ -3,7 +3,7 @@
  * @description: 文章内容
  * @author: zpl
  * @Date: 2020-07-28 10:16:12
- * @LastEditTime: 2021-02-03 11:41:22
+ * @LastEditTime: 2021-02-06 09:23:00
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -65,6 +65,11 @@ class Article extends Model {
         type: DataTypes.STRING(64),
         defaultValue: '本站原创',
         comment: '来源',
+      },
+      conDate: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+        comment: '发布时间',
       },
       isHead: {
         type: DataTypes.BOOLEAN,

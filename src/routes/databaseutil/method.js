@@ -3,7 +3,7 @@
  * @description:
  * @author: zpl
  * @Date: 2021-01-31 20:22:20
- * @LastEditTime: 2021-02-03 11:27:49
+ * @LastEditTime: 2021-02-06 09:52:31
  * @LastEditors: zpl
  */
 const got = require('got');
@@ -183,7 +183,17 @@ class Method {
   async getOldArticles() {
     try {
       const res = await this.gotInstance('api/articles');
-      return res.body.data;
+      if (res.body.status === 'ok') {
+        const list = res.body.data;
+        for (let i = 0; i < list.length; i++) {
+          const current = list[i];
+          const res = await this.gotInstance(`api/article/${current.id}`);
+          current.mainCon = res.body.data.mainCon;
+        }
+        return list;
+      } else {
+        return [];
+      }
     } catch (error) {
       console.log(error);
       return [];
@@ -215,6 +225,7 @@ class Method {
         ...data
       } = oldArticle;
       const currentData = {
+        conDate,
         ...data,
         createdAt: new Date(conDate),
       };
