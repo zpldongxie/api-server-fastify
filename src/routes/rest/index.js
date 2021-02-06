@@ -2,7 +2,7 @@
  * @description rest接口，不做身份验证，其他系统使用的路由要加验证
  * @author: zpl
  * @Date: 2020-07-30 11:26:02
- * @LastEditTime: 2021-01-28 10:20:50
+ * @LastEditTime: 2021-02-06 15:01:02
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -248,7 +248,10 @@ module.exports = fp(async (server, opts, next) => {
       '/rest/menu',
       {
         schema: { tags: ['rest'], summary: '获取导航菜单' },
-        config: { ChannelSettingModule: mysqlModel.ChannelSetting },
+        config: {
+          ChannelTypeModule: mysqlModel.ChannelType,
+          ChannelSettingModule: mysqlModel.ChannelSetting,
+        },
       },
       (request, reply) => channelMethod.getAll(request, reply),
   );

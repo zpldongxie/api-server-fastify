@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-28 10:20:20
+ * @LastEditTime: 2021-02-06 14:45:14
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -111,7 +111,7 @@ class Method extends CommonMethod {
     await (that.run(request, reply))(
         async () => {
           const where = {
-            channel_id: null,
+            channelId: null,
           };
           const attributes = {
             exclude: ['ChannelId'],

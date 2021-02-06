@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-16 20:55:34
+ * @LastEditTime: 2021-02-06 14:23:57
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -15,6 +15,7 @@ const routerBaseInfo = {
   getAllURL: '/api/trainingregs',
   getListURL: '/api/getTrainingRegList',
   putURL: '/api/trainingreg',
+  setPassedURL: '/api/trainingreg/setPassed',
   deleteURL: '/api/trainingregs',
 };
 module.exports = fp(async (server, opts, next) => {
@@ -83,11 +84,16 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => method.queryList(request, reply),
   );
 
-  // 新增或更新
   const updateSchema = require('./update-schema');
   server.put(routerBaseInfo.putURL,
       { schema: { ...updateSchema, tags: ['trainingreg'], summary: '新增或更新' } },
       (request, reply) => method.upsert(request, reply),
+  );
+
+  const setPassedSchema = require('./set-passed-schema');
+  server.post(routerBaseInfo.setPassedURL,
+      { schema: { ...setPassedSchema, tags: ['trainingreg'], summary: '设置审核状态' } },
+      (request, reply) => method.setPassed(request, reply),
   );
 
   // 删除
