@@ -8,7 +8,7 @@
 const S = require('fluent-schema');
 
 const bodyJsonSchema = S.object()
-    .prop('channelId', S.number().required().description('栏目ID'))
+    .prop('channelId', S.string().format('uuid').required().description('栏目ID'))
     .prop('pageSize', S.number().default(20).description('分页大小，默认为20'))
     .prop('current', S.number().default(1).description('当前页码，默认为1'))
     .prop('orderName', S.string().default('conDate').description('排序字段'))
