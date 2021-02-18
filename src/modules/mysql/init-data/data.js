@@ -2,7 +2,7 @@
  * @description: 数据库初始数据
  * @author: zpl
  * @Date: 2020-07-26 22:19:42
- * @LastEditTime: 2021-02-04 11:53:34
+ * @LastEditTime: 2021-02-18 18:10:18
  * @LastEditors: zpl
  */
 // 用户组
@@ -87,9 +87,9 @@ exports.memberTypeList = [{
 // 系统配置
 exports.sysConfig = [{
   name: 'base_url',
-  value: 'http://www.snains.cn/upload/',
+  value: 'http://www.snains.cn/uploads/',
   descStr: '访问域名/IP',
-  group: '基础',
+  group: '上传',
 }, {
   name: 'image_ext',
   value: 'gif,jpg,jpeg,png,bmp',
@@ -155,4 +155,9 @@ exports.sysConfig = [{
   value: '"朱鹏亮" <zpl_dongxie@sina.com>',
   descStr: '发件人邮箱地址',
   group: '邮箱',
+}, {
+  name: 'oldManager',
+  value: 'http://www.snains.cn:8000',
+  descStr: '同步数据的旧环境',
+  group: '同步',
 }];

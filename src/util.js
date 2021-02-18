@@ -2,7 +2,7 @@
  * @description: 全局工具
  * @author: zpl
  * @Date: 2020-09-07 00:38:53
- * @LastEditTime: 2021-02-04 10:11:11
+ * @LastEditTime: 2021-02-18 18:06:09
  * @LastEditors: zpl
  */
 const path = require('path');
@@ -35,7 +35,7 @@ const onRouterSuccess = (reply, data = null, message = '请求成功', code = 20
  * @param {*} err
  */
 const onRouterError = (reply, err) => {
-  const code = err.status || 500;
+  const code = err.status || 200;
   const message = err.message || 'Internal Server Error';
   const resBody = {
     status: 'error',

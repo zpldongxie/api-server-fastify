@@ -2,7 +2,7 @@
  * @description: 数据库工具
  * @author: zpl
  * @Date: 2021-01-31 20:06:21
- * @LastEditTime: 2021-02-01 12:48:32
+ * @LastEditTime: 2021-02-18 17:12:18
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -10,14 +10,16 @@ const CommonMethod = require('../commonMethod');
 const Method = require('./method');
 
 module.exports = fp(async (server, opts, next) => {
-  const { config: { oldManager }, ajv } = opts;
+  const { ajv } = opts;
   const mysqlModel = server.mysql.models;
+  const SysConfigModule = mysqlModel.SysConfig;
   const ChannelModule = mysqlModel.Channel;
   const ChannelTypeModule = mysqlModel.ChannelType;
   const ChannelSettingModule = mysqlModel.ChannelSetting;
   const ArticleModule = mysqlModel.Article;
 
-  const method = new Method(oldManager, {
+  const method = new Method({
+    sysConfigDBMethod: new CommonMethod(SysConfigModule, ajv).dbMethod,
     channelDBMethod: new CommonMethod(ChannelModule, ajv).dbMethod,
     channelTypeDBMethod: new CommonMethod(ChannelTypeModule, ajv).dbMethod,
     channelSettingDBMethod: new CommonMethod(ChannelSettingModule, ajv).dbMethod,

@@ -16,6 +16,4 @@ mysql:
     idle: 10000
   needCreatTable: false
 
-oldManager: "http://localhost:9001"
-
 uploadRootPath: "/usr/share/nginx/html/uploads/"

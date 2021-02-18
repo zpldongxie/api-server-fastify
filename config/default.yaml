@@ -1,13 +1,13 @@
 db:
-  uri: "mongodb://49.234.158.74:27017/api_server_waxh"
+  uri: "mongodb://127.0.0.1:27017/api_server"
   user: "waxh"
   pass: "ysp@1234"
 
 mysql:
-  host: "117.34.73.162"
-  database: "websiteManager_new"
+  host: "127.0.0.1"
+  database: "websiteManager"
   user: "root"
-  password: "Ysp@1234"
+  password: "Waxh@sql@1234"
   dialect: 'mysql'
   pool:
     max: 5
@@ -19,7 +19,5 @@ mysql:
   # 同步前清空所有旧表
   dropOldTable: false
 
-oldManager: "http://www.snains.cn:8000"
-
 # fs.mkdir不能一次创建多级目录，必须确保上一级目录已经存在
-uploadRootPath: "/usr/share/nginx/html/uploads/"
+uploadRootPath: "/project/nginx/html/uploads/"
