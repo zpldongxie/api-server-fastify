@@ -3,7 +3,7 @@
  * @description:
  * @author: zpl
  * @Date: 2021-01-31 20:22:20
- * @LastEditTime: 2021-02-18 17:47:20
+ * @LastEditTime: 2021-02-19 10:31:33
  * @LastEditors: zpl
  */
 const got = require('got');
@@ -70,7 +70,6 @@ class Method {
       const settingRes = await this.sysConfigDBMethod.findOne({ where: { name: 'oldManager' } });
       if (settingRes.status) {
         const prefixUrl = settingRes.data.value;
-        console.log('prefixUrl: ', prefixUrl);
         const { body } = await this.gotInstance('api/channels', { prefixUrl });
         return {
           status: 1,
@@ -110,16 +109,14 @@ class Method {
       for (let i = 0; i < oldChannelList.length; i++) {
         const oldChannel = oldChannelList[i];
         // eslint-disable-next-line no-unused-vars
-        const { id, parentId, createTime, channelType, ChannelSettings, isShow, ...data } = oldChannel;
+        const { id, parentId, ChannelTypeId, ChannelType, ChannelSettings, ...data } = oldChannel;
         const currentData = {
           ...data,
-          showStatus: isShow,
-          createdAt: createTime,
         };
         const currentRes = await this.channelDBMethod.create(currentData);
-        newTotal += currentRes.status;
         if (currentRes.status) {
-          const ct = await this.channelTypeDBMethod.findOne({ where: { name: channelType } });
+          newTotal += currentRes.status;
+          const ct = await this.channelTypeDBMethod.findOne({ where: { name: ChannelType.name } });
           currentRes.data.setChannelType(ct.data);
           this.channelIdComp[id] = currentRes.data.id;
         }
@@ -157,7 +154,6 @@ class Method {
       const settingRes = await this.sysConfigDBMethod.findOne({ where: { name: 'oldManager' } });
       if (settingRes.status) {
         const prefixUrl = settingRes.data.value;
-        console.log('prefixUrl: ', prefixUrl);
         const { body } = await this.gotInstance('api/channelsettings', { prefixUrl });
         return {
           status: 1,
@@ -228,7 +224,6 @@ class Method {
       const settingRes = await this.sysConfigDBMethod.findOne({ where: { name: 'oldManager' } });
       if (settingRes.status) {
         const prefixUrl = settingRes.data.value;
-        console.log('prefixUrl: ', prefixUrl);
         const { body } = await this.gotInstance('api/articles', { prefixUrl });
         if (body.status === 'ok') {
           const list = body.data;
@@ -277,6 +272,7 @@ class Method {
       await this.articleDBMethod.destroy();
       console.log('---文章表及文章扩展表已清空，开始同步---');
       const oldArticles = oldData.data;
+      console.log('---待同步文章数---', oldArticles.length);
       let newTotal = 0;
       for (let i = 0; i < oldArticles.length; i++) {
         const oldArticle = oldArticles[i];
@@ -294,6 +290,9 @@ class Method {
           createdAt: new Date(conDate),
         };
         const currentRes = await this.articleDBMethod.create(currentData);
+        // console.log('---------------------');
+        // console.log(currentRes);
+        // console.log('---------------------');
         const current = currentRes.data;
 
         // 设置栏目关联
