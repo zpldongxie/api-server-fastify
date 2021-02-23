@@ -2,7 +2,7 @@
  * @description:
  * @author: zpl
  * @Date: 2020-08-07 10:32:25
- * @LastEditTime: 2021-01-27 18:00:37
+ * @LastEditTime: 2021-02-23 08:51:21
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -28,17 +28,20 @@ module.exports = fp(async (server, opts, next) => {
       // produces: ['application/json'],
       tags: [
         { name: 'rest', description: '所有对外rest接口' },
-        { name: 'user', description: '用户管理' },
-        { name: 'usergroup', description: '用户组管理' },
-        { name: 'channel', description: '栏目管理' },
-        { name: 'channelsetting', description: '栏目配置管理' },
-        { name: 'article', description: '文章管理' },
-        { name: 'contentdetail', description: '文章管理' },
-        { name: 'training', description: '培训管理' },
-        { name: 'trainingreg', description: '培训报名管理' },
-        { name: 'membercompany', description: '单位会员管理' },
-        { name: 'memberindivic', description: '个人会员管理' },
-        { name: 'membertype', description: '会员类别管理' },
+        { name: 'user', description: '用户' },
+        { name: 'usergroup', description: '用户组' },
+        { name: 'channel', description: '栏目' },
+        { name: 'channelsetting', description: '栏目配置' },
+        { name: 'channeltype', description: '栏目类型' },
+        { name: 'article', description: '文章' },
+        { name: 'articleextension', description: '文章扩展' },
+        { name: 'training', description: '培训' },
+        { name: 'trainingreg', description: '培训报名' },
+        { name: 'membercompany', description: '单位会员' },
+        { name: 'memberindivic', description: '个人会员' },
+        { name: 'membertype', description: '会员类别' },
+        { name: 'entry', description: '入驻申请' },
+        { name: 'servicerequest', description: '服务申请' },
         { name: 'sysconfig', description: '系统配置' },
       ],
       definitions: {
