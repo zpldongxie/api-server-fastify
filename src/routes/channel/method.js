@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-02-05 15:11:21
+ * @LastEditTime: 2021-02-23 16:19:24
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -276,6 +276,25 @@ class Method extends CommonMethod {
           console.log('channel setShowStatus begin');
           const { id, showStatus } = request.body;
           const res = await that.dbMethod.updateOne(id, { showStatus });
+          return res;
+        },
+    );
+  }
+
+  /**
+   * 设置栏目配置继承状态
+   *
+   * @param {*} request
+   * @param {*} reply
+   * @memberof Method
+   */
+  async setSettingExtend(request, reply) {
+    const that = this;
+    await (that.run(request, reply))(
+        async () => {
+          console.log('channel setSettingExtend begin');
+          const { id, settingExtend } = request.body;
+          const res = await that.dbMethod.updateOne(id, { settingExtend });
           return res;
         },
     );

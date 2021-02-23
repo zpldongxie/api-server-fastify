@@ -18,6 +18,7 @@ const routerBaseInfo = {
   getListURL: '/api/getChannelList',
   putURL: '/api/channel',
   putShowStatusURL: '/api/channel/showStatus',
+  putSettingExtendURL: '/api/channel/settingExtend',
   moveURL: '/api/channel/move',
   deleteURL: '/api/channels',
 };
@@ -115,6 +116,12 @@ module.exports = fp(async (server, opts, next) => {
   server.put(routerBaseInfo.putShowStatusURL,
       { schema: { ...setShowStatusSchema, tags: ['channel'], summary: '设置显示状态' } },
       (request, reply) => method.setShowStatus(request, reply),
+  );
+
+  const setSettingExtendSchema = require('./set-setting-extend-schema');
+  server.put(routerBaseInfo.putSettingExtendURL,
+      { schema: { ...setSettingExtendSchema, tags: ['channel'], summary: '设置栏目配置继承状态' } },
+      (request, reply) => method.setSettingExtend(request, reply),
   );
 
   const moveSchema = require('./move-schema');
