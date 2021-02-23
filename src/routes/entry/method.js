@@ -2,10 +2,13 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-16 22:55:43
+ * @LastEditTime: 2021-02-23 16:05:30
  * @LastEditors: zpl
  */
+const { Op } = require('sequelize');
 const CommonMethod = require('../commonMethod');
+
+const { entryStatus } = require('../../dictionary');
 
 /**
  * 路由用到的方法
@@ -53,7 +56,14 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const res = await that.dbMethod.findAll(request.params);
+          console.log('entry getAll begin');
+          const { config: { ChannelModel } } = reply.context;
+          const res = await that.dbMethod.findAll({
+            include: [{
+              model: ChannelModel,
+              attributes: ['id', 'name', 'enName'],
+            }],
+          });
           return res;
         },
     );
@@ -70,6 +80,8 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
+          console.log('entry queryList begin');
+          const { config: { ChannelModel } } = reply.context;
           const {
             current,
             pageSize,
@@ -78,7 +90,10 @@ class Method extends CommonMethod {
             ...where
           } = request.body;
           const attributes = {};
-          const include = [];
+          const include = [{
+            model: ChannelModel,
+            attributes: ['id', 'name', 'enName'],
+          }];
           const res = await that.dbMethod.queryList({
             where,
             filter,
@@ -104,10 +119,50 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const info = rerquest.body;
-          const include = [];
-          const res = await that.dbMethod.create(info, { include });
-          return res;
+          console.log('entry create begin');
+          const { config: { ChannelModel, channelDBMethod } } = reply.context;
+          const { Channels, ...info } = request.body;
+          const cIds = Channels.map((channel) => channel.id);
+          const oldRes = await that.dbMethod.queryList({
+            where: {
+              corporateName: info.corporateName,
+              status: { [Op.in]: [entryStatus.applying, entryStatus.firstPass, entryStatus.alreadyEntry] },
+            },
+            include: [{
+              model: ChannelModel,
+              where: { id: { [Op.in]: cIds } },
+            }],
+          });
+          if (!oldRes.status || !oldRes.data.total) {
+            const { status, data } = await channelDBMethod.queryList({ where: { id: { [Op.in]: cIds } } });
+            if (status) {
+              const channels = data.list;
+              const res = await that.dbMethod.create(info);
+              if (res.status) {
+                const current = res.data;
+                current.setChannels(channels);
+                return {
+                  status: 1,
+                  data: current,
+                };
+              } else {
+                return {
+                  status: 0,
+                  message: res.message,
+                };
+              }
+            } else {
+              return {
+                status: 0,
+                message: '指定栏目不存在',
+              };
+            }
+          } else {
+            return {
+              status: 0,
+              message: '系统检测到已有相同或重复申请流程，请不要提交重复内容。',
+            };
+          }
         },
     );
   }
@@ -123,9 +178,50 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const { id, ...info } = request.body;
-          const res = await that.dbMethod.updateOne(id, info);
-          return res;
+          console.log('entry create begin');
+          const { config: { ChannelModel, channelDBMethod } } = reply.context;
+          const { id, Channels, ...info } = request.body;
+          const cIds = Channels.map((channel) => channel.id);
+          const oldRes = await that.dbMethod.queryList({
+            where: {
+              id: { [Op.not]: id },
+              corporateName: info.corporateName,
+              status: { [Op.in]: [entryStatus.applying, entryStatus.firstPass, entryStatus.alreadyEntry] },
+            },
+            include: [{
+              model: ChannelModel,
+              where: { id: { [Op.in]: cIds } },
+            }],
+          });
+          if (!oldRes.status || !oldRes.data.total) {
+            const { status, data } = await channelDBMethod.queryList({ where: { id: { [Op.in]: cIds } } });
+            if (status) {
+              const res = await that.dbMethod.updateOne(id, info);
+              if (res.status) {
+                const current = res.data;
+                await current.setChannels(data.list);
+                return {
+                  status: 1,
+                  data: current,
+                };
+              } else {
+                return {
+                  status: 0,
+                  message: res.message,
+                };
+              }
+            } else {
+              return {
+                status: 0,
+                message: '指定栏目不存在',
+              };
+            }
+          } else {
+            return {
+              status: 0,
+              message: '不能修改为已有相同申请流程',
+            };
+          }
         },
     );
   }
@@ -139,12 +235,12 @@ class Method extends CommonMethod {
    */
   async upsert(request, reply) {
     const that = this;
-    await (that.run(request, reply))(
-        async () => {
-          const res = await that.dbMethod.upsert(request.body);
-          return res;
-        },
-    );
+    const { id } = request.body;
+    if (id) {
+      await that.update(request, reply);
+    } else {
+      await that.create(request, reply);
+    }
   }
 
   /**
