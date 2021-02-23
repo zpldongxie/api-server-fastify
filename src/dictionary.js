@@ -2,14 +2,23 @@
  * @description: 业务字典
  * @author: zpl
  * @Date: 2021-01-02 22:25:09
- * @LastEditTime: 2021-01-11 16:38:39
+ * @LastEditTime: 2021-02-20 16:13:40
  * @LastEditors: zpl
  */
-// 审核状态
+// 会员审核状态
 exports.memberStatus = {
   'applying': '申请中',
   'firstPass': '初审通过',
   'formalMember': '正式会员',
+  'reject': '申请驳回',
+  'disable': '禁用',
+};
+
+// 入驻审核状态
+exports.entryStatus = {
+  'applying': '申请中',
+  'firstPass': '初审通过',
+  'alreadyEntry': '正式入驻',
   'reject': '申请驳回',
   'disable': '禁用',
 };

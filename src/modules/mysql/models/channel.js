@@ -3,7 +3,7 @@
  * @description: 栏目
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2021-02-03 11:09:05
+ * @LastEditTime: 2021-02-20 16:23:10
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -101,6 +101,8 @@ class Channel extends Model {
     Channel.hasMany(sequelize.models['ChannelSetting'], { onDelete: 'CASCADE' });
     // 栏目 - 培训， 一对多
     Channel.hasMany(sequelize.models['Training'], { onDelete: 'CASCADE' });
+    // 入驻名录 - 栏目， 多对多
+    Channel.belongsToMany(sequelize.models['Entry'], { through: 'ChannelEntry' });
   }
 }
 
