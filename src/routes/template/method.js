@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-16 22:55:43
+ * @LastEditTime: 2021-02-23 10:47:15
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -139,12 +139,12 @@ class Method extends CommonMethod {
    */
   async upsert(request, reply) {
     const that = this;
-    await (that.run(request, reply))(
-        async () => {
-          const res = await that.dbMethod.upsert(request.body);
-          return res;
-        },
-    );
+    const { id } = request.body;
+    if (id) {
+      await that.update(request, reply);
+    } else {
+      await that.create(request, reply);
+    }
   }
 
   /**

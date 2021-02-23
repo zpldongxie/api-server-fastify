@@ -2,7 +2,7 @@
  * @description: 所有路由方法的抽象对象
  * @author: zpl
  * @Date: 2021-01-12 12:23:11
- * @LastEditTime: 2021-02-22 17:28:13
+ * @LastEditTime: 2021-02-23 16:09:21
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -243,12 +243,26 @@ class DatabaseMethod {
    * @memberof DatabaseMethod
    */
   async updateOne(id, updateInfo) {
-    const result = await this.Model.update({ ...updateInfo }, { where: { id } });
-    if (result[0]) {
-      return this.onSuccess(result[0], '更新成功');
+    const current = await this.Model.findOne({ where: { id } });
+    if (current) {
+      for (const key in updateInfo) {
+        if (Object.hasOwnProperty.call(updateInfo, key)) {
+          const info = updateInfo[key];
+          current[key] = info;
+        }
+      }
+      current.save();
+      return this.onSuccess(current, '更新成功');
     } else {
-      return this.onError('更新失败');
+      return this.onError('无效id');
     }
+    // const result = await this.Model.update({ ...updateInfo }, { where: { id } });
+    // console.log('247-----------', result);
+    // if (result[0]) {
+    //   return this.onSuccess(result[0], '更新成功');
+    // } else {
+    //   return this.onError('更新失败');
+    // }
   }
 
   /**

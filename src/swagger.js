@@ -2,7 +2,7 @@
  * @description:
  * @author: zpl
  * @Date: 2020-08-07 10:32:25
- * @LastEditTime: 2021-02-23 08:51:21
+ * @LastEditTime: 2021-02-23 11:45:05
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -14,8 +14,8 @@ module.exports = fp(async (server, opts, next) => {
     routePrefix: '/documentation',
     swagger: {
       info: {
-        title: '网安协会API',
-        description: 'api',
+        title: '网安协会',
+        description: '网安协会网站管理平台api，仅供内部使用，正式发版本后，此界面禁止查看。',
         version: '0.1.0',
       },
       externalDocs: {
@@ -44,19 +44,20 @@ module.exports = fp(async (server, opts, next) => {
         { name: 'servicerequest', description: '服务申请' },
         { name: 'sysconfig', description: '系统配置' },
       ],
-      definitions: {
-        User: {
-          $id: 'User',
-          type: 'object',
-          required: ['id', 'email'],
-          properties: {
-            id: { type: 'string', format: 'uuid' },
-            firstName: { type: 'string', nullable: true },
-            lastName: { type: 'string', nullable: true },
-            email: { type: 'string', format: 'email' },
-          },
-        },
-      },
+      // definitions: {
+      //   User: {
+      //     $id: 'User',
+      //     type: 'object',
+      //     required: ['id', 'email'],
+      //     properties: {
+      //       id: { type: 'string', format: 'uuid' },
+      //       firstName: { type: 'string', nullable: true },
+      //       lastName: { type: 'string', nullable: true },
+      //       email: { type: 'string', format: 'email' },
+      //     },
+      //   },
+      // },
+      // TODO: 有空研究一下
       securityDefinitions: {
         apiKey: {
           type: 'apiKey',
