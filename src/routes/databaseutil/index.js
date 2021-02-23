@@ -2,46 +2,40 @@
  * @description: 数据库工具
  * @author: zpl
  * @Date: 2021-01-31 20:06:21
- * @LastEditTime: 2021-02-18 17:12:18
+ * @LastEditTime: 2021-02-22 14:50:31
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
-const CommonMethod = require('../commonMethod');
 const Method = require('./method');
 
 module.exports = fp(async (server, opts, next) => {
   const { ajv } = opts;
   const mysqlModel = server.mysql.models;
-  const SysConfigModule = mysqlModel.SysConfig;
-  const ChannelModule = mysqlModel.Channel;
-  const ChannelTypeModule = mysqlModel.ChannelType;
-  const ChannelSettingModule = mysqlModel.ChannelSetting;
-  const ArticleModule = mysqlModel.Article;
 
-  const method = new Method({
-    sysConfigDBMethod: new CommonMethod(SysConfigModule, ajv).dbMethod,
-    channelDBMethod: new CommonMethod(ChannelModule, ajv).dbMethod,
-    channelTypeDBMethod: new CommonMethod(ChannelTypeModule, ajv).dbMethod,
-    channelSettingDBMethod: new CommonMethod(ChannelSettingModule, ajv).dbMethod,
-    articleDBMethod: new CommonMethod(ArticleModule, ajv).dbMethod,
-  });
+  const method = new Method(mysqlModel, ajv);
 
   server.post(
-      '/api/databaseutil/channel/async',
+      '/api/databaseutil/commonSettings/sync',
+      { schema: { tags: ['数据库工具'], summary: '从旧数据库同步公共配置数据' } },
+      (request, reply) => method.syncCommonSettings(request, reply),
+  );
+
+  server.post(
+      '/api/databaseutil/channel/sync',
       { schema: { tags: ['数据库工具'], summary: '从旧数据库同步栏目数据' } },
-      (request, reply) => method.asyncChannel(request, reply),
+      (request, reply) => method.syncChannel(request, reply),
   );
 
   server.post(
-      '/api/databaseutil/channelsettings/async',
-      { schema: { tags: ['数据库工具'], summary: '从旧数据库同步栏目配置数据' } },
-      (request, reply) => method.asyncChannelSettings(request, reply),
-  );
-
-  server.post(
-      '/api/databaseutil/article/async',
+      '/api/databaseutil/article/sync',
       { schema: { tags: ['数据库工具'], summary: '从旧数据库同步文章数据' } },
-      (request, reply) => method.asyncArticle(request, reply),
+      (request, reply) => method.syncArticle(request, reply),
+  );
+
+  server.post(
+      '/api/databaseutil/membercompany/sync',
+      { schema: { tags: ['数据库工具'], summary: '从旧数据库同步单位会员数据' } },
+      (request, reply) => method.syncMemberCompany(request, reply),
   );
 
   next();

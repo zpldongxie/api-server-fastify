@@ -157,7 +157,7 @@ exports.sysConfig = [{
   group: '邮箱',
 }, {
   name: 'oldManager',
-  value: 'http://www.snains.cn:8000',
+  value: 'http://49.234.158.74:3000',
   descStr: '同步数据的旧环境',
   group: '同步',
 }];
