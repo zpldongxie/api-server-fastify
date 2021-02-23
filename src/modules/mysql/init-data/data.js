@@ -2,7 +2,7 @@
  * @description: 数据库初始数据
  * @author: zpl
  * @Date: 2020-07-26 22:19:42
- * @LastEditTime: 2021-02-18 18:10:18
+ * @LastEditTime: 2021-02-20 12:06:18
  * @LastEditors: zpl
  */
 // 用户组
@@ -87,7 +87,7 @@ exports.memberTypeList = [{
 // 系统配置
 exports.sysConfig = [{
   name: 'base_url',
-  value: 'http://www.snains.cn/uploads/',
+  value: 'http://www.snains.cn/',
   descStr: '访问域名/IP',
   group: '上传',
 }, {

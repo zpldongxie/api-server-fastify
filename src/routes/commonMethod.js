@@ -153,9 +153,11 @@ class DatabaseMethod {
     const conditions = {
       where: {},
       order: [],
-      offset: (current - 1) * pageSize,
-      limit: pageSize,
     };
+    if (pageSize !== -1) {
+      conditions.offset = (current - 1) * pageSize;
+      conditions.limit = pageSize;
+    }
 
     // 组合查询条件
     if (where && Object.keys(where).length) {

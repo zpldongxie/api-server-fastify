@@ -3,7 +3,7 @@
  * @description: 单位会员
  * @author: zpl
  * @Date: 2020-08-17 18:35:54
- * @LastEditTime: 2021-01-30 17:12:51
+ * @LastEditTime: 2021-02-20 12:35:44
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -46,7 +46,7 @@ class MemberCompany extends Model {
         comment: '邮箱',
       },
       contacts: {
-        type: DataTypes.STRING(4),
+        type: DataTypes.STRING(20),
         allowNull: false,
         comment: '联系人',
       },
