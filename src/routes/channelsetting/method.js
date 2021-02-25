@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-02-22 17:20:26
+ * @LastEditTime: 2021-02-25 17:48:57
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -119,6 +119,66 @@ class Method extends CommonMethod {
   }
 
   /**
+   * 新增
+   *
+   * @param {*} request
+   * @param {*} reply
+   * @memberof Method
+   */
+  async create(request, reply) {
+    const that = this;
+    await (that.run(request, reply))(
+        async () => {
+          console.log('channelsetting create begin');
+          const { config: { channelDBMethod } } = reply.context;
+          const { Channel={ id: -1 }, ...info } = request.body;
+          const { data=null } = await channelDBMethod.findById(Channel.id);
+          // if (status) {
+          const channel = data;
+          const res = await that.dbMethod.create(info);
+          if (res.status) {
+            const current = res.data;
+            current.setChannel(channel);
+            return {
+              status: 1,
+              data: current,
+            };
+          } else {
+            return {
+              status: 0,
+              message: res.message,
+            };
+          }
+          // } else {
+          //   return {
+          //     status: 0,
+          //     message: '指定栏目不存在',
+          //   };
+          // }
+        },
+    );
+  }
+
+  /**
+   * 更新
+   *
+   * @param {*} request
+   * @param {*} reply
+   * @memberof Method
+   */
+  async update(request, reply) {
+    const that = this;
+    await (that.run(request, reply))(
+        async () => {
+          console.log('channelsetting update begin');
+          const { id, ...info } = request.body;
+          const res = await that.dbMethod.updateOne(id, info);
+          return res;
+        },
+    );
+  }
+
+  /**
    * 新增或更新
    *
    * @param {*} request
@@ -127,12 +187,12 @@ class Method extends CommonMethod {
    */
   async upsert(request, reply) {
     const that = this;
-    await (that.run(request, reply))(
-        async () => {
-          const res = await that.dbMethod.upsert(request.body);
-          return res;
-        },
-    );
+    const { id } = request.body;
+    if (id) {
+      await that.update(request, reply);
+    } else {
+      await that.create(request, reply);
+    }
   }
 
   /**

@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-12 20:30:42
+ * @LastEditTime: 2021-02-25 17:36:35
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -20,8 +20,10 @@ const routerBaseInfo = {
 module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
   const CurrentModel = mysqlModel[routerBaseInfo.modelName_U];
+  const ChannelModel = mysqlModel.Channel;
   const { ajv } = opts;
   const method = new Method(CurrentModel, ajv);
+  const channelDBMethod = new Method(ChannelModel, ajv).dbMethod;
 
 
   /*
@@ -78,7 +80,10 @@ module.exports = fp(async (server, opts, next) => {
   // 新增或更新
   const updateSchema = require('./update-schema');
   server.put(routerBaseInfo.putURL,
-      { schema: { ...updateSchema, tags: ['channelsetting'], summary: '新增或更新' } },
+      {
+        schema: { ...updateSchema, tags: ['channelsetting'], summary: '新增或更新' },
+        config: { channelDBMethod },
+      },
       (request, reply) => method.upsert(request, reply),
   );
 
