@@ -2,7 +2,7 @@
  * @description: 全局工具
  * @author: zpl
  * @Date: 2020-09-07 00:38:53
- * @LastEditTime: 2021-02-18 18:06:09
+ * @LastEditTime: 2021-02-25 11:03:05
  * @LastEditors: zpl
  */
 const path = require('path');
@@ -158,6 +158,7 @@ const getCurrentDate = () => {
  * @return {*}
  */
 const getEmailHtml = (context) => {
+  if (context === '') return '';
   return `
   <div style="width: 600px; margin: 10px auto;">
     <div class="header"></div>
