@@ -9,7 +9,7 @@ const { Op } = require('sequelize');
 const CommonMethod = require('../commonMethod');
 
 const { entryStatus } = require('../../dictionary');
-
+const { firstResoveTemplate, rejectTemplate, formalMemberTemplate, disableTemplate } = require('./email-template');
 /**
  * 路由用到的方法
  *
@@ -260,6 +260,92 @@ class Method extends CommonMethod {
         },
     );
   }
+
+   /**
+   * 审核
+   *
+   * @param {*} request
+   * @param {*} reply
+   * @memberof Method
+   */
+  async audit(request, reply) {
+    const that = this;
+    await (that.run(request, reply))(
+        async () => {
+          console.log('entry audit begin');
+          const { config: { sysConfigModel, nodemailer } } = reply.context;
+          const { id, status, rejectDesc = '' } = request.body;
+          const res = await that.dbMethod.findById(id);
+          if (!res.status) {
+            return {
+              status: 0,
+              message: 'ID错误，请确认后重新提交',
+            };
+          }
+          const current = res.data;
+          let logonDate = null;
+          if (res.data.status !== entryStatus.alreadyEntry && status === entryStatus.alreadyEntry) {
+            logonDate = getCurrentDate();
+          }
+          current.status = status;
+          current.rejectDesc = rejectDesc;
+          current.logonDate = logonDate;
+          await current.save();
+          const from = await sysConfigModel.findOne({ where: { name: 'from', group: '邮箱' } });
+          let html = '';
+          switch (status) {
+            case entryStatus.firstPass:
+            // 初审通过
+              html = firstResoveTemplate;
+              break;
+            case entryStatus.reject:
+            // 审核不通过
+              html = rejectTemplate;
+              break;
+            case entryStatus.alreadyEntry:
+            // 正式入驻
+              html = formalMemberTemplate;
+              break;
+            case entryStatus.disable:
+            // 禁用
+              html = disableTemplate;
+              break;
+          }
+          html = html.replace('%name%', current.corporateName);
+          html = html.replace('%type%', current.type);
+          const now = new Date(getCurrentDate());
+          html = html.replace('%date%', `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`);
+          html = html.replace('%rejectDesc%', current.rejectDesc);
+          html = getEmailHtml(html);
+          if (html !== '') {
+            try {
+              await nodemailer.sendMail({
+                from: from.value,
+                to: current.email,
+                subject: '陕西省信息网络安全协会%type%入驻申请状态变更提醒',
+                html,
+              });
+              const sendEmailStatus = getCurrentDate();
+              current.sendEmailStatus = sendEmailStatus;
+              await current.save();
+            } catch (e) {
+              console.warn(e);
+              current.sendEmailStatus = '发送失败';
+              await current.save();
+              return {
+                status: 0,
+                message: '邮件发送失败',
+              };
+            }
+          }
+          return {
+            status: 1,
+          };
+        },
+    );
+  }
+
+
 }
 
 module.exports = Method;
