@@ -2,7 +2,7 @@
  * @description: 所有路由方法的抽象对象
  * @author: zpl
  * @Date: 2021-01-12 12:23:11
- * @LastEditTime: 2021-02-23 16:09:21
+ * @LastEditTime: 2021-02-26 09:04:39
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -89,29 +89,15 @@ class DatabaseMethod {
   /**
    * 获取所有
    *
-   * @param {*} [conditions={}]
+   * @param {*} include
    * @return {*}
    * @memberof DatabaseMethod
    */
-  async findAll(conditions = {}) {
-    const {
-      where = {},
-      order = [],
-      attributes,
-      include,
-    } = conditions;
-
-    const opt = {
-      where,
-      order,
-    };
-    const orderOnCreatedAt = order.find((o) => 'createdAt' === o[0]);
+  async findAll(include) {
+    const opt = {};
     const hasCreatedAt = this.Model.rawAttributes.hasOwnProperty('createdAt');
-    if (!orderOnCreatedAt && hasCreatedAt) {
-      opt.order = order.concat([['createdAt', 'DESC']]);
-    }
-    if (attributes) {
-      opt.attributes = attributes;
+    if (hasCreatedAt) {
+      opt.order = [['createdAt', 'DESC']];
     }
     if (include && include.length) {
       opt.include = include;
@@ -141,11 +127,11 @@ class DatabaseMethod {
    */
   async queryList(
       {
-        where={},
+        where = {},
         filter,
         sorter,
-        current=1,
-        pageSize=10,
+        current = 1,
+        pageSize = 10,
         attributes,
         include,
       },
@@ -225,7 +211,7 @@ class DatabaseMethod {
    * @return {*}
    * @memberof DatabaseMethod
    */
-  async create(info, opt={}) {
+  async create(info, opt = {}) {
     const result = await this.Model.create(info, opt);
     if (result) {
       return this.onSuccess(result, '创建成功');
@@ -256,13 +242,6 @@ class DatabaseMethod {
     } else {
       return this.onError('无效id');
     }
-    // const result = await this.Model.update({ ...updateInfo }, { where: { id } });
-    // console.log('247-----------', result);
-    // if (result[0]) {
-    //   return this.onSuccess(result[0], '更新成功');
-    // } else {
-    //   return this.onError('更新失败');
-    // }
   }
 
   /**
@@ -310,7 +289,7 @@ class DatabaseMethod {
    * @return {*}
    * @memberof DatabaseMethod
    */
-  async delete(ids=[]) {
+  async delete(ids = []) {
     const num = await this.Model.destroy({
       where: {
         id: {
@@ -331,7 +310,7 @@ class DatabaseMethod {
    * @return {*}
    * @memberof DatabaseMethod
    */
-  async deleteMany(where={}) {
+  async deleteMany(where = {}) {
     const num = await this.Model.destroy({ where });
     if (num) {
       return this.onSuccess(num, '删除成功');
@@ -379,7 +358,7 @@ class CommonMethod {
   commonValidate(schema, params) {
     const validate = this.ajv.compile(schema.valueOf());
     const valid = validate(params);
-    return (func, args=[]) => {
+    return (func, args = []) => {
       if (!valid) {
         args.push(valid.errors);
       }

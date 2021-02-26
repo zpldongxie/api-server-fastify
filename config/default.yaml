@@ -5,7 +5,7 @@ db:
 
 mysql:
   host: "127.0.0.1"
-  database: "websiteManager"
+  database: "serviceRating"
   user: "root"
   password: "Waxh@sql@1234"
   dialect: 'mysql'
@@ -20,4 +20,4 @@ mysql:
   dropOldTable: false
 
 # fs.mkdir不能一次创建多级目录，必须确保上一级目录已经存在
-uploadRootPath: "/project/nginx/html/uploads/"
+uploadRootPath: "/project/nginx/html_serviceRating/uploads/"

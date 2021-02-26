@@ -53,7 +53,7 @@ load(routeDir, (name, model) => {
 
 const start = async () => {
   try {
-    await fastify.listen(3000, '0.0.0.0');
+    await fastify.listen(4000, '0.0.0.0');
   } catch (err) {
     console.log(err);
     fastify.log.error(err);

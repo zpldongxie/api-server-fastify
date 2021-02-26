@@ -3,7 +3,7 @@
  * @description: 栏目
  * @author: zpl
  * @Date: 2020-07-21 18:31:33
- * @LastEditTime: 2021-02-20 16:23:10
+ * @LastEditTime: 2021-02-24 14:46:08
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -72,10 +72,11 @@ class Channel extends Model {
         defaultValue: 0,
         comment: '排序值',
       },
-      settingExtend: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true,
-        comment: '是否继承设置',
+      channelType: {
+        type: DataTypes.ENUM,
+        values: ['文章', '链接'],
+        defaultValue: '文章',
+        comment: '栏目类型',
       },
     }, {
       sequelize,
@@ -92,17 +93,8 @@ class Channel extends Model {
    * @memberof Channel
    */
   static reateAssociation(sequelize) {
-    // 栏目 - 栏目类型， 多对一
-    Channel.belongsTo(sequelize.models['ChannelType']);
     // 栏目 - 文章， 多对多
     Channel.belongsToMany(sequelize.models['Article'], { through: 'ChannelAtricle' });
-
-    // 栏目 - 栏目配置， 一对多
-    Channel.hasMany(sequelize.models['ChannelSetting'], { onDelete: 'CASCADE' });
-    // 栏目 - 培训， 一对多
-    Channel.hasMany(sequelize.models['Training'], { onDelete: 'CASCADE' });
-    // 入驻名录 - 栏目， 多对多
-    Channel.belongsToMany(sequelize.models['Entry'], { through: 'ChannelEntry' });
   }
 }
 

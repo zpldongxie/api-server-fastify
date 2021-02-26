@@ -1,5 +1,5 @@
 {
-  "name": "api-server-fastify",
+  "name": "api-service-rating",
   "version": "1.0.0",
   "description": "基于fastify实现的RESTful API服务",
   "main": "index.js",

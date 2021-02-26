@@ -1,12 +1,13 @@
-/* eslint-disable new-cap */
 /*
  * @description: 用户
  * @author: zpl
  * @Date: 2020-07-25 15:10:09
- * @LastEditTime: 2021-01-31 19:37:15
+ * @LastEditTime: 2021-02-25 13:16:30
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
+
+const { userStatus } = require('../../../dictionary');
 
 /**
  * 用户
@@ -37,21 +38,11 @@ class User extends Model {
       },
       password: {
         type: DataTypes.STRING(64),
-        is: /^[0-9a-f]{64}$/i,
         comment: '密码',
-      },
-      name: {
-        type: DataTypes.STRING(64),
-        allowNull: false,
-        comment: '姓名',
-      },
-      sex: {
-        type: DataTypes.ENUM,
-        values: ['男', '女'],
-        comment: '性别',
       },
       mobile: {
         type: DataTypes.STRING(11),
+        allowNull: false,
         comment: '手机',
       },
       email: {
@@ -59,17 +50,30 @@ class User extends Model {
         allowNull: false,
         comment: '邮箱',
       },
-      remark: {
-        type: DataTypes.STRING,
-        comment: '备注',
+      province: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        comment: '所属省份',
       },
       verificationCode: {
         type: DataTypes.STRING(20),
+        allowNull: false,
         comment: '验证码',
       },
+      logonDate: {
+        type: DataTypes.DATE,
+        comment: '注册时间',
+      },
       status: {
-        type: DataTypes.INTEGER,
-        comment: '状态,1为启用，0为未启用',
+        type: DataTypes.ENUM,
+        values: [
+          userStatus.applying,
+          userStatus.rejected,
+          userStatus.enabled,
+          userStatus.disabled,
+        ],
+        defaultValue: userStatus.applying,
+        comment: '状态（申请中 | 申请驳回 | 启用 | 禁用）',
       },
     }, {
       sequelize,
@@ -86,8 +90,38 @@ class User extends Model {
    * @memberof User
    */
   static reateAssociation(sequelize) {
-    // 用户 - 用户组， 多对多
-    User.belongsToMany(sequelize.models['UserGroup'], { through: 'UserGroupUser' });
+    // 用户 - 部门， 多对多
+    User.belongsToMany(sequelize.models['Department'], { through: 'DepartmentUser' });
+
+    // 用户 - 用户扩展， 一对多
+    User.hasMany(sequelize.models['UserExtension']);
+
+    // 用户 - 等级评定， 一对多
+    User.hasMany(sequelize.models['Evaluation']);
+
+    // 用户 - 评定申请， 一对多
+    User.hasMany(sequelize.models['EvaluationRequest']);
+
+    // 用户 - 发票信息， 一对一
+    User.hasOne(sequelize.models['InvoiceInformation']);
+
+    // 用户 - 质量管理体系， 一对多
+    User.hasMany(sequelize.models['MSConstruction']);
+
+    // 用户 - 自主开发产品， 一对多
+    User.hasMany(sequelize.models['SelfProduct']);
+
+    // 用户 - 安全服务工具， 一对多
+    User.hasMany(sequelize.models['SafeTool']);
+
+    // 用户 - 工作环境设施， 一对多
+    User.hasMany(sequelize.models['WorkingEnvironment']);
+
+    // 用户 - 服务渠道， 一对多
+    User.hasMany(sequelize.models['ServiceChannel']);
+
+    // 用户 - 等级评定审批， 一对多
+    User.hasMany(sequelize.models['EvaluationApproval']);
   }
 }
 

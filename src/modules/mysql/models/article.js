@@ -1,9 +1,8 @@
-/* eslint-disable new-cap */
 /*
  * @description: 文章内容
  * @author: zpl
  * @Date: 2020-07-28 10:16:12
- * @LastEditTime: 2021-02-06 09:23:00
+ * @LastEditTime: 2021-02-24 14:51:36
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -55,14 +54,12 @@ class Article extends Model {
         comment: '标题图片',
       },
       auth: {
-        // eslint-disable-next-line new-cap
         type: DataTypes.STRING(64),
         defaultValue: '',
         comment: '作者',
       },
       source: {
-        // eslint-disable-next-line new-cap
-        type: DataTypes.STRING(64),
+        type: DataTypes.STRING(100),
         defaultValue: '本站原创',
         comment: '来源',
       },
@@ -86,40 +83,16 @@ class Article extends Model {
         defaultValue: 0,
         comment: '排序值',
       },
-      canComment: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-        comment: '允许评论',
-      },
-      commentStartTime: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-        comment: '评论开始时间',
-      },
-      commentEndTime: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-        comment: '评论结束时间',
-      },
       contentType: {
-        type: DataTypes.STRING(10),
-        allowNull: false,
+        type: DataTypes.ENUM,
+        values: ['文章', '链接'],
+        defaultValue: '文章',
         comment: '内容类型',
       },
       mainCon: {
         type: DataTypes.TEXT,
         defaultValue: '',
         comment: '文章内容',
-      },
-      mainPic: {
-        type: DataTypes.STRING,
-        defaultValue: '',
-        comment: '图片文章内容',
-      },
-      mainVideo: {
-        type: DataTypes.STRING,
-        defaultValue: '',
-        comment: '视频文章内容',
       },
       mainUrl: {
         type: DataTypes.STRING,
@@ -153,8 +126,6 @@ class Article extends Model {
   static reateAssociation(sequelize) {
     // 栏目 - 文章， 多对多
     Article.belongsToMany(sequelize.models['Channel'], { through: 'ChannelAtricle' });
-    // 文章 - 扩展，一对多
-    Article.Extensions = Article.hasMany(sequelize.models['ArticleExtension'], { onDelete: 'CASCADE' });
   }
 }
 

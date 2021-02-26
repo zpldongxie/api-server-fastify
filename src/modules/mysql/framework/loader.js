@@ -2,7 +2,7 @@
  * @description:
  * @author: zpl
  * @Date: 2020-07-29 22:16:11
- * @LastEditTime: 2021-02-20 16:25:17
+ * @LastEditTime: 2021-02-25 15:22:21
  * @LastEditors: zpl
  */
 
@@ -64,7 +64,11 @@ const buildRoute = async (models) => {
   });
 
   // 例外，不自动生成文件的model
-  const exception = ['ChannelAtricle', 'ChannelEntry', 'UserGroupUser'];
+  const exception = [
+    'DepartmentUser',
+    'ChannelAtricle',
+    'ServiceTypeEvaReq',
+  ];
 
   // 遍历modules
   Object.keys(models)

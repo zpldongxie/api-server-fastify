@@ -2,16 +2,44 @@
  * @description: 数据库初始数据
  * @author: zpl
  * @Date: 2020-07-26 22:19:42
- * @LastEditTime: 2021-02-20 12:06:18
+ * @LastEditTime: 2021-02-25 16:55:48
  * @LastEditors: zpl
  */
+const { getCurrentDate } = require('../../../util');
+const { userStatus } = require('../../../dictionary');
+
 // 用户组
-exports.userGroupList = [{
+exports.departmentList = [{
   name: '管理员',
   tag: 'admin',
 }, {
-  name: '用户',
-  tag: 'user',
+  name: '申请单位',
+  tag: 'sqdw',
+}, {
+  name: '评审机构',
+  tag: 'psjg',
+  // children: [{
+  //   name: '西安云适配',
+  //   tag: 'xmgly',
+  //   children: [{
+  //     name: '审核员',
+  //     tag: 'shy',
+  //   }],
+  // }],
+}, {
+  name: '公约委员会',
+  tag: 'gywyh',
+  // children: [{
+  //   name: '陕西省信息网络安全协会',
+  //   tag: 'wyhgly',
+  //   children: [{
+  //     name: '评定决定员',
+  //     tag: 'pdjdy',
+  //   }],
+  // }],
+}, {
+  name: '网安联',
+  tag: 'wal',
 }, {
   name: '访客',
   tag: 'guest',
@@ -20,74 +48,42 @@ exports.userGroupList = [{
 // 用户
 exports.userList = [{
   loginName: 'admin',
-  password: 'waxh1234',
-  name: 'admin',
-  sex: '男',
+  password: 'fwpd@admin',
   mobile: '18688888888',
-  email: '813015173@qq.com',
-  remark: '',
-  verification_code: '',
-  status: 1,
+  email: '285871388@qq.com',
+  province: '陕西省',
+  verificationCode: '',
+  logonDate: getCurrentDate(),
+  status: userStatus.enabled,
   group: '管理员',
 }, {
-  loginName: 'user',
+  loginName: '陕西省信息网络安全协会',
+  companyName: '陕西省信息网络安全协会',
   password: 'Ysp@1234',
-  name: 'user',
-  sex: '男',
-  mobile: '',
-  email: '',
-  remark: '',
-  verification_code: '',
-  status: 1,
-  group: '用户',
-}];
-
-// 栏目类型
-exports.channelTypeList = [{
-  name: '主页',
-  orderIndex: 0,
+  mobile: '18833334444',
+  email: '18833334444@qq.com',
+  province: '陕西省',
+  verificationCode: '',
+  logonDate: getCurrentDate(),
+  status: userStatus.enabled,
+  group: '公约委员会',
 }, {
-  name: '文章列表',
-  orderIndex: 5,
-}, {
-  name: '图片列表',
-  orderIndex: 10,
-}, {
-  name: '图文列表',
-  orderIndex: 15,
-}, {
-  name: '视频列表',
-  orderIndex: 20,
-}, {
-  name: '单篇文章',
-  orderIndex: 25,
-}, {
-  name: '外部链接',
-  orderIndex: 30,
-}, {
-  name: '安全培训',
-  orderIndex: 35,
-}];
-
-// 会员类别
-exports.memberTypeList = [{
-  name: '副理事长单位',
-  orderIndex: 5,
-}, {
-  name: '理事单位',
-  orderIndex: 10,
-}, {
-  name: '单位会员',
-  orderIndex: 15,
-}, {
-  name: '个人会员',
-  orderIndex: 20,
+  loginName: '西安云适配网络科技有限公司',
+  companyName: '西安云适配网络科技有限公司',
+  password: 'Ysp@1234',
+  mobile: '18833335555',
+  email: '18833335555@qq.com',
+  province: '陕西省',
+  verificationCode: '',
+  logonDate: getCurrentDate(),
+  status: userStatus.enabled,
+  group: '评审机构',
 }];
 
 // 系统配置
 exports.sysConfig = [{
   name: 'base_url',
-  value: 'http://www.snains.cn/',
+  value: 'http://139.186.165.200:81/',
   descStr: '访问域名/IP',
   group: '上传',
 }, {
@@ -155,9 +151,4 @@ exports.sysConfig = [{
   value: '"朱鹏亮" <zpl_dongxie@sina.com>',
   descStr: '发件人邮箱地址',
   group: '邮箱',
-}, {
-  name: 'oldManager',
-  value: 'http://49.234.158.74:3000',
-  descStr: '同步数据的旧环境',
-  group: '同步',
 }];
