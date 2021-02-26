@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-02-26 09:12:54
+ * @LastEditTime: 2021-02-26 09:23:21
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -104,7 +104,7 @@ module.exports = fp(async (server, opts, next) => {
   server.put(routerBaseInfo.auditURL,
       {
         schema: { ...auditSchema, tags: ['entry'], summary: '审核' },
-        config: { ...sysConfigModel, nodemailer: server.nodemailer },
+        config: { sysConfigModel, nodemailer: server.nodemailer },
       },
       (request, reply) => method.audit(request, reply),
   );

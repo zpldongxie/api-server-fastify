@@ -2,13 +2,14 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-02-23 16:05:30
+ * @LastEditTime: 2021-02-26 09:25:08
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
 const CommonMethod = require('../commonMethod');
-
 const { entryStatus } = require('../../dictionary');
+const { getCurrentDate, getEmailHtml } = require('../../util');
+
 const { firstResoveTemplate, rejectTemplate, formalMemberTemplate, disableTemplate } = require('./email-template');
 /**
  * 路由用到的方法
@@ -261,13 +262,13 @@ class Method extends CommonMethod {
     );
   }
 
-   /**
-   * 审核
-   *
-   * @param {*} request
-   * @param {*} reply
-   * @memberof Method
-   */
+  /**
+  * 审核
+  *
+  * @param {*} request
+  * @param {*} reply
+  * @memberof Method
+  */
   async audit(request, reply) {
     const that = this;
     await (that.run(request, reply))(
@@ -344,8 +345,6 @@ class Method extends CommonMethod {
         },
     );
   }
-
-
 }
 
 module.exports = Method;
