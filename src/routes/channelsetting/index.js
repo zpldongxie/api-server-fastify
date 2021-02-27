@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-02-25 17:36:35
+ * @LastEditTime: 2021-02-26 15:35:18
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -15,6 +15,7 @@ const routerBaseInfo = {
   getAllURL: '/api/channelsettings',
   getListURL: '/api/getChannelSettingList',
   putURL: '/api/channelsetting',
+  updateManyURL: '/api/channelsetting/updateMany',
   deleteURL: '/api/channelsettings',
 };
 module.exports = fp(async (server, opts, next) => {
@@ -52,7 +53,6 @@ module.exports = fp(async (server, opts, next) => {
   *            佛祖保佑       永不宕机     永无BUG
   */
 
-  // 根据ID获取单个
   const getByIdSchema = require('./query-by-id-schema');
   server.get(
       routerBaseInfo.getURL,
@@ -62,14 +62,12 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => method.getById(request, reply),
   );
 
-  // 获取所有
   server.get(
       routerBaseInfo.getAllURL,
       { schema: { tags: ['channelsetting'], summary: '获取所有' } },
       (request, reply) => method.getAll(request, reply),
   );
 
-  // 根据条件获取列表
   const queryListSchema = require('./query-list-schema');
   server.post(
       routerBaseInfo.getListURL,
@@ -77,9 +75,9 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => method.queryList(request, reply),
   );
 
-  // 新增或更新
   const updateSchema = require('./update-schema');
-  server.put(routerBaseInfo.putURL,
+  server.put(
+      routerBaseInfo.putURL,
       {
         schema: { ...updateSchema, tags: ['channelsetting'], summary: '新增或更新' },
         config: { channelDBMethod },
@@ -87,7 +85,16 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => method.upsert(request, reply),
   );
 
-  // 删除
+  const updateManyURLSchema = require('./update-many-schema');
+  server.put(
+      routerBaseInfo.updateManyURL,
+      {
+        schema: { ...updateManyURLSchema, tags: ['channelsetting'], summary: '批量更新属性' },
+        config: { channelDBMethod },
+      },
+      (request, reply) => method.updateMany(request, reply),
+  );
+
   const deleteSchema = require('./delete-schema');
   server.delete(
       routerBaseInfo.deleteURL,

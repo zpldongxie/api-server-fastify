@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-02-25 17:48:57
+ * @LastEditTime: 2021-02-26 15:09:10
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -131,9 +131,8 @@ class Method extends CommonMethod {
         async () => {
           console.log('channelsetting create begin');
           const { config: { channelDBMethod } } = reply.context;
-          const { Channel={ id: -1 }, ...info } = request.body;
-          const { data=null } = await channelDBMethod.findById(Channel.id);
-          // if (status) {
+          const { Channel = { id: -1 }, ...info } = request.body;
+          const { data = null } = await channelDBMethod.findById(Channel.id);
           const channel = data;
           const res = await that.dbMethod.create(info);
           if (res.status) {
@@ -149,12 +148,6 @@ class Method extends CommonMethod {
               message: res.message,
             };
           }
-          // } else {
-          //   return {
-          //     status: 0,
-          //     message: '指定栏目不存在',
-          //   };
-          // }
         },
     );
   }
@@ -173,6 +166,25 @@ class Method extends CommonMethod {
           console.log('channelsetting update begin');
           const { id, ...info } = request.body;
           const res = await that.dbMethod.updateOne(id, info);
+          return res;
+        },
+    );
+  }
+
+  /**
+   * 更新多个
+   *
+   * @param {*} request
+   * @param {*} reply
+   * @memberof Method
+   */
+  async updateMany(request, reply) {
+    const that = this;
+    await that.run(request, reply)(
+        async () => {
+          console.log('channelsetting updateMany begin');
+          const { ids, ...info } = request.body;
+          const res = await that.dbMethod.updateMany(ids, info);
           return res;
         },
     );
