@@ -2,7 +2,7 @@
  * @description: mySql
  * @author: zpl
  * @Date: 2020-07-25 14:47:25
- * @LastEditTime: 2021-02-01 08:59:35
+ * @LastEditTime: 2021-02-27 11:09:34
  * @LastEditors: zpl
  */
 
@@ -19,6 +19,12 @@ module.exports = fp(async (fastify, opts, next) => {
     pool,
     operatorsAliases: false, // 仍可通过传入 operators map 至 operatorsAliases 的方式来使用字符串运算符，但会返回弃用警告
     logging: false,
+    define: {
+      charset: 'utf8mb4',
+      dialectOptions: {
+        collate: 'utf8mb4_general_ci',
+      },
+    },
   });
 
   try {
