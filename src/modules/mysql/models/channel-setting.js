@@ -3,7 +3,7 @@
  * @description: 栏目配置
  * @author: zpl
  * @Date: 2020-07-28 10:42:50
- * @LastEditTime: 2021-02-05 16:07:11
+ * @LastEditTime: 2021-03-02 11:45:09
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -65,7 +65,7 @@ class ChannelSetting extends Model {
         comment: '排序值',
       },
       group: {
-        type: DataTypes.STRING(10),
+        type: DataTypes.STRING(20),
         defaultValue: '',
         comment: '分组',
       },
