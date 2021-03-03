@@ -2,7 +2,7 @@
  * @description: 所有路由方法的抽象对象
  * @author: zpl
  * @Date: 2021-01-12 12:23:11
- * @LastEditTime: 2021-02-26 09:04:39
+ * @LastEditTime: 2021-03-02 19:09:56
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -89,11 +89,11 @@ class DatabaseMethod {
   /**
    * 获取所有
    *
-   * @param {*} include
+   * @param {*} { include, attributes }
    * @return {*}
    * @memberof DatabaseMethod
    */
-  async findAll(include) {
+  async findAll({ include, attributes }={}) {
     const opt = {};
     const hasCreatedAt = this.Model.rawAttributes.hasOwnProperty('createdAt');
     if (hasCreatedAt) {
@@ -101,6 +101,9 @@ class DatabaseMethod {
     }
     if (include && include.length) {
       opt.include = include;
+    }
+    if (attributes) {
+      opt.attributes = attributes;
     }
 
     const list = await this.Model.findAll(opt);

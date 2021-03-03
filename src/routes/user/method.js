@@ -2,10 +2,11 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-01-16 22:54:41
+ * @LastEditTime: 2021-03-02 19:17:48
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
+const { Op } = require('sequelize');
 
 /**
  * 路由用到的方法
@@ -35,10 +36,10 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const { config: { UserGroupModule } } = reply.context;
+          const { config: { DepartmentModule } } = reply.context;
           const id = request.params.id;
           const include = [{
-            model: UserGroupModule,
+            model: DepartmentModule,
             attributes: ['id', 'name'],
           }];
           const res = await that.dbMethod.findById(id, include);
@@ -58,12 +59,15 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const { config: { UserGroupModule } } = reply.context;
+          const { config: { DepartmentModule } } = reply.context;
+          const attributes = {
+            exclude: ['password'],
+          };
           const include = [{
-            model: UserGroupModule,
+            model: DepartmentModule,
             attributes: ['id', 'name'],
           }];
-          const res = await that.dbMethod.findAll({ include });
+          const res = await that.dbMethod.findAll({ attributes, include });
           return res;
         },
     );
@@ -80,18 +84,25 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const { config: { UserGroupModule } } = reply.context;
+          const { config: { DepartmentModule } } = reply.context;
           const {
             current,
             pageSize,
             sorter,
             filter,
+            departmentIds,
             ...where
           } = request.body;
+          const attributes = {
+            exclude: ['password'],
+          };
           const include = [{
-            model: UserGroupModule,
+            model: DepartmentModule,
             attributes: ['id', 'name'],
           }];
+          if (departmentIds) {
+            include[0].where = { id: { [Op.in]: departmentIds } };
+          }
           const res = await that.dbMethod.queryList({
             where,
             filter,
@@ -117,10 +128,10 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const { config: { UserGroupModule } } = reply.context;
+          const { config: { DepartmentModule } } = reply.context;
           const info = rerquest.body;
           const include = [{
-            model: UserGroupModule,
+            model: DepartmentModule,
             attributes: ['id', 'name'],
           }];
           const res = await that.dbMethod.create(info, { include });

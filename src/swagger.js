@@ -2,7 +2,7 @@
  * @description:
  * @author: zpl
  * @Date: 2020-08-07 10:32:25
- * @LastEditTime: 2021-02-26 08:38:12
+ * @LastEditTime: 2021-03-01 17:22:25
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -14,8 +14,8 @@ module.exports = fp(async (server, opts, next) => {
     routePrefix: '/documentation',
     swagger: {
       info: {
-        title: '网安协会',
-        description: '网安协会网站管理平台api，仅供内部使用，正式发版本后，此界面禁止查看。',
+        title: '网安联',
+        description: '网安服务机构等级评定系统api，仅供内部使用，正式发版本后，此界面禁止查看。',
         version: '0.1.0',
       },
       externalDocs: {

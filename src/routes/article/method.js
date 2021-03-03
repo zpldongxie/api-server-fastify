@@ -44,7 +44,7 @@ class Method extends CommonMethod {
    * @memberof Method
    */
   async getAll(include) {
-    const res = await this.dbMethod.findAll(include);
+    const res = await this.dbMethod.findAll({ include });
     return res;
   }
 

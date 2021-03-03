@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-02-26 08:47:33
+ * @LastEditTime: 2021-03-02 19:00:54
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -44,7 +44,7 @@ class Method extends CommonMethod {
    * @memberof Method
    */
   async getAll(include) {
-    const res = await this.dbMethod.findAll(include);
+    const res = await this.dbMethod.findAll({ include });
     return res;
   }
 
