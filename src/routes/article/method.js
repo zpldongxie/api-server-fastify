@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-02-03 11:45:03
+ * @LastEditTime: 2021-03-03 12:12:43
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -111,10 +111,9 @@ class Method extends CommonMethod {
             attributes: {
               exclude: ['mainCon'],
             },
-            order: [
-              ['isRecom', 'DESC'],
-              ['orderIndex', 'DESC'],
-            ],
+            sorter: {
+              'orderIndex': 'DESC',
+            },
             include: [
               {
                 model: ChannelModel,
@@ -157,9 +156,8 @@ class Method extends CommonMethod {
             where.pubStatus = { [Op.not]: '已删除' };
           }
           const defaultSoter = {
-            'isHead': 'DESC',
-            'isRecom': 'DESC',
             'orderIndex': 'DESC',
+            'conDate': 'DESC',
           };
           const attributes = {
             exclude: ['mainCon'],

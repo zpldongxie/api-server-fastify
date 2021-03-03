@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-02-23 16:19:24
+ * @LastEditTime: 2021-03-03 12:20:17
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -66,13 +66,13 @@ class Method extends CommonMethod {
           console.log('channel getAll begin');
           const { config: { ChannelTypeModule, ChannelSettingModule } } = reply.context;
           const where = {};
-          const order = [['orderIndex', 'DESC']];
+          const sorter = { 'orderIndex': 'DESC' };
           const include = [{
             model: ChannelTypeModule,
           }, {
             model: ChannelSettingModule,
           }];
-          const res = await that.dbMethod.findAll({ where, order, include });
+          const res = await that.dbMethod.findAll({ where, sorter, include });
           return res;
         },
     );
@@ -93,13 +93,13 @@ class Method extends CommonMethod {
           const { config: { ChannelTypeModule, ChannelSettingModule } } = reply.context;
           const { showStatus } = request.params;
           const where = showStatus ? { showStatus: { [Op.in]: showStatus.split(',') } } : {};
-          const order = [['orderIndex', 'DESC']];
+          const sorter = { 'orderIndex': 'DESC' };
           const include = [{
             model: ChannelTypeModule,
           }, {
             model: ChannelSettingModule,
           }];
-          const res = await that.dbMethod.findAll({ where, order, include });
+          const res = await that.dbMethod.findAll({ where, sorter, include });
           return res;
         },
     );
@@ -120,14 +120,14 @@ class Method extends CommonMethod {
           const { config: { ChannelTypeModule, ChannelSettingModule } } = reply.context;
           const { typeName } = request.params;
           const where = {};
-          const order = [['orderIndex', 'DESC']];
+          const sorter = { 'orderIndex': 'DESC' };
           const include = [{
             model: ChannelTypeModule,
             where: typeName ? { name: { [Op.in]: typeName.split(',') } } : {},
           }, {
             model: ChannelSettingModule,
           }];
-          const res = await that.dbMethod.findAll({ where, order, include });
+          const res = await that.dbMethod.findAll({ where, sorter, include });
           return res;
         },
     );

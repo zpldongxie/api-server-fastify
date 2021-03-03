@@ -2,7 +2,7 @@
  * @description: 所有路由方法的抽象对象
  * @author: zpl
  * @Date: 2021-01-12 12:23:11
- * @LastEditTime: 2021-02-23 16:09:21
+ * @LastEditTime: 2021-03-03 12:15:45
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -96,20 +96,30 @@ class DatabaseMethod {
   async findAll(conditions = {}) {
     const {
       where = {},
-      order = [],
+      sorter,
       attributes,
       include,
     } = conditions;
 
     const opt = {
       where,
-      order,
+      order: [],
     };
-    const orderOnCreatedAt = order.find((o) => 'createdAt' === o[0]);
-    const hasCreatedAt = this.Model.rawAttributes.hasOwnProperty('createdAt');
-    if (!orderOnCreatedAt && hasCreatedAt) {
-      opt.order = order.concat([['createdAt', 'DESC']]);
+
+    // 组合排序条件
+    if (sorter && Object.keys(sorter).length) {
+      for (const key in sorter) {
+        if (sorter.hasOwnProperty(key)) {
+          const value = sorter[key].toLowerCase().includes('asc') ? 'ASC' : 'DESC';
+          opt.order.push([key, value]);
+        }
+      }
     }
+    const hasCreatedAt = this.Model.rawAttributes.hasOwnProperty('createdAt');
+    if (hasCreatedAt) {
+      opt.order = opt.order.concat([['createdAt', 'DESC']]);
+    }
+
     if (attributes) {
       opt.attributes = attributes;
     }
@@ -190,10 +200,8 @@ class DatabaseMethod {
         }
       }
     }
-    // 旧表没有createAt字段，注意要特殊处理
-    const orderOnCreatedAt = conditions.order.find((o) => 'createdAt' === o[0]);
     const hasCreatedAt = this.Model.rawAttributes.hasOwnProperty('createdAt');
-    if (!orderOnCreatedAt && hasCreatedAt) {
+    if (hasCreatedAt) {
       conditions.order = conditions.order.concat([['createdAt', 'DESC']]);
     }
 

@@ -2,7 +2,7 @@
  * @description rest接口，不做身份验证，其他系统使用的路由要加验证
  * @author: zpl
  * @Date: 2020-07-30 11:26:02
- * @LastEditTime: 2021-02-06 15:01:02
+ * @LastEditTime: 2021-03-03 12:23:30
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -63,7 +63,6 @@ module.exports = fp(async (server, opts, next) => {
           const bannerList = getBanner(settings);
 
           // 头条轮播
-
           let headList = [];
           const headListRes = await articleMethod.dbMethod.queryList({
             where: {
@@ -100,11 +99,11 @@ module.exports = fp(async (server, opts, next) => {
             where: {
               'pubStatus': '已发布',
             },
-            order: [
-              ['isRecom', 'DESC'],
-              ['orderIndex', 'DESC'],
-              ['conDate', 'DESC'],
-            ],
+            sorter: {
+              'isRecom': 'DESC',
+              'orderIndex': 'DESC',
+              'conDate': 'DESC',
+            },
             include: [{
               model: mysqlModel.Channel,
               where: { enName: 'xkdt' },
@@ -126,11 +125,11 @@ module.exports = fp(async (server, opts, next) => {
             where: {
               'pubStatus': '已发布',
             },
-            order: [
-              ['isRecom', 'DESC'],
-              ['orderIndex', 'DESC'],
-              ['conDate', 'DESC'],
-            ],
+            sorter: {
+              'isRecom': 'DESC',
+              'orderIndex': 'DESC',
+              'conDate': 'DESC',
+            },
             include: [{
               model: mysqlModel.Channel,
               where: { enName: 'sndt' },
@@ -150,11 +149,11 @@ module.exports = fp(async (server, opts, next) => {
             where: {
               'pubStatus': '已发布',
             },
-            order: [
-              ['isRecom', 'DESC'],
-              ['orderIndex', 'DESC'],
-              ['conDate', 'DESC'],
-            ],
+            sorter: {
+              'isRecom': 'DESC',
+              'orderIndex': 'DESC',
+              'conDate': 'DESC',
+            },
             include: [{
               model: mysqlModel.Channel,
               where: { enName: 'gndt' },
@@ -174,11 +173,11 @@ module.exports = fp(async (server, opts, next) => {
             where: {
               'pubStatus': '已发布',
             },
-            order: [
-              ['isRecom', 'DESC'],
-              ['orderIndex', 'DESC'],
-              ['conDate', 'DESC'],
-            ],
+            sorter: {
+              'isRecom': 'DESC',
+              'orderIndex': 'DESC',
+              'conDate': 'DESC',
+            },
             include: [{
               model: mysqlModel.Channel,
               where: { enName: 'gjdt' },
@@ -196,10 +195,11 @@ module.exports = fp(async (server, opts, next) => {
               'pubStatus': '已发布',
               'isRecom': 1,
             },
-            order: [
-              ['orderIndex', 'DESC'],
-              ['conDate', 'DESC'],
-            ],
+            sorter: {
+              'isRecom': 'DESC',
+              'orderIndex': 'DESC',
+              'conDate': 'DESC',
+            },
             include: [{
               model: mysqlModel.Channel,
               where: { keyWord: '培训' },

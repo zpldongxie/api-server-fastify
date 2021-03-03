@@ -53,8 +53,7 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const res = await that.dbMethod.findAll({
-          });
+          const res = await that.dbMethod.findAll({});
           return res;
         },
     );
