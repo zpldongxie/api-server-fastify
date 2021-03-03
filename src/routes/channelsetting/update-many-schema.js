@@ -2,7 +2,7 @@
  * @description:
  * @author: zpl
  * @Date: 2021-02-26 15:11:32
- * @LastEditTime: 2021-02-26 15:13:51
+ * @LastEditTime: 2021-03-02 11:52:48
  * @LastEditors: zpl
  */
 const S = require('fluent-schema');
@@ -18,10 +18,9 @@ const bodyJsonSchema = S.object()
         'type',
         S.string()
             .enum(['pic', 'url', 'desc', 'video'])
-            .default('')
             .description('配置类型'),
     )
-    .prop('orderIndex', S.number().default(0).description('排序值'))
+    .prop('orderIndex', S.number().description('排序值'))
     .prop('group', S.string().description('分组'))
     .required(['ids']);
 
