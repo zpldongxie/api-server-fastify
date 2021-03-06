@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-02-23 10:47:15
+ * @LastEditTime: 2021-03-05 09:25:49
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -16,12 +16,15 @@ const CommonMethod = require('../commonMethod');
 class Method extends CommonMethod {
   /**
    * Creates an instance of Method.
-   * @param {*} Model
+   * @param {*} mysql
+   * @param {*} modelName
    * @param {*} ajv
    * @memberof Method
    */
-  constructor(Model, ajv) {
-    super(Model, ajv);
+  constructor(mysql, modelName, ajv) {
+    super(mysql[modelName], ajv);
+    this.mysql = mysql;
+    this.model = mysql[modelName];
   }
 
   /**
@@ -104,7 +107,7 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const info = rerquest.body;
+          const info = request.body;
           const include = [];
           const res = await that.dbMethod.create(info, { include });
           return res;

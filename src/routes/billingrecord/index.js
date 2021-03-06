@@ -2,15 +2,14 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-02-26 09:02:41
+ * @LastEditTime: 2021-03-05 10:03:52
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
 const Method = require('./method');
 
 const routerBaseInfo = {
-  modelName_U: 'BillingRecord',
-  modelName_L: 'billingrecord',
+  modelName: 'BillingRecord',
   getURL: '/api/billingrecord/:id',
   getAllURL: '/api/billingrecords',
   getListURL: '/api/getBillingRecordList',
@@ -19,10 +18,8 @@ const routerBaseInfo = {
 };
 module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
-  const CurrentModel = mysqlModel[routerBaseInfo.modelName_U];
   const { ajv } = opts;
-  const method = new Method(CurrentModel, ajv);
-
+  const method = new Method(mysqlModel, routerBaseInfo.modelName, ajv);
 
   /*
   *                        _oo0oo_
@@ -56,26 +53,13 @@ module.exports = fp(async (server, opts, next) => {
       {
         schema: { ...getByIdSchema, tags: ['billingrecord'], summary: '根据ID获取单个' },
       },
-      async (request, reply) => {
-        await method.run(request, reply)(
-            async () => {
-              const id = request.params.id;
-              return await method.getById(id);
-            },
-        );
-      },
+      (request, reply) => method.getById(request, reply),
   );
 
   server.get(
       routerBaseInfo.getAllURL,
       { schema: { tags: ['billingrecord'], summary: '获取所有' } },
-      async (request, reply) => {
-        await method.run(request, reply)(
-            async () => {
-              return await method.getAll();
-            },
-        );
-      },
+      (request, reply) => method.getAll(request, reply),
   );
 
   const queryListSchema = require('./query-list-schema');

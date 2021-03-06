@@ -2,15 +2,14 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-01-19 16:37:00
+ * @LastEditTime: 2021-03-05 10:03:52
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
 const Method = require('./method');
 
 const routerBaseInfo = {
-  modelName_U: 'MSConstruction',
-  modelName_L: 'msconstruction',
+  modelName: 'MSConstruction',
   getURL: '/api/msconstruction/:id',
   getAllURL: '/api/msconstructions',
   getListURL: '/api/getMSConstructionList',
@@ -19,10 +18,8 @@ const routerBaseInfo = {
 };
 module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
-  const CurrentModel = mysqlModel[routerBaseInfo.modelName_U];
   const { ajv } = opts;
-  const method = new Method(CurrentModel, ajv);
-
+  const method = new Method(mysqlModel, routerBaseInfo.modelName, ajv);
 
   /*
   *                        _oo0oo_

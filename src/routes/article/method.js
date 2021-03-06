@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-02-26 08:47:33
+ * @LastEditTime: 2021-03-05 09:25:49
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -16,36 +16,50 @@ const CommonMethod = require('../commonMethod');
 class Method extends CommonMethod {
   /**
    * Creates an instance of Method.
-   * @param {*} Model
+   * @param {*} mysql
+   * @param {*} modelName
    * @param {*} ajv
    * @memberof Method
    */
-  constructor(Model, ajv) {
-    super(Model, ajv);
+  constructor(mysql, modelName, ajv) {
+    super(mysql[modelName], ajv);
+    this.mysql = mysql;
+    this.model = mysql[modelName];
   }
 
   /**
    * 根据ID获取单个
    *
-   * @param {*} id
-   * @return {*}
+   * @param {*} request
+   * @param {*} reply
    * @memberof Method
    */
-  async getById(id) {
-    const res = await this.dbMethod.findById(id);
-    return res;
+  async getById(request, reply) {
+    const that = this;
+    await (that.run(request, reply))(
+        async () => {
+          const id = request.params.id;
+          const res = await that.dbMethod.findById(id);
+          return res;
+        },
+    );
   }
 
   /**
    * 获取所有
    *
-   * @param {*} include
-   * @return {*}
+   * @param {*} request
+   * @param {*} reply
    * @memberof Method
    */
-  async getAll(include) {
-    const res = await this.dbMethod.findAll({ include });
-    return res;
+  async getAll(request, reply) {
+    const that = this;
+    await (that.run(request, reply))(
+        async () => {
+          const res = await that.dbMethod.findAll();
+          return res;
+        },
+    );
   }
 
   /**
@@ -93,7 +107,7 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const info = rerquest.body;
+          const info = request.body;
           const include = [];
           const res = await that.dbMethod.create(info, { include });
           return res;
