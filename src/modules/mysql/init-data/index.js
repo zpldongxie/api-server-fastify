@@ -2,9 +2,11 @@
  * @description: 初始化数据库
  * @author: zpl
  * @Date: 2020-07-27 12:40:11
- * @LastEditTime: 2021-02-25 19:07:38
+ * @LastEditTime: 2021-03-06 23:59:44
  * @LastEditors: zpl
  */
+const UserMethod = require('../../../routes/user/method')
+const { departmentTag } = require('../../../dictionary');
 
 /**
  * 初始化部门
@@ -34,76 +36,20 @@ const initDepartment = async (DepartmentModel, dataList) => {
 /**
  * 初始化用户
  *
- * @param {*} DepartmentModel 用户组模型
- * @param {*} UserModel 用户模型
+ * @param {*} mysqlModel
  * @param {*} dataList 用户初始数据
  * @return {Array} 操作结果
  */
-const initUser = async (DepartmentModel, UserModel, dataList) => {
+const initUser = async (mysqlModel, dataList) => {
+  const method = new UserMethod(mysqlModel, 'User', {});
   const result = [];
   try {
     for (const user of dataList) {
-      const { group, ...info } = user;
-
-      const department = await DepartmentModel.findOne({
-        where: { name: group },
-      });
-      if (department) {
-        let needCreateDepartment = false;
-        let tag;
-        switch (department.tag) {
-          case 'gywyh':
-            // 委员会管理员
-            needCreateDepartment = true;
-            tag = 'wyhgly';
-            break;
-          case 'wyhgly':
-            // 评定决定员
-            needCreateDepartment = true;
-            tag = 'pdjdy';
-            break;
-          case 'psjg':
-            // 项目管理员
-            needCreateDepartment = true;
-            tag = 'xmgly';
-            break;
-          case 'xmgly':
-            // 审核员
-            needCreateDepartment = true;
-            tag = 'shy';
-            break;
-          default:
-            break;
-        }
-
-        if (needCreateDepartment) {
-          const depName = info.companyName || info.loginName;
-          const oldDepartment = await DepartmentModel.findOne({
-            where: { name: depName, parentId: department.id },
-          });
-          if (oldDepartment) {
-            result.push(`部门"${depName}"已存在，管理账号创建失败`);
-          } else {
-            const currentUser = await UserModel.create(info);
-            result.push(`user: ${user.loginName}，创建成功。`);
-            const currentDepartment = await DepartmentModel.create({
-              name: depName,
-              tag,
-              parentId: department.id,
-            });
-            result.push(`已创建部门： ${currentDepartment.name}`);
-            currentUser.setDepartments([currentDepartment]);
-            await currentUser.save();
-            result.push(`user： ${user.loginName}，部门关联成功。部门： ${currentDepartment.name}`);
-          }
-        } else {
-          const currentUser = await UserModel.create(info);
-          result.push(`user: ${user.loginName}，创建成功。`);
-          await currentUser.setDepartments([department]);
-          result.push(`user： ${user.loginName}，部门关联成功。部门： ${department.name}`);
-        }
+      const res = await method.createUser(user);
+      if (res.status) {
+        result.push(`user: ${user.loginName}，创建成功。`);
       } else {
-        result.push(`user: ${user.loginName}，创建失败。需要先注册企业账号。`);
+        result.push(`user: ${user.loginName}，创建失败。${res.message}`);
       }
     }
   } catch (err) {
@@ -154,7 +100,7 @@ const initSysConfig = async (SysConfigModel, dataList) => {
  * @return {Array} 执行结果
  */
 module.exports = async (models) => {
-  const { Department, User, SysConfig } = models;
+  const { Department, SysConfig } = models;
   const { userList, departmentList, sysConfig } = require('./data');
   let returnResult = [];
 
@@ -168,7 +114,7 @@ module.exports = async (models) => {
   console.log('1. 初始化部门...');
   returnResult = returnResult.concat(await initDepartment(Department, departmentList));
   console.log('2. 初始化用户...');
-  returnResult = returnResult.concat(await initUser(Department, User, userList));
+  returnResult = returnResult.concat(await initUser(models, userList));
   console.log('3. 初始化系统配置...');
   returnResult = returnResult.concat(await initSysConfig(SysConfig, sysConfig));
 

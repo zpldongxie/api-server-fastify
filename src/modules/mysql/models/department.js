@@ -2,7 +2,7 @@
  * @description: 部门
  * @author: zpl
  * @Date: 2020-07-26 14:30:44
- * @LastEditTime: 2021-02-25 15:45:16
+ * @LastEditTime: 2021-03-04 11:16:40
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -37,7 +37,6 @@ class Department extends Model {
       tag: {
         type: DataTypes.STRING(20),
         allowNull: false,
-        unique: true,
         comment: '分组英文标记，可用于前台判断身份',
       },
       desc: {

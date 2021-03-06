@@ -2,16 +2,16 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-03-01 16:57:54
+ * @LastEditTime: 2021-03-05 13:58:15
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
 const Method = require('./method');
 const { userStatus } = require('../../dictionary');
+const { getCurrentDate } = require('../../util');
 
 const routerBaseInfo = {
-  modelName_U: 'User',
-  modelName_L: 'user',
+  modelName: 'User',
   doLoginURL: '/api/doLogin',
   getCurrentUserURL: '/api/currentUser',
   getURL: '/api/user/:id',
@@ -22,10 +22,8 @@ const routerBaseInfo = {
 };
 module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
-  const CurrentModel = mysqlModel[routerBaseInfo.modelName_U];
-  const { Department } = mysqlModel;
   const { ajv } = opts;
-  const method = new Method(CurrentModel, ajv);
+  const method = new Method(mysqlModel, routerBaseInfo.modelName, ajv);
 
 
   /*
@@ -70,17 +68,17 @@ module.exports = fp(async (server, opts, next) => {
         const { userName, pwd } = request.body;
         const res = await method.dbMethod.findOne({
           where: { loginName: userName, password: pwd },
-          include: [{ model: Department }],
+          include: [{ model: mysqlModel.Department }],
         });
         const { status, data } = res;
         if (status) {
-          console.log(data.name, ' 正在登录');
+          console.log(data.loginName, ' 正在登录');
           const token = server.jwt.sign({ id: data.id });
           const authors = data.Departments.map((g) => g.tag);
           return reply.code(200).send({
             status: 'ok',
             currentAuthority: authors,
-            token: token,
+            token,
           });
         }
         return reply.code(200).send({ status: 'error', message: '用户名或密码错误' });
@@ -95,14 +93,18 @@ module.exports = fp(async (server, opts, next) => {
         schema: { tags: ['user'], summary: '获取当前登录用户' },
       },
       async (request, reply) => {
-        console.log('get: ' + routerBaseInfo.getCurrentUserURL);
+        console.log(`${getCurrentDate()} -- get: ${routerBaseInfo.getCurrentUserURL}`);
         const res = await method.dbMethod.findOne({
           where: { id: request.user.id, status: userStatus.enabled },
           exclude: ['password', 'verification_code', 'status'],
         });
         const { status, data } = res;
         if (status) {
-          return reply.code(200).send(data);
+          const token = server.jwt.sign({ id: data.id });
+          return reply.code(200).send({
+            data,
+            token,
+          });
         } else {
           return reply.code(200).send('查询失败');
         }
@@ -113,20 +115,14 @@ module.exports = fp(async (server, opts, next) => {
   const getByIdSchema = require('./query-by-id-schema');
   server.get(
       routerBaseInfo.getURL,
-      {
-        schema: { ...getByIdSchema, tags: ['user'], summary: '根据ID获取单个用户' },
-        config: { DepartmentModule: Department },
-      },
+      { schema: { ...getByIdSchema, tags: ['user'], summary: '根据ID获取单个用户' } },
       (request, reply) => method.getById(request, reply),
   );
 
   // 获取所有
   server.get(
       routerBaseInfo.getAllURL,
-      {
-        schema: { tags: ['user'], summary: '获取所有用户' },
-        config: { DepartmentModule: Department },
-      },
+      { schema: { tags: ['user'], summary: '获取所有用户' } },
       (request, reply) => method.getAll(request, reply),
   );
 
@@ -134,10 +130,7 @@ module.exports = fp(async (server, opts, next) => {
   const queryListSchema = require('./query-list-schema');
   server.post(
       routerBaseInfo.getListURL,
-      {
-        schema: { ...queryListSchema, tags: ['user'], summary: '根据条件获取用户列表' },
-        config: { DepartmentModule: Department },
-      },
+      { schema: { ...queryListSchema, tags: ['user'], summary: '根据条件获取用户列表' } },
       (request, reply) => method.queryList(request, reply),
   );
 

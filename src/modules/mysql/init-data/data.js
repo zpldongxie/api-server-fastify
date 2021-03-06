@@ -2,22 +2,25 @@
  * @description: 数据库初始数据
  * @author: zpl
  * @Date: 2020-07-26 22:19:42
- * @LastEditTime: 2021-02-25 16:55:48
+ * @LastEditTime: 2021-03-06 23:42:49
  * @LastEditors: zpl
  */
 const { getCurrentDate } = require('../../../util');
-const { userStatus } = require('../../../dictionary');
+const { userStatus, departmentTag } = require('../../../dictionary');
 
 // 用户组
 exports.departmentList = [{
   name: '管理员',
-  tag: 'admin',
+  tag: departmentTag.系统管理员,
+  orderIndex: 0,
 }, {
   name: '申请单位',
-  tag: 'sqdw',
+  tag: departmentTag.申请单位,
+  orderIndex: 1,
 }, {
   name: '评审机构',
-  tag: 'psjg',
+  tag: departmentTag.评审机构,
+  orderIndex: 2,
   // children: [{
   //   name: '西安云适配',
   //   tag: 'xmgly',
@@ -28,7 +31,8 @@ exports.departmentList = [{
   // }],
 }, {
   name: '公约委员会',
-  tag: 'gywyh',
+  tag: departmentTag.公约委员会,
+  orderIndex: 3,
   // children: [{
   //   name: '陕西省信息网络安全协会',
   //   tag: 'wyhgly',
@@ -39,10 +43,8 @@ exports.departmentList = [{
   // }],
 }, {
   name: '网安联',
-  tag: 'wal',
-}, {
-  name: '访客',
-  tag: 'guest',
+  tag: departmentTag.网安联,
+  orderIndex: 4,
 }];
 
 // 用户
@@ -55,7 +57,7 @@ exports.userList = [{
   verificationCode: '',
   logonDate: getCurrentDate(),
   status: userStatus.enabled,
-  group: '管理员',
+  depTag: departmentTag.系统管理员,
 }, {
   loginName: '陕西省信息网络安全协会',
   companyName: '陕西省信息网络安全协会',
@@ -66,7 +68,7 @@ exports.userList = [{
   verificationCode: '',
   logonDate: getCurrentDate(),
   status: userStatus.enabled,
-  group: '公约委员会',
+  depTag: departmentTag.委员会管理员,
 }, {
   loginName: '西安云适配网络科技有限公司',
   companyName: '西安云适配网络科技有限公司',
@@ -77,7 +79,7 @@ exports.userList = [{
   verificationCode: '',
   logonDate: getCurrentDate(),
   status: userStatus.enabled,
-  group: '评审机构',
+  depTag: departmentTag.项目管理员,
 }];
 
 // 系统配置
