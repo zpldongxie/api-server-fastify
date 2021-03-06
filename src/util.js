@@ -2,7 +2,7 @@
  * @description: 全局工具
  * @author: zpl
  * @Date: 2020-09-07 00:38:53
- * @LastEditTime: 2021-02-25 11:03:05
+ * @LastEditTime: 2021-03-04 19:15:53
  * @LastEditors: zpl
  */
 const path = require('path');
@@ -53,35 +53,58 @@ const onRouterError = (reply, err) => {
 const convertCatchInfo = (error) => {
   const {
     message,
-    original={},
+    original = {},
     validation,
+    errors,
   } = error;
   const { sqlMessage } = original;
   const err = {
     status: 200,
   };
   if (typeof error === 'string') {
+    // console.log('-------------------1');
     // 直接错误描述
     err.message = error;
   } else if (validation) {
+    // console.log('-------------------2');
     // 数据验证错误
     localize.zh(validation);
-    err.message = validation;
+    err.message = validation[0].dataPath + validation[0].message;
   } else if (sqlMessage) {
+    // console.log('-------------------3');
     // sql错误
     err.message = sqlMessage;
+  } else if (errors) {
+    // 数据库约束错误
+    // console.log('-------------------4');
+    const first = errors[0];
+    switch (first.type) {
+      case 'notNull Violation':
+        // console.log('-------------------5');
+        err.message = `${first.path}不能为空`;
+        break;
+      default:
+        // console.log('-------------------6');
+        err.message = first.message;
+        break;
+    }
+    console.log(errors);
   } else if (message) {
+    console.log('message', message);
     switch (message) {
       case 'Validation error':
+        // console.log('-------------------7');
         console.log('进来一个枯怪的分支。。。');
         // 数据验证错误
         err.message = error.errors[0].message;
         break;
       default:
         // 未分类错误
+        // console.log('-------------------8');
         err.message = message;
     }
   } else {
+    // console.log('-------------------9');
     // 其他格式错误
     err.message = 'Internal Server Error';
   }
@@ -260,7 +283,7 @@ const getInsertOrderIndex = (startOrderIndex, endOrderIndex) => {
   const endLength = getFloatLength(endOrderIndex);
   // 前后序号不相邻且新序号位数变长则进位
   if (!isSuccessive(startOrderIndex, endOrderIndex) && newLength > startLength && newLength > endLength) {
-    newIndex = Math.round(newIndex * Math.pow(10, newLength-1)) / Math.pow(10, newLength-1);
+    newIndex = Math.round(newIndex * Math.pow(10, newLength - 1)) / Math.pow(10, newLength - 1);
   }
 
   return newIndex;
