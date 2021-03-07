@@ -2,9 +2,10 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-03-05 13:58:15
+ * @LastEditTime: 2021-03-07 15:26:23
  * @LastEditors: zpl
  */
+const crypto = require('crypto');
 const fp = require('fastify-plugin');
 const Method = require('./method');
 const { userStatus } = require('../../dictionary');
@@ -22,7 +23,7 @@ const routerBaseInfo = {
 };
 module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
-  const { ajv } = opts;
+  const { ajv, config: { hmacKey } } = opts;
   const method = new Method(mysqlModel, routerBaseInfo.modelName, ajv);
 
 
@@ -66,8 +67,9 @@ module.exports = fp(async (server, opts, next) => {
         }
 
         const { userName, pwd } = request.body;
+        const password = crypto.createHmac('sha1', hmacKey).update(pwd).digest('hex');
         const res = await method.dbMethod.findOne({
-          where: { loginName: userName, password: pwd },
+          where: { loginName: userName, password },
           include: [{ model: mysqlModel.Department }],
         });
         const { status, data } = res;
