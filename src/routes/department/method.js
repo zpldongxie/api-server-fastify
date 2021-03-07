@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-03-06 11:09:32
+ * @LastEditTime: 2021-03-07 14:01:21
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -105,10 +105,10 @@ class Method extends CommonMethod {
    * @memberof Method
    */
   async createSHY(companyName) {
-    const companyDep = await this.model.findOne({ name: companyName });
+    const companyDep = await this.model.findOne({ where: { name: companyName } });
     if (companyDep) {
       // 若部门存在，判断是否存在对应的审核员部门
-      const jdwDep = await this.model.findOne({ parentId: companyDep.id, tag: departmentTag.审核员 });
+      const jdwDep = await this.model.findOne({ where: { parentId: companyDep.id, tag: departmentTag.审核员 } });
       if (jdwDep) {
         // 若存在，则给出提示
         return {
@@ -143,7 +143,7 @@ class Method extends CommonMethod {
    */
   async createPSJG(companyName) {
     // 查找评审机构
-    const psjgDep = await this.model.findOne({ tag: departmentTag.评审机构 });
+    const psjgDep = await this.model.findOne({ where: { tag: departmentTag.评审机构 } });
     if (psjgDep) {
       // 创建对应单位，若重名，会触发数据库约束，前台需要处理提示信息
       const dev = await this.model.create({
@@ -180,10 +180,10 @@ class Method extends CommonMethod {
    * @memberof Method
    */
   async createWYHPDJDY(companyName) {
-    const companyDep = await this.model.findOne({ name: companyName });
+    const companyDep = await this.model.findOne({ where: { name: companyName } });
     if (companyDep) {
       // 若部门存在，判断是否存在对应的评定决定员部门
-      const jdwDep = await this.model.findOne({ parentId: companyDep.id, tag: departmentTag.评定决定员 });
+      const jdwDep = await this.model.findOne({ where: { parentId: companyDep.id, tag: departmentTag.评定决定员 } });
       if (jdwDep) {
         // 若存在，则给出提示
         return {
@@ -219,7 +219,7 @@ class Method extends CommonMethod {
    */
   async createWYH(companyName) {
     // 查找公约委员会部门
-    const wyhDep = await this.model.findOne({ tag: departmentTag.公约委员会 });
+    const wyhDep = await this.model.findOne({ where: { tag: departmentTag.公约委员会 } });
     if (wyhDep) {
       // 创建对应单位，若重名，会触发数据库约束，前台需要处理提示信息
       const dev = await this.model.create({

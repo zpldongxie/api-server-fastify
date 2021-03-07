@@ -2,9 +2,10 @@
  * @description: 用户
  * @author: zpl
  * @Date: 2020-07-25 15:10:09
- * @LastEditTime: 2021-02-25 13:16:30
+ * @LastEditTime: 2021-03-07 13:37:43
  * @LastEditors: zpl
  */
+var crypto = require('crypto');
 const { Model, DataTypes } = require('sequelize');
 
 const { userStatus } = require('../../../dictionary');
@@ -39,6 +40,7 @@ class User extends Model {
       password: {
         type: DataTypes.STRING(64),
         comment: '密码',
+        set(value) { this.setDataValue('password', crypto.createHmac('sha1', 'key').update(value).digest('hex')) },
       },
       mobile: {
         type: DataTypes.STRING(11),

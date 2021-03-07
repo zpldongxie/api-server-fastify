@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-03-06 23:47:51
+ * @LastEditTime: 2021-03-07 14:01:46
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -153,7 +153,7 @@ class Method extends CommonMethod {
       include: [this.mysql.UserExtension],
     });
     if (user) {
-      user.setDepartments(sqdwDep);
+      await user.setDepartments(sqdwDep);
       return {
         status: 1,
         data: user,
@@ -215,7 +215,7 @@ class Method extends CommonMethod {
     // 开始创建账号
     const user = await this.model.create(info);
     if (user) {
-      user.setDepartments(dep);
+      await user.setDepartments(dep);
       return {
         status: 1,
         data: user,
@@ -276,7 +276,7 @@ class Method extends CommonMethod {
     // 开始创建账号
     const user = await this.model.create(info);
     if (user) {
-      user.setDepartments(dep);
+      await user.setDepartments(dep);
       return {
         status: 1,
         data: user,
@@ -338,7 +338,7 @@ class Method extends CommonMethod {
     // 开始创建账号
     const user = await this.model.create(info);
     if (user) {
-      user.setDepartments(dep);
+      await user.setDepartments(dep);
       return {
         status: 1,
         data: user,
@@ -399,7 +399,7 @@ class Method extends CommonMethod {
     // 开始创建账号
     const user = await this.model.create(info);
     if (user) {
-      user.setDepartments(dep);
+      await user.setDepartments(dep);
       return {
         status: 1,
         data: user,
@@ -443,7 +443,7 @@ class Method extends CommonMethod {
     // 开始创建账号
     const user = await this.model.create(userInfo);
     if (user) {
-      user.setDepartments(department);
+      await user.setDepartments(department);
       return {
         status: 1,
         data: user,
@@ -487,7 +487,7 @@ class Method extends CommonMethod {
     // 开始创建账号
     const user = await this.model.create(userInfo);
     if (user) {
-      user.setDepartments(department);
+      await user.setDepartments(department);
       return {
         status: 1,
         data: user,

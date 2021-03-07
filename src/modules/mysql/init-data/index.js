@@ -2,11 +2,10 @@
  * @description: 初始化数据库
  * @author: zpl
  * @Date: 2020-07-27 12:40:11
- * @LastEditTime: 2021-03-06 23:59:44
+ * @LastEditTime: 2021-03-07 13:54:19
  * @LastEditors: zpl
  */
-const UserMethod = require('../../../routes/user/method')
-const { departmentTag } = require('../../../dictionary');
+const UserMethod = require('../../../routes/user/method');
 
 /**
  * 初始化部门
@@ -26,8 +25,10 @@ const initDepartment = async (DepartmentModel, dataList) => {
     const { errors } = err;
     if (errors && errors.length) {
       const { message } = errors[0];
+      console.error(`数据库执行失败，department创建失败： ${message}`);
       result.push(`数据库执行失败，department创建失败： ${message}`);
     }
+    console.error(`系统异常，department创建失败： ${err}`);
     result.push(`系统异常，department创建失败： ${err}`);
   }
   return result;
@@ -49,6 +50,7 @@ const initUser = async (mysqlModel, dataList) => {
       if (res.status) {
         result.push(`user: ${user.loginName}，创建成功。`);
       } else {
+        console.error(`user: ${user.loginName}，创建失败。${res.message}`);
         result.push(`user: ${user.loginName}，创建失败。${res.message}`);
       }
     }
@@ -77,7 +79,6 @@ const initSysConfig = async (SysConfigModel, dataList) => {
   try {
     for (const config of dataList) {
       const currentSysConfig = await SysConfigModel.create(config);
-      console.log(`sysConfig: ${currentSysConfig.name}，创建成功。`);
       result.push(`sysConfig: ${currentSysConfig.name}，创建成功。`);
     }
   } catch (err) {
