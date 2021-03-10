@@ -2,7 +2,7 @@
  * @description: 功能模块
  * @author: zpl
  * @Date: 2021-02-24 15:09:58
- * @LastEditTime: 2021-02-24 16:20:58
+ * @LastEditTime: 2021-03-09 12:30:35
  * @LastEditors: zpl
  */
 
@@ -32,8 +32,13 @@ class Modular extends Model {
       name: {
         type: DataTypes.STRING(20),
         allowNull: false,
-        unique: true,
         comment: '功能名称',
+      },
+      tag: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        unique: true,
+        comment: '功能标记',
       },
       parentId: {
         type: DataTypes.UUID,
