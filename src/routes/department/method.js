@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-03-07 14:01:21
+ * @LastEditTime: 2021-03-09 10:23:06
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -101,10 +101,12 @@ class Method extends CommonMethod {
    * 创建审核员部门
    *
    * @param {*} companyName
+   * @param {string} [desc='']
+   * @param {number} [orderIndex=0]
    * @return {*}
    * @memberof Method
    */
-  async createSHY(companyName) {
+  async createSHY(companyName, desc='', orderIndex=0) {
     const companyDep = await this.model.findOne({ where: { name: companyName } });
     if (companyDep) {
       // 若部门存在，判断是否存在对应的审核员部门
@@ -120,7 +122,8 @@ class Method extends CommonMethod {
         const dep = await this.model.create({
           name: `${companyName}审核员`,
           tag: departmentTag.审核员,
-          desc: '',
+          desc,
+          orderIndex,
           parentId: companyDep.id,
         });
         return {
@@ -138,10 +141,12 @@ class Method extends CommonMethod {
    * 创建评审机构
    *
    * @param {*} companyName
+   * @param {string} [desc='']
+   * @param {number} [orderIndex=0]
    * @return {*}
    * @memberof Method
    */
-  async createPSJG(companyName) {
+  async createPSJG(companyName, desc='', orderIndex=0) {
     // 查找评审机构
     const psjgDep = await this.model.findOne({ where: { tag: departmentTag.评审机构 } });
     if (psjgDep) {
@@ -149,7 +154,8 @@ class Method extends CommonMethod {
       const dev = await this.model.create({
         name: companyName,
         tag: departmentTag.项目管理员,
-        desc: '',
+        desc,
+        orderIndex,
         parentId: psjgDep.id,
       });
       // 同步创建审核员分组
@@ -176,10 +182,12 @@ class Method extends CommonMethod {
    * 创建委员会评定决定员部门
    *
    * @param {*} companyName
+   * @param {string} [desc='']
+   * @param {number} [orderIndex=0]
    * @return {*}
    * @memberof Method
    */
-  async createWYHPDJDY(companyName) {
+  async createWYHPDJDY(companyName, desc='', orderIndex=0) {
     const companyDep = await this.model.findOne({ where: { name: companyName } });
     if (companyDep) {
       // 若部门存在，判断是否存在对应的评定决定员部门
@@ -195,7 +203,8 @@ class Method extends CommonMethod {
         const dep = await this.model.create({
           name: `${companyName}评定决定员`,
           tag: departmentTag.评定决定员,
-          desc: '',
+          desc,
+          orderIndex,
           parentId: companyDep.id,
         });
         return {
@@ -214,10 +223,12 @@ class Method extends CommonMethod {
    * 创建委员会成员单位
    *
    * @param {*} companyName
+   * @param {string} [desc='']
+   * @param {number} [orderIndex=0]
    * @return {*}
    * @memberof Method
    */
-  async createWYH(companyName) {
+  async createWYH(companyName, desc='', orderIndex=0) {
     // 查找公约委员会部门
     const wyhDep = await this.model.findOne({ where: { tag: departmentTag.公约委员会 } });
     if (wyhDep) {
@@ -225,7 +236,8 @@ class Method extends CommonMethod {
       const dev = await this.model.create({
         name: companyName,
         tag: departmentTag.委员会管理员,
-        desc: '',
+        desc,
+        orderIndex,
         parentId: wyhDep.id,
       });
       // 同步创建评定决定员分组
@@ -259,10 +271,22 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const info = request.body;
-          const include = [];
-          const res = await that.dbMethod.create(info, { include });
-          return res;
+          const { name, tag, desc, orderIndex } = request.body;
+          switch (tag) {
+            case departmentTag.委员会管理员:
+              return await this.createWYH(name, desc, orderIndex);
+            case departmentTag.评定决定员:
+              return await this.createWYHPDJDY(name, desc, orderIndex);
+            case departmentTag.项目管理员:
+              return await this.createPSJG(name, desc, orderIndex);
+            case departmentTag.审核员:
+              return await this.createSHY(name, desc, orderIndex);
+            default:
+              return {
+                status: 0,
+                message: '部门类型不在允许范围内',
+              };
+          }
         },
     );
   }
