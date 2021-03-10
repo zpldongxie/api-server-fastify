@@ -2,7 +2,7 @@
  * @description: 数据库初始数据
  * @author: zpl
  * @Date: 2020-07-26 22:19:42
- * @LastEditTime: 2021-03-06 23:42:49
+ * @LastEditTime: 2021-03-10 19:32:12
  * @LastEditors: zpl
  */
 const { getCurrentDate } = require('../../../util');
@@ -81,6 +81,173 @@ exports.userList = [{
   status: userStatus.enabled,
   depTag: departmentTag.项目管理员,
 }];
+
+// 服务类型
+exports.serviceType = [{
+  name: '安全咨询',
+  descStr: '',
+}, {
+  name: '安全集成',
+  descStr: '',
+}, {
+  name: '安全运维',
+  descStr: '',
+}, {
+  name: '监测预警',
+  descStr: '',
+}, {
+  name: '应急响应',
+  descStr: '',
+}, {
+  name: '软件安全',
+  descStr: '',
+}, {
+  name: '工业控制系统安全',
+  descStr: '',
+}, {
+  name: '数据安全',
+  descStr: '',
+}];
+
+// 模块信息
+exports.modular = [
+  {
+    'id': '30883399-21a4-4458-afca-1fdd99ab1194',
+    'name': '信息维护',
+    'tag': 'information',
+    'parentId': null,
+    'descStr': '申请单位对单位信息的维护功能',
+    'orderIndex': 90,
+  },
+  {
+    'id': '1b91761c-7dba-4789-bb80-93f2103c1f12',
+    'name': '商务管理',
+    'tag': 'business',
+    'parentId': null,
+    'descStr': null,
+    'orderIndex': 80,
+  },
+  {
+    'id': '70d5d7fa-15b6-48ee-902f-ad6a455b0d62',
+    'name': '证书管理',
+    'tag': 'cer_mag',
+    'parentId': null,
+    'descStr': '模板维护',
+    'orderIndex': 70,
+  },
+  {
+    'id': '4b6772e7-350b-450c-922b-d477767fcadd',
+    'name': '证书管理',
+    'tag': 'cer_list',
+    'parentId': null,
+    'descStr': '管理',
+    'orderIndex': 60,
+  },
+  {
+    'id': '9d47c31b-c881-4174-b8d7-fbc00ab217f8',
+    'name': '证书管理',
+    'tag': 'cer_self',
+    'parentId': null,
+    'descStr': '申请单位',
+    'orderIndex': 50,
+  },
+  {
+    'id': '7c333cb7-85f7-48af-ba8b-464cd10915cb',
+    'name': '审核列表',
+    'tag': 'auditList',
+    'parentId': null,
+    'descStr': null,
+    'orderIndex': 40,
+  },
+  {
+    'id': 'aa827d4d-a63d-43da-910e-5a20bc8a48f3',
+    'name': '填写申请',
+    'tag': 'request',
+    'parentId': null,
+    'descStr': null,
+    'orderIndex': 30,
+  },
+  {
+    'id': '353d8908-a3db-4728-b3ae-34a4a92d8c7c',
+    'name': '文章管理',
+    'tag': 'article',
+    'parentId': null,
+    'descStr': null,
+    'orderIndex': 20,
+  },
+  {
+    'id': '0f659d83-7223-4434-82a2-1b5a1711263c',
+    'name': '首页',
+    'tag': 'index',
+    'parentId': null,
+    'descStr': null,
+    'orderIndex': 10,
+  },
+  {
+    'id': '10f7e298-d527-43f6-a631-3635b0ff8e1e',
+    'name': '发票信息维护',
+    'tag': 'bus_invoice',
+    'parentId': '1b91761c-7dba-4789-bb80-93f2103c1f12',
+    'descStr': null,
+    'orderIndex': 40,
+  },
+  {
+    'id': '10f93bdc-7931-423f-a9be-b024c7a62bab',
+    'name': '回收站',
+    'tag': 'recycleBin',
+    'parentId': '353d8908-a3db-4728-b3ae-34a4a92d8c7c',
+    'descStr': null,
+    'orderIndex': 30,
+  },
+  {
+    'id': 'cf8e2146-dc1d-4607-a439-64a10756689e',
+    'name': '收款管理',
+    'tag': 'bus/rep',
+    'parentId': '1b91761c-7dba-4789-bb80-93f2103c1f12',
+    'descStr': null,
+    'orderIndex': 30,
+  },
+  {
+    'id': 'b8532ce7-e28d-4126-92b3-56638e1de4eb',
+    'name': '付款管理',
+    'tag': 'bus_pay',
+    'parentId': '1b91761c-7dba-4789-bb80-93f2103c1f12',
+    'descStr': null,
+    'orderIndex': 20,
+  },
+  {
+    'id': 'e15da8e1-7861-4e24-8de3-05ff0850feda',
+    'name': '文章分组管理',
+    'tag': 'articleGroup',
+    'parentId': '353d8908-a3db-4728-b3ae-34a4a92d8c7c',
+    'descStr': null,
+    'orderIndex': 20,
+  },
+  {
+    'id': '6f9a9004-563f-4bac-ae08-87fb83791a7a',
+    'name': '文章列表',
+    'tag': 'wzlb',
+    'parentId': '353d8908-a3db-4728-b3ae-34a4a92d8c7c',
+    'descStr': null,
+    'orderIndex': 10,
+  },
+  {
+    'id': 'f030147a-5331-434a-b7a5-304c9947f92d',
+    'name': '合同管理',
+    'tag': 'bus_contract',
+    'parentId': '1b91761c-7dba-4789-bb80-93f2103c1f12',
+    'descStr': null,
+    'orderIndex': 10,
+  },
+  {
+    'id': 'fbf2cef7-987f-43da-ad3a-e83a1f167083',
+    'name': '初次申请',
+    'tag': 'rq_initial',
+    'parentId': 'aa827d4d-a63d-43da-910e-5a20bc8a48f3',
+    'descStr': null,
+    'orderIndex': null,
+  },
+];
 
 // 系统配置
 exports.sysConfig = [{

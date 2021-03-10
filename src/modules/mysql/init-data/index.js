@@ -2,7 +2,7 @@
  * @description: 初始化数据库
  * @author: zpl
  * @Date: 2020-07-27 12:40:11
- * @LastEditTime: 2021-03-07 13:54:19
+ * @LastEditTime: 2021-03-10 19:02:36
  * @LastEditors: zpl
  */
 const UserMethod = require('../../../routes/user/method');
@@ -68,6 +68,60 @@ const initUser = async (mysqlModel, dataList) => {
 };
 
 /**
+ * 初始化服务类型
+ *
+ * @param {*} ServiceTypeModel 服务类型模型
+ * @param {*} dataList 服务类型初始数据
+ * @return {Array} 操作结果
+ */
+const initServiceType = async (ServiceTypeModel, dataList) => {
+  const result = [];
+  try {
+    for (const st of dataList) {
+      const currentST = await ServiceTypeModel.create(st);
+      result.push(`serviceType: ${currentST.name}，创建成功。`);
+    }
+  } catch (err) {
+    const { errors } = err;
+    if (errors && errors.length) {
+      const { message } = errors[0];
+      console.error(`数据库执行失败： ${message}`);
+      result.push(`数据库执行失败： ${message}`);
+    }
+    console.error(`系统异常，memberType创建失败： ${err}`);
+    result.push(`系统异常，memberType创建失败： ${err}`);
+  }
+  return result;
+};
+
+/**
+ * 初始化模块信息
+ *
+ * @param {*} ModularModel 模块信息模型
+ * @param {*} modular 模块信息初始数据
+ * @return {Array} 操作结果
+ */
+const initModularInfo = async (ModularModel, modular) => {
+  const result = [];
+  try {
+    for (const m of modular) {
+      const currentModular = await ModularModel.create(m);
+      result.push(`serviceType: ${currentModular.name}，创建成功。`);
+    }
+  } catch (err) {
+    const { errors } = err;
+    if (errors && errors.length) {
+      const { message } = errors[0];
+      console.error(`数据库执行失败： ${message}`);
+      result.push(`数据库执行失败： ${message}`);
+    }
+    console.error(`系统异常，memberType创建失败： ${err}`);
+    result.push(`系统异常，memberType创建失败： ${err}`);
+  }
+  return result;
+};
+
+/**
  * 初始化系统配置
  *
  * @param {*} SysConfigModel 系统配置模型
@@ -101,8 +155,8 @@ const initSysConfig = async (SysConfigModel, dataList) => {
  * @return {Array} 执行结果
  */
 module.exports = async (models) => {
-  const { Department, SysConfig } = models;
-  const { userList, departmentList, sysConfig } = require('./data');
+  const { Department, ServiceType, Modular, SysConfig } = models;
+  const { userList, departmentList, serviceType, modular, sysConfig } = require('./data');
   let returnResult = [];
 
   const departments = await Department.findAll();
@@ -116,7 +170,11 @@ module.exports = async (models) => {
   returnResult = returnResult.concat(await initDepartment(Department, departmentList));
   console.log('2. 初始化用户...');
   returnResult = returnResult.concat(await initUser(models, userList));
-  console.log('3. 初始化系统配置...');
+  console.log('3. 初始化服务类别...');
+  returnResult = returnResult.concat(await initServiceType(ServiceType, serviceType));
+  console.log('4. 初始化模块信息...');
+  returnResult = returnResult.concat(await initModularInfo(Modular, modular));
+  console.log('5. 初始化系统配置...');
   returnResult = returnResult.concat(await initSysConfig(SysConfig, sysConfig));
 
   console.log('-----------------------------------------------');
