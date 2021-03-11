@@ -2,7 +2,7 @@
  * @description: 合同表
  * @author: zpl
  * @Date: 2020-10-14 21:31:40
- * @LastEditTime: 2021-02-25 13:18:36
+ * @LastEditTime: 2021-03-11 17:26:29
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -46,11 +46,6 @@ class EvaluationRequest extends Model {
         type: DataTypes.STRING(20),
         allowNull: false,
         comment: '机构资质',
-      },
-      companyName: {
-        type: DataTypes.STRING(64),
-        allowNull: false,
-        comment: '单位名称',
       },
       processStatus: {
         type: DataTypes.ENUM,
@@ -98,8 +93,14 @@ class EvaluationRequest extends Model {
     // 等级评定申请 - 申请详情， 一对一
     EvaluationRequest.hasOne(sequelize.models['RequestDetail']);
 
+    // 等级评定申请 - 人员素质信息， 一对一
+    EvaluationRequest.hasOne(sequelize.models['PersonalQuality']);
+
     // 等级评定申请 - 管理体系建设情况， 一对多
     EvaluationRequest.hasMany(sequelize.models['MSConstruction']);
+
+    // 等级评定申请 - 公司业绩， 一对一
+    EvaluationRequest.hasOne(sequelize.models['CompanyPerformance']);
 
     // 等级评定申请 - 自主开发产品， 一对多
     EvaluationRequest.hasMany(sequelize.models['SelfProduct']);

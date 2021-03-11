@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-03-07 15:26:23
+ * @LastEditTime: 2021-03-11 18:27:09
  * @LastEditors: zpl
  */
 const crypto = require('crypto');
@@ -70,13 +70,20 @@ module.exports = fp(async (server, opts, next) => {
         const password = crypto.createHmac('sha1', hmacKey).update(pwd).digest('hex');
         const res = await method.dbMethod.findOne({
           where: { loginName: userName, password },
-          include: [{ model: mysqlModel.Department }],
+          include: [{
+            model: mysqlModel.Department,
+            include: [{
+              model: mysqlModel.DepTag,
+            }],
+          }],
         });
         const { status, data } = res;
         if (status) {
           console.log(data.loginName, ' 正在登录');
           const token = server.jwt.sign({ id: data.id });
-          const authors = data.Departments.map((g) => g.tag);
+          const authors = data.Departments.map((g) => {
+            return g.DepTag.name;
+          });
           return reply.code(200).send({
             status: 'ok',
             currentAuthority: authors,

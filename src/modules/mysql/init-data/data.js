@@ -2,13 +2,43 @@
  * @description: 数据库初始数据
  * @author: zpl
  * @Date: 2020-07-26 22:19:42
- * @LastEditTime: 2021-03-10 19:32:12
+ * @LastEditTime: 2021-03-11 17:32:06
  * @LastEditors: zpl
  */
 const { getCurrentDate } = require('../../../util');
 const { userStatus, departmentTag } = require('../../../dictionary');
 
-// 用户组
+// 部门类别
+exports.depTag = [{
+  name: 'admin',
+  descStr: '系统管理员',
+}, {
+  name: 'sqdw',
+  descStr: '申请单位',
+}, {
+  name: 'psjg',
+  descStr: '评审机构',
+}, {
+  name: 'xmgly',
+  descStr: '项目管理员',
+}, {
+  name: 'shy',
+  descStr: '审核员',
+}, {
+  name: 'gywyh',
+  descStr: '公约委员会',
+}, {
+  name: 'wyhgly',
+  descStr: '委员会管理员',
+}, {
+  name: 'pdjdy',
+  descStr: '评定决定员',
+}, {
+  name: 'wal',
+  descStr: '网安联',
+}];
+
+// 部门
 exports.departmentList = [{
   name: '管理员',
   tag: departmentTag.系统管理员,

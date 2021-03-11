@@ -2,7 +2,7 @@
  * @description: 申请详情表
  * @author: zpl
  * @Date: 2020-10-14 21:31:40
- * @LastEditTime: 2021-02-25 12:45:01
+ * @LastEditTime: 2021-03-11 17:03:09
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -122,18 +122,6 @@ class RequestDetail extends Model {
       percentageOfChinese: {
         type: DataTypes.STRING,
         comment: '中国公民或组织持股比例',
-      },
-      totalNumberOfEnterprises: {
-        type: DataTypes.INTEGER,
-        comment: '企业总人数',
-      },
-      staffComposition: {
-        type: DataTypes.STRING,
-        comment: '人员构成',
-      },
-      performance: {
-        type: DataTypes.STRING,
-        comment: '业绩',
       },
       businessLicense: {
         type: DataTypes.STRING,

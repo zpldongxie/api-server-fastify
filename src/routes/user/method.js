@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-03-07 14:01:46
+ * @LastEditTime: 2021-03-11 18:58:10
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -47,6 +47,10 @@ class Method extends CommonMethod {
           const include = [{
             model: this.mysql.Department,
             attributes: ['id', 'name'],
+            include: [{
+              model: this.mysql.DepTag,
+              attributes: ['id', 'name', 'descStr'],
+            }],
           }];
           const res = await that.dbMethod.findById(id, include);
           return res;
@@ -71,6 +75,10 @@ class Method extends CommonMethod {
           const include = [{
             model: this.mysql.Department,
             attributes: ['id', 'name'],
+            include: [{
+              model: this.mysql.DepTag,
+              attributes: ['id', 'name', 'descStr'],
+            }],
           }];
           const res = await that.dbMethod.findAll({ attributes, include });
           return res;
@@ -103,6 +111,10 @@ class Method extends CommonMethod {
           const include = [{
             model: this.mysql.Department,
             attributes: ['id', 'name'],
+            include: [{
+              model: this.mysql.DepTag,
+              attributes: ['id', 'name', 'descStr'],
+            }],
           }];
           if (departmentIds) {
             include[0].where = { id: { [Op.in]: departmentIds } };
@@ -131,7 +143,10 @@ class Method extends CommonMethod {
   async creatSQDWQ(userInfo) {
     // 查找申请单位部门
     const sqdwDep = await this.mysql.Department.findOne({
-      where: { tag: departmentTag.申请单位 },
+      include: [{
+        model: this.mysql.DepTag,
+        where: { name: departmentTag.申请单位 },
+      }],
     });
     if (!sqdwDep) {
       return {
@@ -177,7 +192,10 @@ class Method extends CommonMethod {
     const { companyName, ...info } = userInfo;
     // 查找评审机构部门
     const psjgDep = await this.mysql.Department.findOne({
-      where: { tag: departmentTag.评审机构 },
+      include: [{
+        model: this.mysql.DepTag,
+        where: { name: departmentTag.评审机构 },
+      }],
     });
     if (!psjgDep) {
       return {
@@ -239,7 +257,10 @@ class Method extends CommonMethod {
     const { companyName, ...info } = userInfo;
     // 查找评审机构部门
     const psjgDep = await this.mysql.Department.findOne({
-      where: { tag: departmentTag.评审机构 },
+      include: [{
+        model: this.mysql.DepTag,
+        where: { name: departmentTag.评审机构 },
+      }],
     });
     if (!psjgDep) {
       return {
@@ -300,7 +321,10 @@ class Method extends CommonMethod {
     const { companyName, ...info } = userInfo;
     // 查找公约委员会部门
     const wyhDep = await this.mysql.Department.findOne({
-      where: { tag: departmentTag.公约委员会 },
+      include: [{
+        model: this.mysql.DepTag,
+        where: { name: departmentTag.公约委员会 },
+      }],
     });
     if (!wyhDep) {
       return {
@@ -362,7 +386,10 @@ class Method extends CommonMethod {
     const { companyName, ...info } = userInfo;
     // 查找公约委员会部门
     const wyhDep = await this.mysql.Department.findOne({
-      where: { tag: departmentTag.公约委员会 },
+      include: [{
+        model: this.mysql.DepTag,
+        where: { name: departmentTag.公约委员会 },
+      }],
     });
     if (!wyhDep) {
       return {
@@ -422,9 +449,11 @@ class Method extends CommonMethod {
   async createWAL(userInfo) {
     // 查找网安联部门
     const department = await this.mysql.Department.findOne({
-      where: { tag: departmentTag.网安联 },
       include: [{
         model: this.model,
+      }, {
+        model: this.mysql.DepTag,
+        where: { name: departmentTag.网安联 },
       }],
     });
     if (!department) {
@@ -466,9 +495,11 @@ class Method extends CommonMethod {
   async createXTGLY(userInfo) {
     // 查找系统管理员部门
     const department = await this.mysql.Department.findOne({
-      where: { tag: departmentTag.系统管理员 },
       include: [{
         model: this.model,
+      }, {
+        model: this.mysql.DepTag,
+        where: { name: departmentTag.系统管理员 },
       }],
     });
     if (!department) {

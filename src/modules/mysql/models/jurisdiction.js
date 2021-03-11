@@ -2,7 +2,7 @@
  * @description: 权限
  * @author: zpl
  * @Date: 2021-02-24 15:09:58
- * @LastEditTime: 2021-02-24 16:24:31
+ * @LastEditTime: 2021-03-11 16:14:19
  * @LastEditors: zpl
  */
 
@@ -58,8 +58,8 @@ class Jurisdiction extends Model {
     // 权限 - 功能模块， 多对一
     Jurisdiction.belongsTo(sequelize.models['Modular'], { through: 'ModularJurisdiction' });
 
-    // 权限 - 部门， 多对一
-    Jurisdiction.belongsTo(sequelize.models['Department']);
+    // 权限 - 部门类别， 多对一
+    Jurisdiction.belongsTo(sequelize.models['DepTag']);
   }
 }
 

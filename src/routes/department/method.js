@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-03-09 10:23:06
+ * @LastEditTime: 2021-03-11 18:32:21
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -40,7 +40,9 @@ class Method extends CommonMethod {
     await (that.run(request, reply))(
         async () => {
           const id = request.params.id;
-          const res = await that.dbMethod.findById(id);
+          const res = await that.dbMethod.findById(id, [{
+            model: that.mysql.DepTag,
+          }]);
           return res;
         },
     );
@@ -57,7 +59,11 @@ class Method extends CommonMethod {
     const that = this;
     await (that.run(request, reply))(
         async () => {
-          const res = await that.dbMethod.findAll();
+          const res = await that.dbMethod.findAll({
+            include: [{
+              model: that.mysql.DepTag,
+            }],
+          });
           return res;
         },
     );
@@ -82,7 +88,9 @@ class Method extends CommonMethod {
             ...where
           } = request.body;
           const attributes = {};
-          const include = [];
+          const include = [{
+            model: that.mysql.DepTag,
+          }];
           const res = await that.dbMethod.queryList({
             where,
             filter,
@@ -110,7 +118,13 @@ class Method extends CommonMethod {
     const companyDep = await this.model.findOne({ where: { name: companyName } });
     if (companyDep) {
       // 若部门存在，判断是否存在对应的审核员部门
-      const jdwDep = await this.model.findOne({ where: { parentId: companyDep.id, tag: departmentTag.审核员 } });
+      const jdwDep = await this.model.findOne({
+        where: { parentId: companyDep.id },
+        include: [{
+          model: this.mysql.DepTag,
+          where: { name: departmentTag.审核员 },
+        }],
+      });
       if (jdwDep) {
         // 若存在，则给出提示
         return {
@@ -126,6 +140,9 @@ class Method extends CommonMethod {
           orderIndex,
           parentId: companyDep.id,
         });
+        const tag = await this.mysql.DepTag.findOne({ name: departmentTag.审核员 });
+        dev.setDepTag(tag);
+        await dev.save();
         return {
           status: 1,
           data: dep,
@@ -148,7 +165,12 @@ class Method extends CommonMethod {
    */
   async createPSJG(companyName, desc='', orderIndex=0) {
     // 查找评审机构
-    const psjgDep = await this.model.findOne({ where: { tag: departmentTag.评审机构 } });
+    const psjgDep = await this.model.findOne({
+      include: [{
+        model: this.mysql.DepTag,
+        where: { name: departmentTag.评审机构 },
+      }],
+    });
     if (psjgDep) {
       // 创建对应单位，若重名，会触发数据库约束，前台需要处理提示信息
       const dev = await this.model.create({
@@ -158,13 +180,19 @@ class Method extends CommonMethod {
         orderIndex,
         parentId: psjgDep.id,
       });
+      const tag = await this.mysql.DepTag.findOne({ name: departmentTag.项目管理员 });
+      dev.setDepTag(tag);
+      await dev.save();
       // 同步创建审核员分组
-      await this.model.create({
+      const shyDev = await this.model.create({
         name: `${companyName}审核员`,
         tag: departmentTag.审核员,
         desc: '',
         parentId: dev.id,
       });
+      const shyTag = await this.mysql.DepTag.findOne({ name: departmentTag.项目管理员 });
+      shyDev.setDepTag(shyTag);
+      await shyDev.save();
       return {
         status: 1,
         data: dev,
@@ -191,7 +219,13 @@ class Method extends CommonMethod {
     const companyDep = await this.model.findOne({ where: { name: companyName } });
     if (companyDep) {
       // 若部门存在，判断是否存在对应的评定决定员部门
-      const jdwDep = await this.model.findOne({ where: { parentId: companyDep.id, tag: departmentTag.评定决定员 } });
+      const jdwDep = await this.model.findOne({
+        where: { parentId: companyDep.id },
+        include: [{
+          model: this.mysql.DepTag,
+          where: { name: departmentTag.评定决定员 },
+        }],
+      });
       if (jdwDep) {
         // 若存在，则给出提示
         return {
@@ -207,6 +241,9 @@ class Method extends CommonMethod {
           orderIndex,
           parentId: companyDep.id,
         });
+        const tag = await this.mysql.DepTag.findOne({ name: departmentTag.评定决定员 });
+        dev.setDepTag(tag);
+        await dev.save();
         return {
           status: 1,
           data: dep,
@@ -230,23 +267,32 @@ class Method extends CommonMethod {
    */
   async createWYH(companyName, desc='', orderIndex=0) {
     // 查找公约委员会部门
-    const wyhDep = await this.model.findOne({ where: { tag: departmentTag.公约委员会 } });
+    const wyhDep = await this.model.findOne({
+      include: [{
+        model: this.mysql.DepTag,
+        where: { name: departmentTag.公约委员会 },
+      }],
+    });
     if (wyhDep) {
       // 创建对应单位，若重名，会触发数据库约束，前台需要处理提示信息
       const dev = await this.model.create({
         name: companyName,
-        tag: departmentTag.委员会管理员,
         desc,
         orderIndex,
         parentId: wyhDep.id,
       });
+      const tag = await this.mysql.DepTag.findOne({ name: departmentTag.委员会管理员 });
+      dev.setDepTag(tag);
+      await dev.save();
       // 同步创建评定决定员分组
-      await this.model.create({
+      const jdwDew = await this.model.create({
         name: `${companyName}评定决定员`,
-        tag: departmentTag.评定决定员,
         desc: '',
         parentId: dev.id,
       });
+      const jdwTag = await this.mysql.DepTag.findOne({ name: departmentTag.评定决定员 });
+      jdwDew.setDepTag(jdwTag);
+      await dev.save();
       return {
         status: 1,
         data: dev,

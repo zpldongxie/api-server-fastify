@@ -1,28 +1,28 @@
 /*
- * @description: 部门
+ * @description: 部门类别
  * @author: zpl
  * @Date: 2020-07-26 14:30:44
- * @LastEditTime: 2021-03-11 16:13:40
+ * @LastEditTime: 2021-03-11 17:30:21
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
 
 /**
- * 部门
+ * 部门类别
  *
- * @class Department
+ * @class DepTag
  * @extends {Model}
  */
-class Department extends Model {
+class DepTag extends Model {
   /**
    * 初始化，统一暴露给index，保证所有model使用同一sequelize实例
    *
    * @static
    * @param {*} sequelize
-   * @memberof Department
+   * @memberof DepTag
    */
   static initNow(sequelize) {
-    Department.init({
+    DepTag.init({
       id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
@@ -34,27 +34,15 @@ class Department extends Model {
         unique: true,
         comment: '名称',
       },
-      desc: {
+      descStr: {
         type: DataTypes.STRING,
         comment: '描述',
       },
-      orderIndex: {
-        type: DataTypes.DOUBLE,
-        comment: '排序值',
-      },
-      parentId: {
-        type: DataTypes.UUID,
-        comment: '父ID',
-        references: {
-          model: Department,
-          key: 'id',
-        },
-      },
     }, {
       sequelize,
-      modelName: 'Department',
+      modelName: 'DepTag',
       timestamps: false,
-      comment: '部门',
+      comment: '部门类别',
     });
   }
 
@@ -63,15 +51,15 @@ class Department extends Model {
    *
    * @static
    * @param {*} sequelize
-   * @memberof Department
+   * @memberof DepTag
    */
   static reateAssociation(sequelize) {
-    // 部门 - 用户， 多对多
-    Department.belongsToMany(sequelize.models['User'], { through: 'DepartmentUser' });
+    // 部门类别 - 部门， 一对多
+    DepTag.hasMany(sequelize.models['Department']);
 
-    // 部门 - 部门类别， 多对一
-    Department.belongsTo(sequelize.models['DepTag']);
+    // 部门类别 - 权限， 一对多
+    DepTag.hasMany(sequelize.models['Jurisdiction']);
   }
 }
 
-module.exports = Department;
+module.exports = DepTag;
