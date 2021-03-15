@@ -2,7 +2,7 @@
  * @description: 功能模块
  * @author: zpl
  * @Date: 2021-02-24 15:09:58
- * @LastEditTime: 2021-03-09 12:30:35
+ * @LastEditTime: 2021-03-14 12:52:33
  * @LastEditors: zpl
  */
 
@@ -34,8 +34,8 @@ class Modular extends Model {
         allowNull: false,
         comment: '功能名称',
       },
-      tag: {
-        type: DataTypes.STRING(20),
+      path: {
+        type: DataTypes.STRING,
         allowNull: false,
         unique: true,
         comment: '功能标记',

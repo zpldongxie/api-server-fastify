@@ -2,7 +2,7 @@
  * @description: 部门类别
  * @author: zpl
  * @Date: 2020-07-26 14:30:44
- * @LastEditTime: 2021-03-11 17:30:21
+ * @LastEditTime: 2021-03-13 09:27:09
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -37,6 +37,10 @@ class DepTag extends Model {
       descStr: {
         type: DataTypes.STRING,
         comment: '描述',
+      },
+      orderIndex: {
+        type: DataTypes.INTEGER,
+        comment: '排序值',
       },
     }, {
       sequelize,
