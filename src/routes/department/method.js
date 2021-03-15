@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-03-11 18:32:21
+ * @LastEditTime: 2021-03-13 15:23:40
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -135,7 +135,6 @@ class Method extends CommonMethod {
         // 若不存在，则创建对应的评定决定员部门
         const dep = await this.model.create({
           name: `${companyName}审核员`,
-          tag: departmentTag.审核员,
           desc,
           orderIndex,
           parentId: companyDep.id,
@@ -143,6 +142,7 @@ class Method extends CommonMethod {
         const tag = await this.mysql.DepTag.findOne({ name: departmentTag.审核员 });
         dev.setDepTag(tag);
         await dev.save();
+        console.log(`审核员部门创建成功，单位名称：${companyName}`);
         return {
           status: 1,
           data: dep,
@@ -175,7 +175,6 @@ class Method extends CommonMethod {
       // 创建对应单位，若重名，会触发数据库约束，前台需要处理提示信息
       const dev = await this.model.create({
         name: companyName,
-        tag: departmentTag.项目管理员,
         desc,
         orderIndex,
         parentId: psjgDep.id,
@@ -186,13 +185,13 @@ class Method extends CommonMethod {
       // 同步创建审核员分组
       const shyDev = await this.model.create({
         name: `${companyName}审核员`,
-        tag: departmentTag.审核员,
         desc: '',
         parentId: dev.id,
       });
-      const shyTag = await this.mysql.DepTag.findOne({ name: departmentTag.项目管理员 });
+      const shyTag = await this.mysql.DepTag.findOne({ name: departmentTag.审核员 });
       shyDev.setDepTag(shyTag);
       await shyDev.save();
+      console.log(`评审机构创建成功，机构名称：${companyName}`);
       return {
         status: 1,
         data: dev,
@@ -236,7 +235,6 @@ class Method extends CommonMethod {
         // 若不存在，则创建对应的评定决定员部门
         const dep = await this.model.create({
           name: `${companyName}评定决定员`,
-          tag: departmentTag.评定决定员,
           desc,
           orderIndex,
           parentId: companyDep.id,
@@ -244,10 +242,11 @@ class Method extends CommonMethod {
         const tag = await this.mysql.DepTag.findOne({ name: departmentTag.评定决定员 });
         dev.setDepTag(tag);
         await dev.save();
+        console.log(`委员会评定决定员部门创建成功，单位名称：${companyName}`);
         return {
           status: 1,
           data: dep,
-          message: `委员会管理员部门创建成功，单位名称：${companyName}`,
+          message: `委员会评定决定员部门创建成功，单位名称：${companyName}`,
         };
       }
     } else {
@@ -293,6 +292,7 @@ class Method extends CommonMethod {
       const jdwTag = await this.mysql.DepTag.findOne({ name: departmentTag.评定决定员 });
       jdwDew.setDepTag(jdwTag);
       await dev.save();
+      console.log(`委员会成员单位创建成功，单位名称：${companyName}`);
       return {
         status: 1,
         data: dev,

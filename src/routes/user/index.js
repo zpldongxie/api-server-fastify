@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-03-11 18:27:09
+ * @LastEditTime: 2021-03-15 17:06:58
  * @LastEditors: zpl
  */
 const crypto = require('crypto');
@@ -105,6 +105,12 @@ module.exports = fp(async (server, opts, next) => {
         console.log(`${getCurrentDate()} -- get: ${routerBaseInfo.getCurrentUserURL}`);
         const res = await method.dbMethod.findOne({
           where: { id: request.user.id, status: userStatus.enabled },
+          include: [{
+            model: mysqlModel.Department,
+            include: [{
+              model: mysqlModel.DepTag,
+            }],
+          }],
           exclude: ['password', 'verification_code', 'status'],
         });
         const { status, data } = res;

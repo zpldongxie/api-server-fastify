@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-03-11 18:58:10
+ * @LastEditTime: 2021-03-13 15:13:15
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -168,7 +168,8 @@ class Method extends CommonMethod {
       include: [this.mysql.UserExtension],
     });
     if (user) {
-      await user.setDepartments(sqdwDep);
+      user.setDepartments(sqdwDep);
+      await user.save();
       return {
         status: 1,
         data: user,
@@ -233,7 +234,8 @@ class Method extends CommonMethod {
     // 开始创建账号
     const user = await this.model.create(info);
     if (user) {
-      await user.setDepartments(dep);
+      user.setDepartments(dep);
+      await user.save();
       return {
         status: 1,
         data: user,
@@ -297,7 +299,8 @@ class Method extends CommonMethod {
     // 开始创建账号
     const user = await this.model.create(info);
     if (user) {
-      await user.setDepartments(dep);
+      user.setDepartments(dep);
+      await user.save();
       return {
         status: 1,
         data: user,
@@ -362,7 +365,8 @@ class Method extends CommonMethod {
     // 开始创建账号
     const user = await this.model.create(info);
     if (user) {
-      await user.setDepartments(dep);
+      user.setDepartments(dep);
+      await user.save();
       return {
         status: 1,
         data: user,
@@ -426,7 +430,8 @@ class Method extends CommonMethod {
     // 开始创建账号
     const user = await this.model.create(info);
     if (user) {
-      await user.setDepartments(dep);
+      user.setDepartments(dep);
+      await user.save();
       return {
         status: 1,
         data: user,
@@ -472,7 +477,8 @@ class Method extends CommonMethod {
     // 开始创建账号
     const user = await this.model.create(userInfo);
     if (user) {
-      await user.setDepartments(department);
+      user.setDepartments(department);
+      await user.save();
       return {
         status: 1,
         data: user,
@@ -518,7 +524,8 @@ class Method extends CommonMethod {
     // 开始创建账号
     const user = await this.model.create(userInfo);
     if (user) {
-      await user.setDepartments(department);
+      user.setDepartments(department);
+      await user.save();
       return {
         status: 1,
         data: user,
