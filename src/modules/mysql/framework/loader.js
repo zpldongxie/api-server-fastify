@@ -2,7 +2,7 @@
  * @description:
  * @author: zpl
  * @Date: 2020-07-29 22:16:11
- * @LastEditTime: 2021-02-25 15:22:21
+ * @LastEditTime: 2021-03-13 09:33:17
  * @LastEditors: zpl
  */
 
@@ -76,27 +76,26 @@ const buildRoute = async (models) => {
       .map((modelName) => {
         const targetDirPath = path.join(root, `./${modelName.toLowerCase()}`);
 
-        // 文件夹不存在则创建
+        // 文件夹不存在则创建，不处理已存在的文件夹
         if (!fs.existsSync(targetDirPath)) {
           fs.mkdirSync(targetDirPath);
           console.log('The ' + targetDirPath + ' folder has been created!');
+          templates.forEach((item) => {
+            const targetFilePath = path.join(targetDirPath, item.name);
+            // 创建文件
+            if (!fs.existsSync(targetFilePath)) {
+              const content = item.template
+                  .replace(/CurrentModelName/g, modelName)
+                  .replace(/currentModelName/g, modelName.toLowerCase());
+              fs.writeFile(targetFilePath, content, (err) => {
+                if (err) throw err;
+                console.log('The ' + targetFilePath + ' has been created!');
+              });
+            } else {
+            // console.log(targetFilePath + ' has already been existed!');
+            }
+          });
         }
-
-        templates.forEach((item) => {
-          const targetFilePath = path.join(targetDirPath, item.name);
-          // 创建文件
-          if (!fs.existsSync(targetFilePath)) {
-            const content = item.template
-                .replace(/CurrentModelName/g, modelName)
-                .replace(/currentModelName/g, modelName.toLowerCase());
-            fs.writeFile(targetFilePath, content, (err) => {
-              if (err) throw err;
-              console.log('The ' + targetFilePath + ' has been created!');
-            });
-          } else {
-          // console.log(targetFilePath + ' has already been existed!');
-          }
-        });
       });
 };
 
