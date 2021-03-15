@@ -2,10 +2,11 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-03-05 09:25:49
+ * @LastEditTime: 2021-03-15 11:32:14
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
+const DepTagMethod = require('../deptag/method');
 
 /**
  * 路由用到的方法
@@ -25,6 +26,7 @@ class Method extends CommonMethod {
     super(mysql[modelName], ajv);
     this.mysql = mysql;
     this.model = mysql[modelName];
+    this.depTagMethod = new DepTagMethod(mysql, 'DepTag', ajv);
   }
 
   /**
@@ -81,7 +83,12 @@ class Method extends CommonMethod {
             ...where
           } = request.body;
           const attributes = {};
-          const include = [];
+          const include = [{
+            model: that.mysql.Jurisdiction,
+            include: [{
+              model: that.mysql.DepTag,
+            }],
+          }];
           const res = await that.dbMethod.queryList({
             where,
             filter,
@@ -92,6 +99,54 @@ class Method extends CommonMethod {
             include,
           });
           return res;
+        },
+    );
+  }
+
+  /**
+   * 根据条件获取列表
+   *
+   * @param {*} request
+   * @param {*} reply
+   * @memberof Method
+   */
+  async queryListAndJurisdiction(request, reply) {
+    const that = this;
+    await (that.run(request, reply))(
+        async () => {
+          const {
+            tag,
+            sorter,
+            filter,
+            ...where
+          } = request.body;
+          const depTagsRes = await that.depTagMethod.dbMethod.findOne({ where: { name: tag } });
+          if (depTagsRes.status) {
+            const depTagId = depTagsRes.data.id;
+            const include = [{
+              model: that.mysql.Jurisdiction,
+              where: {
+                depTagId,
+                canRead: true,
+              },
+              include: [{
+                model: that.mysql.DepTag,
+              }],
+            }];
+            const res = await that.dbMethod.queryList({
+              where,
+              filter,
+              sorter,
+              pageSize: -1,
+              include,
+            });
+            return res;
+          } else {
+            return {
+              status: 0,
+              message: '身份类型无效',
+            };
+          }
         },
     );
   }

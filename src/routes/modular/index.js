@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-03-05 10:03:52
+ * @LastEditTime: 2021-03-11 15:48:03
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -13,6 +13,7 @@ const routerBaseInfo = {
   getURL: '/api/modular/:id',
   getAllURL: '/api/modulars',
   getListURL: '/api/getModularList',
+  getListAndJuURL: '/api/modular/getListAndJu',
   putURL: '/api/modular',
   deleteURL: '/api/modulars',
 };
@@ -67,6 +68,13 @@ module.exports = fp(async (server, opts, next) => {
       routerBaseInfo.getListURL,
       { schema: { ...queryListSchema, tags: ['modular'], summary: '根据条件获取列表' } },
       (request, reply) => method.queryList(request, reply),
+  );
+
+  const queryListAndJuSchema = require('./query-list-and-ju-schema');
+  server.post(
+      routerBaseInfo.getListAndJuURL,
+      { schema: { ...queryListAndJuSchema, tags: ['modular'], summary: '根据身份类型获取带权限信息的列表' } },
+      (request, reply) => method.queryListAndJurisdiction(request, reply),
   );
 
   const updateSchema = require('./update-schema');

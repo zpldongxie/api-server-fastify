@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-03-05 10:03:52
+ * @LastEditTime: 2021-03-13 09:28:34
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -10,11 +10,7 @@ const Method = require('./method');
 
 const routerBaseInfo = {
   modelName: 'DepTag',
-  getURL: '/api/deptag/:id',
   getAllURL: '/api/deptags',
-  getListURL: '/api/getDepTagList',
-  putURL: '/api/deptag',
-  deleteURL: '/api/deptags',
 };
 module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
@@ -47,39 +43,10 @@ module.exports = fp(async (server, opts, next) => {
   *            佛祖保佑       永不宕机     永无BUG
   */
 
-  const getByIdSchema = require('./query-by-id-schema');
-  server.get(
-      routerBaseInfo.getURL,
-      {
-        schema: { ...getByIdSchema, tags: ['deptag'], summary: '根据ID获取单个' },
-      },
-      (request, reply) => method.getById(request, reply),
-  );
-
   server.get(
       routerBaseInfo.getAllURL,
       { schema: { tags: ['deptag'], summary: '获取所有' } },
       (request, reply) => method.getAll(request, reply),
-  );
-
-  const queryListSchema = require('./query-list-schema');
-  server.post(
-      routerBaseInfo.getListURL,
-      { schema: { ...queryListSchema, tags: ['deptag'], summary: '根据条件获取列表' } },
-      (request, reply) => method.queryList(request, reply),
-  );
-
-  const updateSchema = require('./update-schema');
-  server.put(routerBaseInfo.putURL,
-      { schema: { ...updateSchema, tags: ['deptag'], summary: '新增或更新' } },
-      (request, reply) => method.upsert(request, reply),
-  );
-
-  const deleteSchema = require('./delete-schema');
-  server.delete(
-      routerBaseInfo.deleteURL,
-      { schema: { ...deleteSchema, tags: ['deptag'], summary: '批量删除' } },
-      (request, reply) => method.remove(request, reply),
   );
 
   next();

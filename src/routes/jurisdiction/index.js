@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-03-05 10:03:52
+ * @LastEditTime: 2021-03-12 18:42:25
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -12,9 +12,8 @@ const routerBaseInfo = {
   modelName: 'Jurisdiction',
   getURL: '/api/jurisdiction/:id',
   getAllURL: '/api/jurisdictions',
-  getListURL: '/api/getJurisdictionList',
-  putURL: '/api/jurisdiction',
-  deleteURL: '/api/jurisdictions',
+  setReadURL: '/api/authority/setRead',
+  setWriteURL: '/api/authority/setWrite',
 };
 module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
@@ -62,24 +61,18 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => method.getAll(request, reply),
   );
 
-  const queryListSchema = require('./query-list-schema');
-  server.post(
-      routerBaseInfo.getListURL,
-      { schema: { ...queryListSchema, tags: ['jurisdiction'], summary: '根据条件获取列表' } },
-      (request, reply) => method.queryList(request, reply),
+  const setReadSchema = require('./set-read-schema');
+  server.put(
+      routerBaseInfo.setReadURL,
+      { schema: { ...setReadSchema, tags: ['jurisdiction'], summary: '设置可读权限' } },
+      (request, reply) => method.setRead(request, reply),
   );
 
-  const updateSchema = require('./update-schema');
-  server.put(routerBaseInfo.putURL,
-      { schema: { ...updateSchema, tags: ['jurisdiction'], summary: '新增或更新' } },
-      (request, reply) => method.upsert(request, reply),
-  );
-
-  const deleteSchema = require('./delete-schema');
-  server.delete(
-      routerBaseInfo.deleteURL,
-      { schema: { ...deleteSchema, tags: ['jurisdiction'], summary: '批量删除' } },
-      (request, reply) => method.remove(request, reply),
+  const setWriteSchema = require('./set-write-schema');
+  server.put(
+      routerBaseInfo.setWriteURL,
+      { schema: { ...setWriteSchema, tags: ['jurisdiction'], summary: '设置可写权限' } },
+      (request, reply) => method.setWrite(request, reply),
   );
 
   next();
