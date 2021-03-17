@@ -1,8 +1,8 @@
 /*
- * @description: 合同表
+ * @description: 等级评定申请表
  * @author: zpl
  * @Date: 2020-10-14 21:31:40
- * @LastEditTime: 2021-03-11 17:26:29
+ * @LastEditTime: 2021-03-17 09:41:32
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -10,7 +10,7 @@ const { Model, DataTypes } = require('sequelize');
 const { processStatus } = require('../../../dictionary');
 
 /**
- * 合同
+ * 等级评定申请
  *
  * @class EvaluationRequest
  * @extends {Model}
@@ -63,7 +63,7 @@ class EvaluationRequest extends Model {
     }, {
       sequelize,
       modelName: 'EvaluationRequest',
-      comment: '合同',
+      comment: '等级评定申请',
     });
   }
 
@@ -113,6 +113,9 @@ class EvaluationRequest extends Model {
 
     // 等级评定申请 - 服务渠道， 一对多
     EvaluationRequest.hasMany(sequelize.models['ServiceChannel']);
+
+    // 等级评定申请 - 上传记录， 一对多
+    EvaluationRequest.hasMany(sequelize.models['UploadRecord']);
   }
 }
 
