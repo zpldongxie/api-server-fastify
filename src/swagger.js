@@ -2,7 +2,7 @@
  * @description:
  * @author: zpl
  * @Date: 2020-08-07 10:32:25
- * @LastEditTime: 2021-03-01 17:22:25
+ * @LastEditTime: 2021-03-16 11:10:54
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -28,6 +28,31 @@ module.exports = fp(async (server, opts, next) => {
       // produces: ['application/json'],
       tags: [
         { name: 'user', description: '用户' },
+        { name: 'userextension', description: '用户扩展' },
+        { name: 'department', description: '部门' },
+        { name: 'deptag', description: '部门类型' },
+        { name: 'evaluationrequest', description: '等级评定申请' },
+        { name: 'requestdetail', description: '申请详情' },
+        { name: 'personalquality', description: '人员素质信息' },
+        { name: 'msconstruction', description: '管理体系建设情况' },
+        { name: 'companyperformance', description: '公司业绩' },
+        { name: 'safetool', description: '安全服务工具' },
+        { name: 'selfproduct', description: '自主开发产品' },
+        { name: 'servicechannel', description: '服务渠道' },
+        { name: 'workingenvironment', description: '工作环境' },
+        { name: 'contract', description: '合同' },
+        { name: 'billingrecord', description: '开票记录' },
+        { name: 'paymentrecord', description: '付款记录' },
+        { name: 'invoiceinformation', description: '发票信息' },
+        { name: 'certificateissuing', description: '证书颁发信息' },
+        { name: 'certificateinformation', description: '证书信息' },
+        { name: 'evaluation', description: '等级评定' },
+        { name: 'evaluationapproval', description: '等级评定审批' },
+        { name: 'servicetype', description: '服务类别' },
+        { name: 'modular', description: '功能模块' },
+        { name: 'jurisdiction', description: '权限' },
+        { name: 'article', description: '文章' },
+        { name: 'channel', description: '栏目' },
         { name: 'sysconfig', description: '系统配置' },
       ],
       // definitions: {
