@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-03-13 15:13:15
+ * @LastEditTime: 2021-03-17 11:57:56
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -183,7 +183,7 @@ class Method extends CommonMethod {
   }
 
   /**
-   * 创建审核机构审核员账号
+   * 创建评审机构审核员账号
    *
    * @param {*} userInfo 用户信息
    * @return {*}
@@ -191,6 +191,12 @@ class Method extends CommonMethod {
    */
   async creatSHY(userInfo) {
     const { companyName, ...info } = userInfo;
+    if (!companyName) {
+      return {
+        status: 0,
+        message: '必须指定单位名称',
+      };
+    }
     // 查找评审机构部门
     const psjgDep = await this.mysql.Department.findOne({
       include: [{
@@ -217,7 +223,13 @@ class Method extends CommonMethod {
     }
     // 查找对应审核员部门
     let dep = await this.mysql.Department.findOne({
-      where: { parentId: companyDep.id, tag: departmentTag.审核员 },
+      where: {
+        parentId: companyDep.id,
+      },
+      include: [{
+        model: this.mysql.DepTag,
+        where: { name: departmentTag.审核员 },
+      }],
     });
     // 如果对审核员部门位不存在，则创建，若创建失败，直接返回失败信息
     if (!dep) {
@@ -257,6 +269,12 @@ class Method extends CommonMethod {
    */
   async creatXMGLY(userInfo) {
     const { companyName, ...info } = userInfo;
+    if (!companyName) {
+      return {
+        status: 0,
+        message: '必须指定单位名称',
+      };
+    }
     // 查找评审机构部门
     const psjgDep = await this.mysql.Department.findOne({
       include: [{
@@ -322,6 +340,12 @@ class Method extends CommonMethod {
    */
   async creatPDJDY(userInfo) {
     const { companyName, ...info } = userInfo;
+    if (!companyName) {
+      return {
+        status: 0,
+        message: '必须指定单位名称',
+      };
+    }
     // 查找公约委员会部门
     const wyhDep = await this.mysql.Department.findOne({
       include: [{
@@ -348,7 +372,13 @@ class Method extends CommonMethod {
     }
     // 查找对应评定决定员部门
     let dep = await this.mysql.Department.findOne({
-      where: { parentId: companyDep.id, tag: departmentTag.评定决定员 },
+      where: {
+        parentId: companyDep.id,
+      },
+      include: [{
+        model: this.mysql.DepTag,
+        where: { name: departmentTag.评定决定员 },
+      }],
     });
     // 如果对评定决定员部门位不存在，则创建，若创建失败，直接返回失败信息
     if (!dep) {
@@ -388,6 +418,12 @@ class Method extends CommonMethod {
    */
   async creatWYHGLY(userInfo) {
     const { companyName, ...info } = userInfo;
+    if (!companyName) {
+      return {
+        status: 0,
+        message: '必须指定单位名称',
+      };
+    }
     // 查找公约委员会部门
     const wyhDep = await this.mysql.Department.findOne({
       include: [{
