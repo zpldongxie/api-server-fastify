@@ -2,7 +2,7 @@
  * @description: 全局工具
  * @author: zpl
  * @Date: 2020-09-07 00:38:53
- * @LastEditTime: 2021-03-04 19:15:53
+ * @LastEditTime: 2021-03-17 13:21:30
  * @LastEditors: zpl
  */
 const path = require('path');
@@ -70,41 +70,44 @@ const convertCatchInfo = (error) => {
     // 数据验证错误
     localize.zh(validation);
     err.message = validation[0].dataPath + validation[0].message;
-  } else if (sqlMessage) {
-    // console.log('-------------------3');
-    // sql错误
-    err.message = sqlMessage;
   } else if (errors) {
     // 数据库约束错误
-    // console.log('-------------------4');
+    // console.log('-------------------3');
     const first = errors[0];
     switch (first.type) {
       case 'notNull Violation':
-        // console.log('-------------------5');
+        // console.log('-------------------4');
         err.message = `${first.path}不能为空`;
+        break;
+      case 'unique violation':
+        // console.log('-------------------5');
+        err.message = `${first.path}不能与已有记录重复`;
         break;
       default:
         // console.log('-------------------6');
         err.message = first.message;
         break;
     }
-    console.log(errors);
+  } else if (sqlMessage) {
+    // console.log('-------------------7');
+    // sql错误
+    err.message = sqlMessage;
   } else if (message) {
     console.log('message', message);
     switch (message) {
       case 'Validation error':
-        // console.log('-------------------7');
+        // console.log('-------------------8');
         console.log('进来一个枯怪的分支。。。');
         // 数据验证错误
         err.message = error.errors[0].message;
         break;
       default:
         // 未分类错误
-        // console.log('-------------------8');
+        // console.log('-------------------9');
         err.message = message;
     }
   } else {
-    // console.log('-------------------9');
+    // console.log('-------------------10');
     // 其他格式错误
     err.message = 'Internal Server Error';
   }
