@@ -2,7 +2,7 @@
  * @description: 初始化数据库
  * @author: zpl
  * @Date: 2020-07-27 12:40:11
- * @LastEditTime: 2021-03-11 18:16:11
+ * @LastEditTime: 2021-03-23 11:56:45
  * @LastEditors: zpl
  */
 const UserMethod = require('../../../routes/user/method');
@@ -138,7 +138,7 @@ const initModularInfo = async (ModularModel, modular) => {
   try {
     for (const m of modular) {
       const currentModular = await ModularModel.create(m);
-      result.push(`serviceType: ${currentModular.name}，创建成功。`);
+      result.push(`modular: ${currentModular.name}，创建成功。`);
     }
   } catch (err) {
     const { errors } = err;
@@ -147,8 +147,8 @@ const initModularInfo = async (ModularModel, modular) => {
       console.error(`数据库执行失败： ${message}`);
       result.push(`数据库执行失败： ${message}`);
     }
-    console.error(`系统异常，memberType创建失败： ${err}`);
-    result.push(`系统异常，memberType创建失败： ${err}`);
+    console.error(`系统异常，modular创建失败： ${err}`);
+    result.push(`系统异常，modular创建失败： ${err}`);
   }
   return result;
 };

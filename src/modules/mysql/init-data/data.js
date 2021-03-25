@@ -2,7 +2,7 @@
  * @description: 数据库初始数据
  * @author: zpl
  * @Date: 2020-07-26 22:19:42
- * @LastEditTime: 2021-03-14 13:00:22
+ * @LastEditTime: 2021-03-25 09:19:01
  * @LastEditors: zpl
  */
 const { getCurrentDate } = require('../../../util');
@@ -119,6 +119,7 @@ exports.userList = [{
   logonDate: getCurrentDate(),
   status: userStatus.enabled,
   depTag: departmentTag.项目管理员,
+  judgingLevel: 3,
 }];
 
 // 服务类型
@@ -156,7 +157,7 @@ exports.modular = [
     'path': '/information',
     'parentId': null,
     'descStr': '申请单位对单位信息的维护功能',
-    'orderIndex': 90,
+    'orderIndex': 100,
   },
   {
     'id': '1b91761c-7dba-4789-bb80-93f2103c1f12',
@@ -164,7 +165,7 @@ exports.modular = [
     'path': '/business',
     'parentId': null,
     'descStr': null,
-    'orderIndex': 80,
+    'orderIndex': 90,
   },
   {
     'id': '70d5d7fa-15b6-48ee-902f-ad6a455b0d62',
@@ -172,7 +173,7 @@ exports.modular = [
     'path': '/certificate/management',
     'parentId': null,
     'descStr': '模板维护',
-    'orderIndex': 70,
+    'orderIndex': 80,
   },
   {
     'id': '4b6772e7-350b-450c-922b-d477767fcadd',
@@ -180,7 +181,7 @@ exports.modular = [
     'path': '/certificate/list',
     'parentId': null,
     'descStr': '管理',
-    'orderIndex': 60,
+    'orderIndex': 70,
   },
   {
     'id': '9d47c31b-c881-4174-b8d7-fbc00ab217f8',
@@ -188,12 +189,20 @@ exports.modular = [
     'path': '/certificate/self',
     'parentId': null,
     'descStr': '申请单位',
-    'orderIndex': 50,
+    'orderIndex': 60,
   },
   {
     'id': '7c333cb7-85f7-48af-ba8b-464cd10915cb',
     'name': '审核列表',
     'path': '/rating/auditList',
+    'parentId': null,
+    'descStr': null,
+    'orderIndex': 50,
+  },
+  {
+    'id': '7a222cb7-85f7-48af-ba8b-464cd10915ab',
+    'name': '申请列表',
+    'path': '/rating/applyList',
     'parentId': null,
     'descStr': null,
     'orderIndex': 40,
