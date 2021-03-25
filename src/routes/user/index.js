@@ -66,7 +66,7 @@ module.exports = fp(async (server, opts, next) => {
           return reply.code(400).send(validate.errors);
         }
 
-        const { userName, pwd } = request.body;
+        const { userName, pwd, type } = request.body;
         const password = crypto.createHmac('sha1', hmacKey).update(pwd).digest('hex');
         const res = await method.dbMethod.findOne({
           where: { loginName: userName, password },
@@ -78,19 +78,24 @@ module.exports = fp(async (server, opts, next) => {
           }],
         });
         const { status, data } = res;
-        if (status) {
-          console.log(data.loginName, ' 正在登录');
-          const token = server.jwt.sign({ id: data.id });
-          const authors = data.Departments.map((g) => {
-            return g.DepTag.name;
-          });
-          return reply.code(200).send({
-            status: 'ok',
-            currentAuthority: authors,
-            token,
-          });
+        if (!status) {
+          return reply.code(200).send({ status: 'error', message: '用户名或密码错误' });
         }
-        return reply.code(200).send({ status: 'error', message: '用户名或密码错误' });
+        const currentType = data.Departments[0].DepTag.name;
+        if (currentType !== type && !(currentType === 'admin' && 'wal' === type)) {
+          // admin只能通过网安联入口进入
+          return reply.code(200).send({ status: 'error', message: '账号类型不正确' });
+        }
+        console.log(data.loginName, ' 正在登录');
+        const token = server.jwt.sign({ id: data.id });
+        const authors = data.Departments.map((g) => {
+          return g.DepTag.name;
+        });
+        return reply.code(200).send({
+          status: 'ok',
+          currentAuthority: authors,
+          token,
+        });
       },
   );
 
