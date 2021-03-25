@@ -14,6 +14,7 @@ const bodyJsonSchema = S.object()
     .prop('status', S.string().enum(Object.values(userStatus)).default(userStatus.applying).description('注册时间'))
     .prop('depTag', S.string().enum(Object.values(departmentTag)).description('所属部门类型'))
     .prop('companyName', S.string().maxLength(64).description('单位名称'))
+    .prop('judgingLevel', S.string().maxLength(64).description('评审级别'))
     .required([]);
 
 module.exports = {
@@ -21,6 +22,7 @@ module.exports = {
     注册时，
     需要传入depTag以明确账号类型，
     评审机构和公约委员会下的账号，需要传入companyName来确定部门名称，
+    评审机构需要传入judgingLevel，确定可评审的申请级别，信息同步到扩展信息judgingLevel中
     服务单位直接以公司名称做为登录名，注册成功后需要把loginName同步到扩展信息companyName中
   `,
   body: bodyJsonSchema,

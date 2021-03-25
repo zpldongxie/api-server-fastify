@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-03-15 17:06:58
+ * @LastEditTime: 2021-03-23 21:27:23
  * @LastEditors: zpl
  */
 const crypto = require('crypto');
@@ -13,13 +13,15 @@ const { getCurrentDate } = require('../../util');
 
 const routerBaseInfo = {
   modelName: 'User',
-  doLoginURL: '/api/doLogin',
-  getCurrentUserURL: '/api/currentUser',
-  getURL: '/api/user/:id',
-  getAllURL: '/api/users',
-  getListURL: '/api/getUserList',
-  putURL: '/api/user',
-  deleteURL: '/api/users',
+  doLoginURL: '/api/doLogin', // 登录
+  getCurrentUserURL: '/api/currentUser', // 获取当前登录的用户信息
+  getURL: '/api/user/:id', // 根据ID获取信息
+  getListURL: '/api/getUserList', // 按条件查询
+  getXmglyList: '/api/getXmgly', // 获取项目管理员列表
+  getShyList: '/api/getShy', // 获取当前登录用户对应的审核员列表
+  getPdjdyList: '/api/getPdjdyList', // 获取当前登录用户可选的评定决定员列表
+  putURL: '/api/user', // 新增用户
+  deleteURL: '/api/users', // 删除用户
 };
 module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
@@ -139,19 +141,39 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => method.getById(request, reply),
   );
 
-  // 获取所有
-  server.get(
-      routerBaseInfo.getAllURL,
-      { schema: { tags: ['user'], summary: '获取所有用户' } },
-      (request, reply) => method.getAll(request, reply),
-  );
-
-  // 根据条件获取列表
   const queryListSchema = require('./query-list-schema');
   server.post(
       routerBaseInfo.getListURL,
       { schema: { ...queryListSchema, tags: ['user'], summary: '根据条件获取用户列表' } },
       (request, reply) => method.queryList(request, reply),
+  );
+
+  const getXmglyListSchema = require('./get-xmgly-list-schema');
+  server.post(
+      routerBaseInfo.getXmglyList,
+      {
+        preValidation: [server.authenticate],
+        schema: { ...getXmglyListSchema, tags: ['user'], summary: '获取项目管理员列表' },
+      },
+      (request, reply) => method.getXmglyList(request, reply),
+  );
+
+  server.get(
+      routerBaseInfo.getShyList,
+      {
+        preValidation: [server.authenticate],
+        schema: { tags: ['user'], summary: '获取当前登录用户对应的审核员列表' },
+      },
+      (request, reply) => method.getShyList(request, reply),
+  );
+
+  server.get(
+      routerBaseInfo.getPdjdyList,
+      {
+        preValidation: [server.authenticate],
+        schema: { tags: ['user'], summary: '获取当前登录用户可选的评定决定员列表' },
+      },
+      (request, reply) => method.getPdjdyList(request, reply),
   );
 
   // 新增或更新
