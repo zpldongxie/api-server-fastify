@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-03-05 09:25:49
+ * @LastEditTime: 2021-03-19 10:00:48
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -148,6 +148,24 @@ class Method extends CommonMethod {
     } else {
       await that.create(request, reply);
     }
+  }
+
+  /**
+   * 批量设置文章属性
+   *
+   * @param {*} request
+   * @param {*} reply
+   * @memberof Method
+   */
+  async setAttr(request, reply) {
+    const that = this;
+    await (that.run(request, reply))(
+        async () => {
+          const { ids, attr } = request.body;
+          const res = await that.dbMethod.updateMany(ids, attr);
+          return res;
+        },
+    );
   }
 
   /**
