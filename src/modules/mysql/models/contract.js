@@ -2,7 +2,7 @@
  * @description: 合同表
  * @author: zpl
  * @Date: 2020-10-14 21:31:40
- * @LastEditTime: 2021-02-25 08:44:34
+ * @LastEditTime: 2021-03-22 11:53:47
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -49,7 +49,7 @@ class Contract extends Model {
         comment: '签署日期',
       },
       archive: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.STRING,
         allowNull: false,
         comment: '归档文件',
       },

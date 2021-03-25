@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-03-05 10:03:52
+ * @LastEditTime: 2021-03-18 15:59:32
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -13,7 +13,7 @@ const routerBaseInfo = {
   getURL: '/api/personalquality/:id',
   getAllURL: '/api/personalqualitys',
   getListURL: '/api/getPersonalQualityList',
-  putURL: '/api/personalquality',
+  saveOnRequestURL: '/api/personalquality/saveOnRequest',
   deleteURL: '/api/personalqualitys',
 };
 module.exports = fp(async (server, opts, next) => {
@@ -69,10 +69,10 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => method.queryList(request, reply),
   );
 
-  const updateSchema = require('./update-schema');
-  server.put(routerBaseInfo.putURL,
-      { schema: { ...updateSchema, tags: ['personalquality'], summary: '新增或更新' } },
-      (request, reply) => method.upsert(request, reply),
+  const saveOnRequestSchema = require('./save-on-request-schema');
+  server.put(routerBaseInfo.saveOnRequestURL,
+      { schema: { ...saveOnRequestSchema, tags: ['personalquality'], summary: '保存到申请中' } },
+      (request, reply) => method.saveOnRequest(request, reply),
   );
 
   const deleteSchema = require('./delete-schema');

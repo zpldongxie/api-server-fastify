@@ -38,17 +38,17 @@ class PersonalQuality extends Model {
         comment: '负责人从事信息技术管理年限',
       },
       techLeaderName: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(20),
         allowNull: false,
         comment: '技术负责人姓名',
       },
       techLeaderMajor: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(20),
         allowNull: false,
         comment: '技术负责人专业',
       },
       techLeaderTitle: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(20),
         allowNull: false,
         comment: '技术负责人职称',
       },
@@ -58,17 +58,17 @@ class PersonalQuality extends Model {
         comment: '技术负责人从事信息技术工作年限',
       },
       financeLeaderName: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(20),
         allowNull: false,
         comment: '财务负责人姓名',
       },
       financeLeaderMajor: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(20),
         allowNull: false,
         comment: '财务负责人专业',
       },
       financeLeaderTitleAges: {
-        type: DataTypes.STRING,
+        type: DataTypes.DATE,
         allowNull: false,
         comment: '财务负责人获得职称时间',
       },
@@ -83,7 +83,7 @@ class PersonalQuality extends Model {
         comment: '安全服务人员本科学历人数',
       },
       undergraduateShare: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(10),
         allowNull: false,
         comment: '安全服务人员本科占专业技术人员比例',
       },
@@ -93,7 +93,7 @@ class PersonalQuality extends Model {
         comment: '安全服务人员硕士学历人数',
       },
       masterShare: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(10),
         allowNull: false,
         comment: '安全服务人员硕士占专业技术人员比例',
       },
@@ -103,7 +103,7 @@ class PersonalQuality extends Model {
         comment: '安全服务人员博士学历及以上人数',
       },
       doctorShare: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(10),
         allowNull: false,
         comment: '安全服务人员博士学历及以上占专业技术人员比例',
       },

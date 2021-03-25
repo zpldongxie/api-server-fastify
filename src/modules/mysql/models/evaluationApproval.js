@@ -2,7 +2,7 @@
  * @description: 等级评定审批
  * @author: zpl
  * @Date: 2021-02-24 15:09:58
- * @LastEditTime: 2021-02-25 12:50:15
+ * @LastEditTime: 2021-03-23 14:22:53
  * @LastEditors: zpl
  */
 
@@ -36,13 +36,12 @@ class EvaluationApproval extends Model {
       },
       handlingOpinions: {
         type: DataTypes.ENUM,
-        allowNull: false,
-        values: ['通过', '不通过'],
+        values: ['通过', '不通过', '待处理'],
+        defaultValue: '待处理',
         comment: '审批结果',
       },
       notes: {
-        type: DataTypes.STRING(20),
-        allowNull: false,
+        type: DataTypes.STRING,
         comment: '审批意见',
       },
       approvalFiles: {
@@ -52,7 +51,6 @@ class EvaluationApproval extends Model {
     }, {
       sequelize,
       modelName: 'EvaluationApproval',
-      timestamps: false,
       comment: '等级评定审批',
     });
   }
@@ -68,8 +66,11 @@ class EvaluationApproval extends Model {
     // 等级评定审批 - 等级评定申请， 多对一
     EvaluationApproval.belongsTo(sequelize.models['EvaluationRequest']);
 
-    // 等级评定审批 - 用户， 多对一
-    EvaluationApproval.belongsTo(sequelize.models['User']);
+    // 等级评定审批 - 用户， 多对一。  申请人
+    EvaluationApproval.belongsTo(sequelize.models['User'], { as: 'applicant' });
+
+    // 等级评定审批 - 用户， 多对一。  执行人
+    EvaluationApproval.belongsTo(sequelize.models['User'], { as: 'executive' });
   }
 }
 

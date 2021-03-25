@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-03-05 09:25:49
+ * @LastEditTime: 2021-03-22 12:14:07
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -82,6 +82,48 @@ class Method extends CommonMethod {
           } = request.body;
           const attributes = {};
           const include = [];
+          const res = await that.dbMethod.queryList({
+            where,
+            filter,
+            sorter,
+            current,
+            pageSize,
+            attributes,
+            include,
+          });
+          return res;
+        },
+    );
+  }
+
+  /**
+   * 根据条件获取当前用户的合同列表
+   *
+   * @param {*} request
+   * @param {*} reply
+   * @memberof Method
+   */
+  async getListForCurrentUser(request, reply) {
+    const that = this;
+    await (that.run(request, reply))(
+        async () => {
+          const currentUserId = request.user.id;
+          const {
+            current,
+            pageSize,
+            sorter,
+            filter,
+            ...where
+          } = request.body;
+          const attributes = {};
+          const include = [{
+            model: that.mysql.EvaluationRequest,
+            include: [{
+              model: that.mysql.User,
+              where: { id: currentUserId },
+              attributes: ['id', 'loginName'],
+            }],
+          }];
           const res = await that.dbMethod.queryList({
             where,
             filter,

@@ -2,7 +2,7 @@
  * @description: 所有路由方法的抽象对象
  * @author: zpl
  * @Date: 2021-01-12 12:23:11
- * @LastEditTime: 2021-03-03 13:21:20
+ * @LastEditTime: 2021-03-24 20:05:17
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -329,11 +329,12 @@ class DatabaseMethod {
    * 根据条件删除多个
    *
    * @param {*} [where={}]
+   * @param {*} [include=[]]
    * @return {*}
    * @memberof DatabaseMethod
    */
-  async deleteMany(where = {}) {
-    const num = await this.Model.destroy({ where });
+  async deleteMany(where = {}, include=[]) {
+    const num = await this.Model.destroy({ where, include });
     if (num) {
       return this.onSuccess(num, '删除成功');
     }

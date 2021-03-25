@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-03-05 09:25:49
+ * @LastEditTime: 2021-03-19 12:07:13
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -63,91 +63,54 @@ class Method extends CommonMethod {
   }
 
   /**
-   * 根据条件获取列表
+   * 保存到申请记录中
    *
-   * @param {*} request
-   * @param {*} reply
+   * @param {*} requestId 申请记录ID
+   * @param {*} data 服务渠道列表
+   * @return {*}
    * @memberof Method
    */
-  async queryList(request, reply) {
+  async doSaveOnRequest(requestId, data) {
     const that = this;
-    await (that.run(request, reply))(
-        async () => {
-          const {
-            current,
-            pageSize,
-            sorter,
-            filter,
-            ...where
-          } = request.body;
-          const attributes = {};
-          const include = [];
-          const res = await that.dbMethod.queryList({
-            where,
-            filter,
-            sorter,
-            current,
-            pageSize,
-            attributes,
-            include,
-          });
-          return res;
-        },
-    );
-  }
-
-  /**
-   * 新增
-   *
-   * @param {*} request
-   * @param {*} reply
-   * @memberof Method
-   */
-  async create(request, reply) {
-    const that = this;
-    await (that.run(request, reply))(
-        async () => {
-          const info = request.body;
-          const include = [];
-          const res = await that.dbMethod.create(info, { include });
-          return res;
-        },
-    );
-  }
-
-  /**
-   * 更新
-   *
-   * @param {*} request
-   * @param {*} reply
-   * @memberof Method
-   */
-  async update(request, reply) {
-    const that = this;
-    await (that.run(request, reply))(
-        async () => {
-          const { id, ...info } = request.body;
-          const res = await that.dbMethod.updateOne(id, info);
-          return res;
-        },
-    );
-  }
-
-  /**
-   * 新增或更新
-   *
-   * @param {*} request
-   * @param {*} reply
-   * @memberof Method
-   */
-  async upsert(request, reply) {
-    const that = this;
-    const { id } = request.body;
-    if (id) {
-      await that.update(request, reply);
-    } else {
-      await that.create(request, reply);
+    const er = await that.mysql.EvaluationRequest.findOne({ where: { id: requestId } });
+    if (!er) {
+      return {
+        status: 0,
+        message: '申请ID无效',
+      };
     }
+
+    await that.dbMethod.deleteMany({ EvaluationRequestId: requestId });
+
+    let resNum = 0;
+    for (let i = 0; i < data.length; i++) {
+      const msc = data[i];
+      delete msc.id;
+      const curRes = await that.dbMethod.create({ ...msc, EvaluationRequestId: requestId }, {
+        include: [{ model: that.mysql.EvaluationRequest }],
+      });
+      resNum += curRes.status;
+    }
+    return {
+      status: 1,
+      message: '操作成功',
+      data: {
+        listSize: data.length,
+        successSize: resNum,
+      },
+    };
+  }
+
+  /**
+   * 批量保存到申请中
+   *
+   * @param {*} request
+   * @param {*} reply
+   * @memberof Method
+   */
+  async saveOnRequest(request, reply) {
+    const that = this;
+    await (that.run(request, reply))( that.doSaveOnRequest );
   }
 
   /**

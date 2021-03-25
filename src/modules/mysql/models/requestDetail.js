@@ -2,7 +2,7 @@
  * @description: 申请详情表
  * @author: zpl
  * @Date: 2020-10-14 21:31:40
- * @LastEditTime: 2021-03-11 17:03:09
+ * @LastEditTime: 2021-03-18 14:22:14
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -39,11 +39,11 @@ class RequestDetail extends Model {
       },
       detailed: {
         type: DataTypes.STRING,
-        comment: '详细',
+        comment: '地址',
       },
       communication: {
         type: DataTypes.STRING(20),
-        comment: '通信',
+        comment: '电话',
       },
       postcode: {
         type: DataTypes.STRING(6),
@@ -96,7 +96,7 @@ class RequestDetail extends Model {
         comment: '注册号',
       },
       registeredCapital: {
-        type: DataTypes.STRING(64),
+        type: DataTypes.DOUBLE,
         comment: '注册资本',
       },
       established: {
@@ -104,7 +104,7 @@ class RequestDetail extends Model {
         comment: '成立时间',
       },
       typeOfEnterprise: {
-        type: DataTypes.STRING(20),
+        type: DataTypes.STRING(64),
         comment: '企业类型',
       },
       businessScope: {
@@ -120,60 +120,8 @@ class RequestDetail extends Model {
         comment: '股东持股比例，数组，与主要股东对应',
       },
       percentageOfChinese: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(10),
         comment: '中国公民或组织持股比例',
-      },
-      businessLicense: {
-        type: DataTypes.STRING,
-        comment: '营业执照副本',
-      },
-      planning: {
-        type: DataTypes.STRING,
-        comment: '简介/规划',
-      },
-      workplace: {
-        type: DataTypes.STRING,
-        comment: '办公场所',
-      },
-      auditReport: {
-        type: DataTypes.STRING,
-        comment: '近二年审计报告',
-      },
-      letterOfCommitment: {
-        type: DataTypes.STRING,
-        comment: '承诺函',
-      },
-      certificate: {
-        type: DataTypes.STRING,
-        comment: '学历、职称、安全培训证书复印件',
-      },
-      personnelSituation: {
-        type: DataTypes.STRING,
-        comment: '安全服务人员基本情况',
-      },
-      undertakeTheContract: {
-        type: DataTypes.STRING,
-        comment: '项目承接合同复印件',
-      },
-      enterpriseAwards: {
-        type: DataTypes.STRING,
-        comment: '企业获奖',
-      },
-      humanResources: {
-        type: DataTypes.STRING,
-        comment: '人力资源',
-      },
-      confidentialityManagement: {
-        type: DataTypes.STRING,
-        comment: '保密管理制度',
-      },
-      projectManagement: {
-        type: DataTypes.STRING,
-        comment: '项目管理制度',
-      },
-      projectDocumentation: {
-        type: DataTypes.STRING,
-        comment: '项目过程文档',
       },
     }, {
       sequelize,

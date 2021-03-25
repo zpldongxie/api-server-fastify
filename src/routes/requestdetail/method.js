@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-03-05 09:25:49
+ * @LastEditTime: 2021-03-18 15:25:24
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -140,14 +140,34 @@ class Method extends CommonMethod {
    * @param {*} reply
    * @memberof Method
    */
-  async upsert(request, reply) {
+  async saveOnRequest(request, reply) {
     const that = this;
-    const { id } = request.body;
-    if (id) {
-      await that.update(request, reply);
-    } else {
-      await that.create(request, reply);
-    }
+    await (that.run(request, reply))(
+        async () => {
+          const { id, data } = request.body;
+          const er = await that.mysql.EvaluationRequest.findOne({ where: { id } });
+          if (!er) {
+            return {
+              status: 0,
+              message: '申请ID无效',
+            };
+          }
+
+          await that.dbMethod.deleteMany({
+            EvaluationRequestId: id,
+          });
+
+          const res = that.dbMethod.create({
+            ...data,
+            EvaluationRequestId: id,
+          }, {
+            include: [{
+              model: that.mysql.EvaluationRequest,
+            }],
+          });
+          return res;
+        },
+    );
   }
 
   /**

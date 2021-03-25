@@ -2,14 +2,14 @@
  * @description: 服务渠道表
  * @author: zpl
  * @Date: 2021-02-24 15:09:58
- * @LastEditTime: 2021-02-25 14:25:25
+ * @LastEditTime: 2021-03-17 14:34:20
  * @LastEditors: zpl
  */
 
 const { Model, DataTypes } = require('sequelize');
 
 /**
- * 服务渠道表
+ * 服务渠道
  *
  * @class ServiceChannel
  * @extends {Model}
@@ -29,12 +29,12 @@ class ServiceChannel extends Model {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      website: {
-        type: DataTypes.STRING(64),
+      type: {
+        type: DataTypes.STRING(20),
         allowNull: false,
         comment: '类别',
       },
-      office: {
+      details: {
         type: DataTypes.STRING,
         allowNull: false,
         comment: '具体内容',
@@ -43,7 +43,7 @@ class ServiceChannel extends Model {
       sequelize,
       modelName: 'ServiceChannel',
       timestamps: false,
-      comment: '服务渠道表',
+      comment: '服务渠道',
     });
   }
 
@@ -55,10 +55,10 @@ class ServiceChannel extends Model {
    * @memberof ServiceChannel
    */
   static reateAssociation(sequelize) {
-    // 服务渠道表 - 用户， 多对一
+    // 服务渠道 - 用户， 多对一
     ServiceChannel.belongsTo(sequelize.models['User']);
 
-    // 服务渠道表 - 等级评定申请， 多对一
+    // 服务渠道 - 等级评定申请， 多对一
     ServiceChannel.belongsTo(sequelize.models['EvaluationRequest']);
   }
 }

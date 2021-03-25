@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-03-05 10:03:52
+ * @LastEditTime: 2021-03-22 12:10:48
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -13,6 +13,7 @@ const routerBaseInfo = {
   getURL: '/api/contract/:id',
   getAllURL: '/api/contracts',
   getListURL: '/api/getContractList',
+  getListForCurrentUserURL: '/api/getContractList/currentUser',
   putURL: '/api/contract',
   deleteURL: '/api/contracts',
 };
@@ -67,6 +68,15 @@ module.exports = fp(async (server, opts, next) => {
       routerBaseInfo.getListURL,
       { schema: { ...queryListSchema, tags: ['contract'], summary: '根据条件获取列表' } },
       (request, reply) => method.queryList(request, reply),
+  );
+
+  server.post(
+      routerBaseInfo.getListForCurrentUserURL,
+      {
+        preValidation: [server.authenticate],
+        schema: { ...queryListSchema, tags: ['contract'], summary: '根据条件获取当前用户的合同列表' },
+      },
+      (request, reply) => method.getListForCurrentUser(request, reply),
   );
 
   const updateSchema = require('./update-schema');

@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-03-05 10:03:52
+ * @LastEditTime: 2021-03-22 10:09:48
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -13,7 +13,7 @@ const routerBaseInfo = {
   getURL: '/api/evaluationapproval/:id',
   getAllURL: '/api/evaluationapprovals',
   getListURL: '/api/getEvaluationApprovalList',
-  putURL: '/api/evaluationapproval',
+  approvalURL: '/api/ea/approval',
   deleteURL: '/api/evaluationapprovals',
 };
 module.exports = fp(async (server, opts, next) => {
@@ -69,10 +69,13 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => method.queryList(request, reply),
   );
 
-  const updateSchema = require('./update-schema');
-  server.put(routerBaseInfo.putURL,
-      { schema: { ...updateSchema, tags: ['evaluationapproval'], summary: '新增或更新' } },
-      (request, reply) => method.upsert(request, reply),
+  const approvalSchema = require('./approval-schema');
+  server.put(routerBaseInfo.approvalURL,
+      {
+        preValidation: [server.authenticate],
+        schema: { ...approvalSchema, tags: ['evaluationapproval'], summary: '审核' },
+      },
+      (request, reply) => method.approval(request, reply),
   );
 
   const deleteSchema = require('./delete-schema');

@@ -2,7 +2,7 @@
  * @description: 工作环境设施
  * @author: zpl
  * @Date: 2021-02-24 15:09:58
- * @LastEditTime: 2021-02-25 14:12:08
+ * @LastEditTime: 2021-03-18 16:31:29
  * @LastEditors: zpl
  */
 
@@ -36,6 +36,7 @@ class WorkingEnvironment extends Model {
       },
       model: {
         type: DataTypes.STRING(50),
+        allowNull: false,
         comment: '型号',
       },
       quantity: {

@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-03-17 11:04:46
+ * @LastEditTime: 2021-03-24 19:41:56
  * @LastEditors: zpl
  */
 const CommonMethod = require('../commonMethod');
@@ -90,6 +90,7 @@ class Method extends CommonMethod {
           const attributes = {};
           const include = [{
             model: that.mysql.DepTag,
+            required: true,
           }];
           const res = await that.dbMethod.queryList({
             where,

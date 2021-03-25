@@ -2,7 +2,7 @@
  * @description: 路由
  * @author: zpl
  * @Date: 2020-08-02 13:19:12
- * @LastEditTime: 2021-03-05 10:03:52
+ * @LastEditTime: 2021-03-18 17:36:12
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -12,8 +12,7 @@ const routerBaseInfo = {
   modelName: 'SelfProduct',
   getURL: '/api/selfproduct/:id',
   getAllURL: '/api/selfproducts',
-  getListURL: '/api/getSelfProductList',
-  putURL: '/api/selfproduct',
+  saveOnRequestURL: '/api/selfproduct/saveOnRequest',
   deleteURL: '/api/selfproducts',
 };
 module.exports = fp(async (server, opts, next) => {
@@ -62,19 +61,11 @@ module.exports = fp(async (server, opts, next) => {
       (request, reply) => method.getAll(request, reply),
   );
 
-  const queryListSchema = require('./query-list-schema');
-  server.post(
-      routerBaseInfo.getListURL,
-      { schema: { ...queryListSchema, tags: ['selfproduct'], summary: '根据条件获取列表' } },
-      (request, reply) => method.queryList(request, reply),
+  const saveOnRequestSchema = require('./save-on-request-schema');
+  server.put(routerBaseInfo.saveOnRequestURL,
+      { schema: { ...saveOnRequestSchema, tags: ['selfproduct'], summary: '批量保存到申请中' } },
+      (request, reply) => method.saveOnRequest(request, reply),
   );
-
-  const updateSchema = require('./update-schema');
-  server.put(routerBaseInfo.putURL,
-      { schema: { ...updateSchema, tags: ['selfproduct'], summary: '新增或更新' } },
-      (request, reply) => method.upsert(request, reply),
-  );
-
   const deleteSchema = require('./delete-schema');
   server.delete(
       routerBaseInfo.deleteURL,

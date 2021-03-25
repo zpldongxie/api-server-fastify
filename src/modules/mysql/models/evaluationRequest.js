@@ -2,7 +2,7 @@
  * @description: 等级评定申请表
  * @author: zpl
  * @Date: 2020-10-14 21:31:40
- * @LastEditTime: 2021-03-17 09:41:32
+ * @LastEditTime: 2021-03-23 15:09:40
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -31,14 +31,14 @@ class EvaluationRequest extends Model {
         primaryKey: true,
       },
       level: {
-        type: DataTypes.STRING(4),
+        type: DataTypes.INTEGER,
         allowNull: false,
         comment: '申请级别',
       },
       requestType: {
         type: DataTypes.ENUM,
-        values: ['评定申请', '级别变更'],
-        defaultValue: '评定申请',
+        values: ['初次申请', '级别变更'],
+        defaultValue: '初次申请',
         allowNull: false,
         comment: '申请类型',
       },
@@ -51,11 +51,10 @@ class EvaluationRequest extends Model {
         type: DataTypes.ENUM,
         values: [
           processStatus.toSubmit,
-          processStatus.pending,
           processStatus.pendingPayment,
           processStatus.underReview,
           processStatus.rejected,
-          processStatus.passed,
+          processStatus.finished,
         ],
         allowNull: false,
         comment: '流程状态',
