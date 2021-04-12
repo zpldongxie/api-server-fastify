@@ -1,65 +1,71 @@
 # api-server-fastify
 ## 基于fastify实现的RESTful API服务
 
-## 业务说明
-### 1. 上传文件结构设计
-- 建议上传的文件入在一个静态网站中，可以利用CDN进行访问加速。当然使用图床等专业平台效果更佳。
-- 为方便浏览及管理，文档结构文件夹使用中文件名称。所有文件与数据库有对应关系，所以为只读，需要进行操作时，必须通过业务系统进行。
-- 上传文件夹中在根目录按服务类别创建文件夹。
-- 每个类别中包含一个cerTemplat文件夹用来保存证书模板。
-- 每个类别中包含一个cer文件，以省份进行分类，保存所有单位获取到的证书，文件名以单位名称+证书生成日期的形式保存。
-- 每个类别中以单位名称 -> 申请日期 -> 申请材料 的方式保存每次申请的文件。
+## 系统说明
+- 本系统为纯API服务，无UI界面
+- 使用到的技术
+
+||||||
+| :---: | :---: | :---: | :---: | :---: |
+|<a href="https://nodejs.org/zh-cn/" target="_blank"><img src="https://nodejs.org/static/images/logo.svg" height="40" /><br />nodejs</a>|<a href="https://www.fastify.io/" target="_blank"><img src="https://www.fastify.io/images/fastify-logo-inverted.2180cc6b1919d47a.png" height="40" /><br />fastify</a>|<a href="https://swagger.io/" target="_blank"><img src="https://static1.smartbear.co/swagger/media/assets/images/swagger_logo.svg" height="40" /><br />swagger</a>|<a href="https://sequelize.org/" target="_blank"><img src="https://sequelize.org/master/image/brand_logo.png" height="40" /><br />sequelize</a>|<a href="https://www.mysql.com/" target="_blank"><img src="https://labs.mysql.com/common/logos/mysql-logo.svg?v2" height="40" /><br />mysql</a>|
+<br />
+- 参考项目
+
+|||
+|-|-|
+|[fastify-example](https://github.com/delvedor/fastify-example#readme)|[fastify-starter-kit](https://github.com/SecSamDev/fastify-starter-kit)|
+<br />
+- 代码结构
 ```hash
-# 保存示例
 root
+  ├─ models       # 数据库模型
+  |     ├─ business_basis           # 基础教育数据库
+  |     |    ├─ initData            # 初始数据
+  |     |    ├─ schemas             # 模型定义
+  |     |    ├─ index.js            # 统一加载所有model
+  |     |    ├─ README.md           # 说明文档
+  |     |    ├─ user.js             # 模型方法实现-用户，其他依此类推
+  |     |
+  |     └─ dictionary               # 字典数据库，结构同上
   |
-  ├─ 安全咨询
-  |     |
-  |     ├─ cerTemplat
-  |     |
-  |     ├─ cer
-  |     |    |
-  |     |    ├─ 陕西省
-  |     |    |    |
-  |     |    |    ├─ 申请单位一_20201111.png
-  |     |    |    |
-  |     |    |    ├─ ...更多文件
-  |     |    |
-  |     |    ├─ ...更多地区
-  |     |
-  |     ├─ 申请单位一
-  |     |    |
-  |     |    ├─ 20200520
-  |     |    |     |
-  |     |    |     ├─ 固定办公场所证明材料
-  |     |    |     |     |
-  |     |    |     |     ├─ 文件1
-  |     |    |     |     |
-  |     |    |     |     ├─ ...文件n
-  |     |    |     |
-  |     |    |     ├─ ...其他材料
-  |     |    |
-  |     |    ├─ ...其他时间
-  |     |
-  |     ├─ ...其他申请单位
+  ├─ plugins       # 插件
+  |     ├─ authorization.js         # OAthor2认证配置，暂未生效
+  |     ├─ jwt.js                   # jwt认证
+  |     ├─ mysql_business_basis.js  # 基础教育数据库模型挂载及同步
+  |     ├─ mysql_dictionary.js      # 字典数据库模型挂载及同步
+  |     ├─ swagger.js               # swagger路由映射
+  |     └─ util.js                  # 定义一此通用的工具及方法
   |
-  └─ ...其他类别同上
+  ├─ routes        # 路由
+  |     ├─ auth                     # 认证相关路由
+  |     ├─ status.js                # 系统状态路由
+  |     ├─ README.md                # 路由实现说明及开发建议
+  |     ├─ user                     # 用户相关路由，其他依此类推
+  |
+  ├─ script        # 需要用到，但不影响项目的脚本
+  |     ├─ keys-generator.js        # 生成42位长度的base64字符串
+  |
+  ├─ test          # 测试脚本，后期再实现
+  |
+  ├─ .env          # 系统变量配置
+  ├─ app.js        # 应用入口
+  ├─ configure_dev.js           # 开发环境配置
+  ├─ configure_production.js    # 生产环境配置
+  └─ server.js                  # 不使用cli时，请直接以此文件为入口，使用npm执行
+```
+
+# TODO
+## swagger转openAPI后，components下schemas名称不准确的问题
+- fastify-swagger引用的json-schema-resolver包需要优化，官方已有[问题跟踪](https://github.com/Eomm/json-schema-resolver/pull/4)
+- 先修改[源码](node_modules/json-schema-resolver/ref-resolver.js)140行进行规避
+```js
+json[kRefToDef] = `def-${rolling++}`
+// 修改为
+json[kRefToDef] = id || `def-${rolling++}`
 ```
 
 ## 关于数据库
 本系统使用mysql，对应的操作库为sequelize和mysql2
-### 创建一个表的步骤
-- 在mysql -> models下创建model文件
-- mysql -> framework 下的loader.js 实现了自动读取models信息并挂载到服务中，每次系统启动时mysql -> index.js会实时进行调用读取
-- 每次启动项目，会根据环境变量配置决定是否自动向mysql数据库创建表格
-```bash
-# 配置文件 config/default.yaml
-  # 同步模型到数据库
-  needCreatTable: false
-  # 同步前清空所有旧表
-  dropOldTable: false
-```
-- mysql -> init-data 实现了数据初始化功能，当前以部门表是否有数据为判断是否需要初始化数据的参考
 
 ## 关于接口
 ### 接口定义步骤
@@ -88,8 +94,67 @@ api文档地址：
 - 资源管理功能中会默认域名对应配置的物理路径，且上传文件夹是以静态资源进行访问
 - 例如磁盘中/uploads/image/aaa.png 对应的访问地址就是 ip:port/uploads/image/aaa.png
 
-### 2. 一行命令查找服务进程并kill掉
-首次使用先用ps命令确认node和项目脚本的执行信息
-```bash
-ps -ef|grep /root/.nvm/versions/node/v10.16.3/bin/node |grep ./src/index.js  | grep  -v grep  | awk '{print $2}' | xargs kill -9
+## 参考代码，源自fastify-example项目
+- fastfiy封装的http客户端，性能做过优化
+```js
+import undici from 'undici'
+// Undici is an http client for Node.js extremely optimized
+// to achieve the best performances possible. Is very well
+// suited if you need to send all the request to the same endpoint.
+const client = undici('https://api.github.com')
+async function isUserAllowed (token) {
+  const response = await client.request({
+    method: 'GET',
+    path: '/user/emails',
+    headers: {
+      'User-Agent': 'scurte',
+      Authorization: `Bearer ${token}`
+    }
+  })
+
+  if (response.statusCode >= 400) {
+    throw httpErrors.unauthorized('Authenticate again')
+  }
+
+  let payload = ''
+  response.body.setEncoding('utf8')
+  for await (const chunk of response.body) {
+    payload += chunk
+  }
+  payload = JSON.parse(payload)
+
+  const isAllowed = payload.some(ele => allowedUsers.includes(ele.email))
+  if (!isAllowed) {
+    const err = httpErrors.forbidden('You are not allowed to access this')
+    // let's store the user info so we can log them later
+    err.user = payload
+    throw err
+  }
+
+  for (const ele of payload) {
+    if (ele.primary) return ele.email
+  }
+  throw httpErrors.badRequest('The user does not have a primary email')
+}
+```
+- OAuth认证插件
+```js
+import OAuth from 'fastify-oauth2'
+// `fastify-oauth2` is a plugin that helps you handle oauth2 flows.
+// It comes with preconfigured settings for the major oauth providers.
+// Are you using Auth0? See https://npm.im/fastify-auth0-verify
+fastify.register(OAuth, {
+  name: 'github',
+  credentials: {
+    client: {
+      id: config.GITHUB_APP_ID,
+      secret: config.GITHUB_APP_SECRET
+    },
+    auth: OAuth.GITHUB_CONFIGURATION
+  },
+  startRedirectPath: '/_app/login/github',
+  // TODO: this url should change if we are in prod
+  callbackUri: 'http://localhost:3000/_app/login/github/callback',
+  scope: ['user:email']
+})
 ```
