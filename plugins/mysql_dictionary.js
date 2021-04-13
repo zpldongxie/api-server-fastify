@@ -2,7 +2,7 @@
  * @description: 注册字典数据库模型
  * @author: zpl
  * @Date: 2021-04-10 15:57:54
- * @LastEditTime: 2020-01-03 12:31:45
+ * @LastEditTime: 2021-04-13 19:04:46
  * @LastEditors: zpl
  */
 import fp from 'fastify-plugin'
@@ -20,7 +20,6 @@ async function plugin(fastify, options) {
     host,
     dialect,
     pool,
-    operatorsAliases: false, // 仍可通过传入 operators map 至 operatorsAliases 的方式来使用字符串运算符，但会返回弃用警告
     logging: false,
     define: {
       charset: 'utf8mb4',
