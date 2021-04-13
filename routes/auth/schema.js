@@ -2,7 +2,7 @@
  * @description: 
  * @author: zpl
  * @Date: 2020-01-03 20:24:04
- * @LastEditTime: 2020-01-04 00:49:01
+ * @LastEditTime: 2021-04-13 14:38:18
  * @LastEditors: zpl
  */
 import S from 'fluent-json-schema'
@@ -10,6 +10,7 @@ import S from 'fluent-json-schema'
 /** 登录参数 */
 const LoginParams = S.object()
   .id('LoginParams')
+  .description('登录参数')
   .prop('username', S.string().description('登录名').required())
   .prop('password', S.string().description('密码').required())
   .prop('autoLogin', S.boolean().description('自动登录').required())
@@ -60,20 +61,17 @@ export default class {
       }
     }
   }
-}
 
-// /** 账密登录 */
-// export const postAccount = {
-//   tags: ['auth'],
-//   operationId: 'postAccount',
-//   summary: '账密登录',
-//   description: '',
-//   body: S.ref('#LoginParams'),
-//   response: {
-//     200: S.ref('#LoginResult'),
-//     401: S.object()
-//       .description('登录失败')
-//       .prop('statusCode', S.number())
-//       .prop('message', S.string())
-//   }
-// }
+  get outLogin() {
+    return {
+      tags: ['auth'],
+      operationId: 'outLogin',
+      summary: '退出登录',
+      description: '',
+      response: {
+        200: S.object()
+          .prop('status', S.string().enum(['ok', 'error'])),
+      }
+    }
+  }
+}

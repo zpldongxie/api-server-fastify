@@ -2,7 +2,7 @@
  * @description: 
  * @author: zpl
  * @Date: 2020-01-02 21:18:30
- * @LastEditTime: 2021-04-12 13:50:38
+ * @LastEditTime: 2021-04-12 17:22:46
  * @LastEditors: zpl
  */
 import User from '../../models/business_basis/user.js'
@@ -37,7 +37,7 @@ export default async function auth(fastify, opts) {
       /**@type {User}*/
       let usr = await user.getUsernameAndPassword(req.body.username, req.body.password)
       if (usr != null) {
-        const token = jwt.sign({ userId: usr.id })
+        const token = jwt.sign({ userId: usr.id, userName: usr.username })
         res.setCookie('edu_platform', token, { path: '/' });
         return {
           status: 'ok',
@@ -47,6 +47,18 @@ export default async function auth(fastify, opts) {
         }
       } else {
         throw httpErrors.unauthorized('用户名或密码错误')
+      }
+    }
+  })
+
+  fastify.route({
+    method: 'POST',
+    url: '/outLogin',
+    schema: schema.outLogin,
+    handler: async (req, res) => {
+      res.clearCookie('edu_platform', { path: '/' })
+      return {
+        status: 'ok',
       }
     }
   })
