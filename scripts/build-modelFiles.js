@@ -1,8 +1,9 @@
 /*
- * @description: 
+ * @description: 通过参数指定schemas文件夹，自动分析并生成对应的model文件
+ * 示例： node .\scripts\build-modelFiles.js .\models\business_basis\schemas\
  * @author: zpl
  * @Date: 2021-04-13 15:04:19
- * @LastEditTime: 2021-04-13 19:28:06
+ * @LastEditTime: 2021-04-14 09:33:13
  * @LastEditors: zpl
  */
 import fs from 'fs';
