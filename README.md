@@ -1,56 +1,80 @@
-# api-server-fastify
-## 基于fastify实现的RESTful API服务
-
-## 关于数据库
-本系统使用mysql，对应的操作库为sequelize和mysql2
-### 创建一个表的步骤
-- 在mysql -> models下创建model文件
-- mysql -> framework 下的loader.js 实现了自动读取models信息并挂载到服务中，每次系统启动时mysql -> index.js会实时进行调用读取
-```js
-await loadModel(sequelize);
+# 智慧教育平台API服务
+项目地址：[]()
+## 系统说明
+- 本系统为纯API服务，无UI界面
+### 启动项目
+1. 请先配置env环境变量
+  - XXDM 学校代码
+  - NODE_ENV node环境变量
+  - COOKIE_SECRET cookie和jwt都使用此密钥
+  - HMAC_KEY 用户密码加密key
+  - UPLOAD_ROOT_PATH 文件上传根路径
+2. npm run dev 开发模式
+3. npm start 生产模式
+### TODO
+- swagger转openAPI后，components下schemas名称不准确的问题
+  - fastify-swagger引用的json-schema-resolver包需要优化，官方已有[问题跟踪](https://github.com/Eomm/json-schema-resolver/pull/4)
+  - 先修改[源码](node_modules/json-schema-resolver/ref-resolver.js)140行进行规避
+  ```js
+  json[kRefToDef] = `def-${rolling++}`
+  // 修改为
+  json[kRefToDef] = id || `def-${rolling++}`
+  ```
+### 代码结构
+```hash
+root
+  ├─ models       # 数据库模型
+  |     ├─ business_basis           # 基础教育数据库
+  |     |    ├─ initData            # 初始数据
+  |     |    ├─ schemas             # 模型定义
+  |     |    ├─ index.js            # 统一加载所有model
+  |     |    ├─ README.md           # 说明文档
+  |     |    ├─ user.js             # 模型方法实现-用户，其他依此类推
+  |     |
+  |     └─ dictionary               # 字典数据库，结构同上
+  |
+  ├─ plugins       # 插件
+  |     ├─ authorization.js         # OAthor2认证配置，暂未生效
+  |     ├─ jwt.js                   # jwt认证
+  |     ├─ mysql_business_basis.js  # 基础教育数据库模型挂载及同步
+  |     ├─ mysql_dictionary.js      # 字典数据库模型挂载及同步
+  |     ├─ swagger.js               # swagger路由映射
+  |     └─ util.js                  # 定义一此通用的工具及方法
+  |
+  ├─ routes        # 路由
+  |     ├─ auth                     # 认证相关路由
+  |     ├─ status.js                # 系统状态路由
+  |     ├─ README.md                # 路由实现说明及开发建议
+  |     ├─ user                     # 用户相关路由，其他依此类推
+  |
+  ├─ script        # 需要用到，但不影响项目的脚本
+  |     ├─ build-modelFiles.js      # 自动生成model文件
+  |     ├─ keys-generator.js        # 生成42位长度的base64字符串
+  |
+  ├─ test          # 测试脚本，后期再实现
+  |
+  ├─ .env          # 系统变量配置
+  ├─ app.js        # 应用入口
+  ├─ configure_dev.js           # 开发环境配置
+  ├─ configure_production.js    # 生产环境配置
+  └─ server.js                  # 不使用cli时，请直接以此文件为入口，使用npm执行
 ```
-- 每次启动项目，会根据环境变量配置决定是否自动向mysql数据库创建表格
-```js
-if (needCreatTable) {
-  await checkTablesExists(database, models);
-}
-```
-- mysql -> init-data 实现了数据初始化功能，当前以用户分组表是否有数据为判断是否需要初始化数据的参考
-```js
-if (userGroups && userGroups.length) return ['无需初始化'];
-console.log('-----------------------------------------------');
-console.log('---------------初始化数据库 开始---------------');
-console.log('-----------------------------------------------');
+### 技术参考
 
-console.log('1. 初始化用户组...');
-returnResult = returnResult.concat(await initUserGroup(UserGroup, userGroupList));
-console.log('2. 初始化用户...');
-returnResult = returnResult.concat(await initUser(UserGroup, User, userList));
-console.log('3. 初始化会员类型...');
-returnResult = returnResult.concat(await initMemberType(MemberType, memberTypeList));
+|                            nodejs                            |                           fastify                            |                           swagger                            |                          sequelize                           |                            mysql                             |
+| :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+| <a href="https://nodejs.org/zh-cn/" target="_blank"><img src="https://nodejs.org/static/images/logo.svg" height="40" /></a> | <a href="https://www.fastify.io/" target="_blank"><img src="https://www.fastify.io/images/fastify-logo-menu.d13f8da7a965c800.png" height="40" /></a> | <a href="https://swagger.io/" target="_blank"><img src="https://static1.smartbear.co/swagger/media/assets/images/swagger_logo.svg" height="40" /></a> | <a href="https://sequelize.org/" target="_blank"><img src="https://sequelize.org/master/image/brand_logo.png" height="40" /></a> | <a href="https://www.mysql.com/" target="_blank"><img src="https://labs.mysql.com/common/logos/mysql-logo.svg?v2" height="40" /></a> |
+<br />
 
-console.log('-----------------------------------------------');
-console.log('---------------初始化数据库 结束---------------');
-console.log('-----------------------------------------------');
-```
-- mysql -> dao.js 对面向数据的基本操作进行的封装
+### 项目参考
+[fastify-example](https://github.com/delvedor/fastify-example#readme)
+[fastify-starter-kit](https://github.com/SecSamDev/fastify-starter-kit)
+<br />
 
 ## 关于接口
-### 接口定义步骤
-- 定义了针对所有model的通用api模板
-- 通过CLI工具自动生成标准route文件，有特殊业务场景的可在生成的标准文件中进行修改
-- 所有参数验证在route文件中结合schema完成
-```js
-const validate = ajv.compile(queryListSchema.body.valueOf());
-const valid = validate(request.body);
-if (!valid) {
-  return reply.code(400).send(validate.errors);
-}
-```
-- routes -> util.js 实现了面向业务操作的基本封装以及统一应答设定，由route文件进行调用
 ### 本系统使用fastify-swagger自动生成api文档
 api文档地址：
-[http://49.234.158.74:3000/documentation/static/index.html](http://49.234.158.74:3000/documentation/static/index.html)
+http://{ip}:{port}/documentation/static/index.html
 
 ## 其他实现
 ### 1. 上传下载使用fastify-multer插件
@@ -60,9 +84,3 @@ api文档地址：
 - 在管理平台上传配置中设置访问域名，例如 http://www.baidu.com/，建议以 / 结尾
 - 资源管理功能中会默认域名对应配置的物理路径，且上传文件夹是以静态资源进行访问
 - 例如磁盘中/uploads/image/aaa.png 对应的访问地址就是 ip:port/uploads/image/aaa.png
-
-### 2. 一行命令查找服务进程并kill掉
-首次使用先用ps命令确认node和项目脚本的执行信息
-```bash
-ps -ef|grep /root/.nvm/versions/node/v10.16.3/bin/node |grep ./src/index.js  | grep  -v grep  | awk '{print $2}' | xargs kill -9
-```

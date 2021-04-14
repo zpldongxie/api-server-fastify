@@ -1,12 +1,10 @@
-const sourceMapSupport = require('source-map-support');
-
-sourceMapSupport.install();
+require('source-map-support').install();
 
 const fastify = require('fastify')();
 const path = require('path');
 const config = require('config');
 const auth = require('./authenticate');
-const { load } = require('./util');
+const { onRouterError, convertCatchInfo, load } = require('./util');
 // const db = require('./modules/db');
 const mysql = require('./modules/mysql');
 
@@ -33,9 +31,21 @@ fastify.register(require('fastify-cors'), {
   methods: ['POST', 'GET', 'PUT', 'DELETE'],
 });
 
-// 挂载路由
 const Ajv = require('ajv');
-const ajv = new Ajv({ allErrors: true });
+const ajv = new Ajv({
+  allErrors: true,
+  useDefaults: true,
+  coerceTypes: true,
+});
+// 全局异常捕捉
+fastify.setErrorHandler((error, _, reply) => {
+  console.log('-----捕捉到错误了-----');
+  console.warn(error);
+  const err = convertCatchInfo(error);
+  onRouterError(reply, err);
+});
+
+// 挂载路由
 const routeDir = path.resolve(__dirname, './routes');
 load(routeDir, (name, model) => {
   fastify.register(model, { ajv, config });
@@ -43,7 +53,7 @@ load(routeDir, (name, model) => {
 
 const start = async () => {
   try {
-    await fastify.listen(3000, '0.0.0.0');
+    await fastify.listen(4000, '0.0.0.0');
   } catch (err) {
     console.log(err);
     fastify.log.error(err);
@@ -53,11 +63,11 @@ const start = async () => {
 
 process.on('uncaughtException', (error) => {
   console.log('----uncaughtException----');
-  console.error(error);
+  console.error('error:', error);
 });
 process.on('unhandledRejection', (error) => {
   console.log('----unhandledRejection----');
-  console.error(error);
+  console.error('error:', error);
 });
 
 start();

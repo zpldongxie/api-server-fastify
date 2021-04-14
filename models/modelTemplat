@@ -1,0 +1,40 @@
+/*
+ * @description: %title_CN%
+ * @author: zpl
+ * @Date: %time%
+ * @LastEditTime: %time%
+ * @LastEditors: zpl
+ */
+import Sequelize from 'sequelize'
+import %title% from './schemas/%title%.js'
+
+const { Model } = Sequelize
+
+class %title_U% extends Model {
+  /**
+   * 模型初始化
+   *
+   * @static
+   * @param {*} sequelize
+   * @param {*} DataTypes
+   * @return {*} 
+   * @memberof User
+   */
+   static init(sequelize) {
+    return super.init(%title%, {
+      tableName: "%title%",
+      sequelize,
+      comment: '%title_CN%',
+    })
+  }
+
+  static associate(models) {
+    //No asociations
+  }
+
+  static getById(id) {
+    return this.findOne({ where: { id } })
+  }
+}
+
+export default %title_U%;
