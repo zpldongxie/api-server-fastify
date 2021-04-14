@@ -2,11 +2,11 @@
  * @description: 
  * @author: zpl
  * @Date: 2021-04-12 15:31:57
- * @LastEditTime: 2021-04-12 15:55:41
+ * @LastEditTime: 2021-04-14 14:42:11
  * @LastEditors: zpl
  */
 import S from 'fluent-json-schema'
-import { privateSchema, publicSchema } from '../../models/business_basis/schemas/user.js'
+import { privateSchema, publicSchema, CreateSchema } from '../../models/business_basis/schemas/user.js'
 
 export default class {
   constructor(fastify) {
@@ -21,6 +21,7 @@ export default class {
   regSchema() {
     this.fastify.addSchema(publicSchema)
     this.fastify.addSchema(privateSchema)
+    this.fastify.addSchema(CreateSchema)
   }
 
   /**
@@ -34,6 +35,19 @@ export default class {
       operationId: 'currentUser',
       summary: '获取当前用户',
       description: '',
+      response: {
+        200: S.ref('CurrentUser#'),
+      }
+    }
+  }
+
+  get CreateUser() {
+    return {
+      tags: ['user'],
+      operationId: 'createUser',
+      summary: '创建用户',
+      description: '',
+      body: S.ref('CreateUser#'),
       response: {
         200: S.ref('CurrentUser#'),
       }
