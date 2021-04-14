@@ -35,8 +35,8 @@ export default async function (fastify, opts) {
   // 支持跨域
   // https://en.wikipedia.org/wiki/Cross-origin_resource_sharing
   fastify.register(Cors, {
-    origin: false,
-    methods: ['POST', 'GET', 'PUT', 'DELETE'],
+    origin: '*',
+    methods: ['OPTIONS', 'POST', 'GET', 'PUT', 'DELETE'],
   })
 
   // Normally you would need to load by hand each plugin. 

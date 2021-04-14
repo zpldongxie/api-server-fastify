@@ -68,7 +68,9 @@ async function swaggerGenerator (fastify, opts) {
         description: 'fastify-swagger技术参考',
       },
       servers: [{
-        url: 'http://49.233.193.39:3000'
+        url: 'http://127.0.0.1:3000',
+      }, {
+        url: 'http://49.233.193.39:3000',
       }],
       components: {
         securitySchemes: {
