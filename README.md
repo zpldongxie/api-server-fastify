@@ -68,6 +68,7 @@ root
 
 ### 项目参考
 [fastify-example](https://github.com/delvedor/fastify-example#readme)
+
 [fastify-starter-kit](https://github.com/SecSamDev/fastify-starter-kit)
 <br />
 

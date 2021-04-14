@@ -11,10 +11,10 @@ export default async function (fastify, opts) {
   // The `fastify-env` plugin will expose those configuration under `fastify.config` and validate those at startup.
   fastify.register(Env, {
     schema: S.object()
-      .prop('NODE_ENV', S.string().required())
+      .prop('NODE_ENV', S.string().enum(['dev', 'production']).required())
+      .prop('XXDM', S.string().required())
       .prop('COOKIE_SECRET', S.string().required())
       .prop('HMAC_KEY', S.string().required())
-      .prop('TEST_USER', S.string().required())
       .prop('UPLOAD_ROOT_PATH', S.string().required())
       .valueOf()
   })
