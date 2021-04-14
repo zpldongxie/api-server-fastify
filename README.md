@@ -60,29 +60,27 @@ root
   └─ server.js                  # 不使用cli时，请直接以此文件为入口，使用npm执行
 ```
 ### 技术参考
-<table style="text-align: center;background-color: rgba(0,0,0,0.2);" border="0">
-  <tr>
-  <td><a href="https://nodejs.org/zh-cn/" target="_blank"><img src="https://nodejs.org/static/images/logo.svg" height="40" /><br />nodejs</a>
-  </td>
-  <td><a href="https://www.fastify.io/" target="_blank"><img src="https://www.fastify.io/images/fastify-logo-inverted.2180cc6b1919d47a.png" height="40" /><br />fastify</a>
-  </td>
-  <td><a href="https://swagger.io/" target="_blank"><img src="https://static1.smartbear.co/swagger/media/assets/images/swagger_logo.svg" height="40" /><br />swagger</a>
-  </td>
-  <td><a href="https://sequelize.org/" target="_blank"><img src="https://sequelize.org/master/image/brand_logo.png" height="40" /><br />sequelize</a>
-  </td>
-  <td><a href="https://www.mysql.com/" target="_blank"><img src="https://labs.mysql.com/common/logos/mysql-logo.svg?v2" height="40" /><br />mysql</a>
-  </td>
-  </tr>
-</table>
+<div style="text-align: center; background-color: rgba(0,0,0,0.2); padding: 10px;">
+  <span style="display: inline-block; padding: 0 10px;"><a href="https://nodejs.org/zh-cn/" target="_blank"><img src="https://nodejs.org/static/images/logo.svg" height="40" /><br />nodejs</a>
+  </span>
+  <span style="display: inline-block; padding: 0 10px;"><a href="https://www.fastify.io/" target="_blank"><img src="https://www.fastify.io/images/fastify-logo-inverted.2180cc6b1919d47a.png" height="40" /><br />fastify</a>
+  </span>
+  <span style="display: inline-block; padding: 0 10px;"><a href="https://swagger.io/" target="_blank"><img src="https://static1.smartbear.co/swagger/media/assets/images/swagger_logo.svg" height="40" /><br />swagger</a>
+  </span>
+  <span style="display: inline-block; padding: 0 10px;"><a href="https://sequelize.org/" target="_blank"><img src="https://sequelize.org/master/image/brand_logo.png" height="40" /><br />sequelize</a>
+  </span>
+  <span style="display: inline-block; padding: 0 10px;"><a href="https://www.mysql.com/" target="_blank"><img src="https://labs.mysql.com/common/logos/mysql-logo.svg?v2" height="40" /><br />mysql</a>
+  </span>
+</div>
+
 <br />
 
 ### 项目参考
-<table style="text-align: center;background-color: rgba(0,0,0,0.2);" border="0">
-  <tr>
-  <td><a href="https://github.com/delvedor/fastify-example#readme">fastify-example</a></td>
-  <td><a href="https://github.com/SecSamDev/fastify-starter-kit">fastify-starter-kit</a></td>
-  </tr>
-</table>
+<div style="background-color: rgba(0,0,0,0.2); padding: 10px;">
+  <span style="display: inline-block; padding: 0 10px;"><a href="https://github.com/delvedor/fastify-example#readme">fastify-example</a></span>
+  <span style="display: inline-block; padding: 0 10px;"><a href="https://github.com/SecSamDev/fastify-starter-kit">fastify-starter-kit</a></span>
+</div>
+
 <br />
 
 ## 关于接口
