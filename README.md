@@ -64,15 +64,11 @@ root
 |                            nodejs                            |                           fastify                            |                           swagger                            |                          sequelize                           |                            mysql                             |
 | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
 | <a href="https://nodejs.org/zh-cn/" target="_blank"><img src="https://nodejs.org/static/images/logo.svg" height="40" /></a> | <a href="https://www.fastify.io/" target="_blank"><img src="https://www.fastify.io/images/fastify-logo-menu.d13f8da7a965c800.png" height="40" /></a> | <a href="https://swagger.io/" target="_blank"><img src="https://static1.smartbear.co/swagger/media/assets/images/swagger_logo.svg" height="40" /></a> | <a href="https://sequelize.org/" target="_blank"><img src="https://sequelize.org/master/image/brand_logo.png" height="40" /></a> | <a href="https://www.mysql.com/" target="_blank"><img src="https://labs.mysql.com/common/logos/mysql-logo.svg?v2" height="40" /></a> |
-
 <br />
 
 ### 项目参考
-<div>
-  <span style="display: inline-block; padding: 0 10px;"><a href="https://github.com/delvedor/fastify-example#readme">fastify-example</a></span>
-  <span style="display: inline-block; padding: 0 10px;"><a href="https://github.com/SecSamDev/fastify-starter-kit">fastify-starter-kit</a></span>
-</div>
-
+[fastify-example](https://github.com/delvedor/fastify-example#readme)
+[fastify-starter-kit](https://github.com/SecSamDev/fastify-starter-kit)
 <br />
 
 ## 关于接口
