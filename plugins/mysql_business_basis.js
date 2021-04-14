@@ -2,7 +2,7 @@
  * @description: 注册基础教育数据库模型
  * @author: zpl
  * @Date: 2021-04-10 15:57:54
- * @LastEditTime: 2021-04-13 19:02:58
+ * @LastEditTime: 2021-04-14 14:07:30
  * @LastEditors: zpl
  */
 import fp from 'fastify-plugin'
@@ -28,7 +28,7 @@ async function plugin(fastify, options) {
       },
     },
   })
-  registerModels(sequelize, resetTable);
+  registerModels(sequelize, config.XXDM, resetTable);
   if (autoConnect) {
     return sequelize.authenticate().then(decorate)
   }

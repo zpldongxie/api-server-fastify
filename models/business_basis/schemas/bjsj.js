@@ -2,7 +2,7 @@
  * @description: 班级数据
  * @author: zpl
  * @Date: 2021-04-13 16:55:03
- * @LastEditTime: 2021-04-13 19:27:35
+ * @LastEditTime: 2021-04-14 14:16:23
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
@@ -10,8 +10,9 @@ import S from 'fluent-json-schema'
 
 const { DataTypes } = Sequelize
 
-export default {
-  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+export default (XXDM) => ({
+  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true, },
+  XXDM: { type: DataTypes.STRING(32), defaultValue: XXDM, comment: '学校代码' },
   BH: { type: DataTypes.STRING(10), comment: '班号', allowNull: false },
   BJ: { type: DataTypes.STRING(20), comment: '班级', allowNull: false },
   JBNY: { type: DataTypes.STRING(6), comment: '建班年月', allowNull: false },
@@ -24,7 +25,7 @@ export default {
   BYRQ: { type: DataTypes.STRING(8), comment: '毕业日期', },
   SFSSMZSYJXB: { type: DataTypes.STRING(1), comment: '是否少数民族双语教学班', allowNull: false },
   SYJXMSM: { type: DataTypes.STRING(1), comment: '双语教学模式码', allowNull: false },
-}
+})
 
 export const InfoSchema = S.object()
   .id('BJSJ')

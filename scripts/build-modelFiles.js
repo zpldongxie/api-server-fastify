@@ -3,7 +3,7 @@
  * 示例： node .\scripts\build-modelFiles.js .\models\business_basis\schemas\
  * @author: zpl
  * @Date: 2021-04-13 15:04:19
- * @LastEditTime: 2021-04-14 09:33:13
+ * @LastEditTime: 2021-04-14 14:17:40
  * @LastEditors: zpl
  */
 import fs from 'fs';
@@ -69,7 +69,7 @@ function run() {
     const targetFilePath = path.join(dir, '../', `${realName}.js`);
     const json = file.InfoSchema.valueOf();
     importList.push(`import ${json['$id']} from './${realName}.js'`);
-    modelList.push(`${json['$id']}: ${json['$id']}.init(sequelize)`);
+    modelList.push(`${json['$id']}: ${json['$id']}.init(sequelize, XXDM)`);
 
     if (!fs.existsSync(targetFilePath)) {
       console.log('--开始生成--', targetFilePath);

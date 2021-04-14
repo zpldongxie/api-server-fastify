@@ -1,12 +1,12 @@
 /*
  * @description: 作息方案
  * @author: zpl
- * @Date: 2021-04-13 19:50:8
- * @LastEditTime: 2021-04-13 20:03:31
+ * @Date: 2021-04-14 14:25:28
+ * @LastEditTime: 2021-04-14 14:25:28
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
-import njsj from './schemas/njsj.js'
+import getSchema from './schemas/zxfa.js'
 
 const { Model } = Sequelize
 
@@ -16,21 +16,20 @@ class ZXFA extends Model {
    *
    * @static
    * @param {*} sequelize
-   * @param {*} DataTypes
+   * @param {*} XXDM 学校代码
    * @return {*} 
    * @memberof User
    */
-   static init(sequelize) {
-    return super.init(njsj, {
-      tableName: "njsj",
+   static init(sequelize, XXDM) {
+    return super.init(getSchema(XXDM), {
+      tableName: "zxfa",
       sequelize,
       comment: '作息方案',
     })
   }
 
   static associate(models) {
-    // 作息方案 - 作息时间，一对多
-    models.ZXFA.hasMany(models.ZXSJ)
+    //No asociations
   }
 
   static getById(id) {

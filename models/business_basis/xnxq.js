@@ -1,12 +1,12 @@
 /*
  * @description: 学年学期
  * @author: zpl
- * @Date: 2021-04-13 19:50:8
- * @LastEditTime: 2021-04-13 19:50:8
+ * @Date: 2021-04-14 14:25:28
+ * @LastEditTime: 2021-04-14 14:25:28
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
-import xnxq from './schemas/xnxq.js'
+import getSchema from './schemas/xnxq.js'
 
 const { Model } = Sequelize
 
@@ -16,12 +16,12 @@ class XNXQ extends Model {
    *
    * @static
    * @param {*} sequelize
-   * @param {*} DataTypes
+   * @param {*} XXDM 学校代码
    * @return {*} 
    * @memberof User
    */
-   static init(sequelize) {
-    return super.init(xnxq, {
+   static init(sequelize, XXDM) {
+    return super.init(getSchema(XXDM), {
       tableName: "xnxq",
       sequelize,
       comment: '学年学期',

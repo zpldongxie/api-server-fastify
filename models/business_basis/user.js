@@ -2,11 +2,11 @@
  * @description: 用户表
  * @author: zpl
  * @Date: 2021-04-10 16:05:25
- * @LastEditTime: 2021-04-13 14:52:53
+ * @LastEditTime: 2021-04-14 14:21:04
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
-import user from './schemas/user.js'
+import getSchema from './schemas/user.js'
 
 const { Model } = Sequelize;
 
@@ -52,12 +52,12 @@ class User extends Model {
    *
    * @static
    * @param {*} sequelize
-   * @param {*} DataTypes
+   * @param {*} XXDM 学校代码
    * @return {*} 
    * @memberof User
    */
-  static init(sequelize) {
-    return super.init(user, {
+  static init(sequelize, XXDM) {
+    return super.init(getSchema(XXDM), {
       tableName: "usuarios",
       sequelize,
       comment: '用户',

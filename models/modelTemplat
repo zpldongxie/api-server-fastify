@@ -6,7 +6,7 @@
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
-import %title% from './schemas/%title%.js'
+import getSchema from './schemas/%title%.js'
 
 const { Model } = Sequelize
 
@@ -16,12 +16,12 @@ class %title_U% extends Model {
    *
    * @static
    * @param {*} sequelize
-   * @param {*} DataTypes
+   * @param {*} XXDM 学校代码
    * @return {*} 
    * @memberof User
    */
-   static init(sequelize) {
-    return super.init(%title%, {
+   static init(sequelize, XXDM) {
+    return super.init(getSchema(XXDM), {
       tableName: "%title%",
       sequelize,
       comment: '%title_CN%',

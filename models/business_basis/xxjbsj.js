@@ -1,12 +1,12 @@
 /*
  * @description: 学校基本数据
  * @author: zpl
- * @Date: 2021-04-13 18:45:21
- * @LastEditTime: 2021-04-13 18:45:21
+ * @Date: 2021-04-14 14:25:28
+ * @LastEditTime: 2021-04-14 14:25:28
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
-import xxjbsj from './schemas/xxjbsj.js'
+import getSchema from './schemas/xxjbsj.js'
 
 const { Model } = Sequelize
 
@@ -16,12 +16,12 @@ class XXJBSJ extends Model {
    *
    * @static
    * @param {*} sequelize
-   * @param {*} DataTypes
+   * @param {*} XXDM 学校代码
    * @return {*} 
    * @memberof User
    */
-   static init(sequelize) {
-    return super.init(xxjbsj, {
+   static init(sequelize, XXDM) {
+    return super.init(getSchema(XXDM), {
       tableName: "xxjbsj",
       sequelize,
       comment: '学校基本数据',

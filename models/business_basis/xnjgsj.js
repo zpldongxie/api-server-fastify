@@ -1,12 +1,12 @@
 /*
  * @description: 校内机构数据
  * @author: zpl
- * @Date: 2021-04-13 18:45:21
- * @LastEditTime: 2021-04-13 18:45:21
+ * @Date: 2021-04-14 14:25:28
+ * @LastEditTime: 2021-04-14 14:25:28
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
-import xnjgsj from './schemas/xnjgsj.js'
+import getSchema from './schemas/xnjgsj.js'
 
 const { Model } = Sequelize
 
@@ -16,12 +16,12 @@ class XNJGSJ extends Model {
    *
    * @static
    * @param {*} sequelize
-   * @param {*} DataTypes
+   * @param {*} XXDM 学校代码
    * @return {*} 
    * @memberof User
    */
-   static init(sequelize) {
-    return super.init(xnjgsj, {
+   static init(sequelize, XXDM) {
+    return super.init(getSchema(XXDM), {
       tableName: "xnjgsj",
       sequelize,
       comment: '校内机构数据',

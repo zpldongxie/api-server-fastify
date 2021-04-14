@@ -1,12 +1,12 @@
 /*
  * @description: 年级数据
  * @author: zpl
- * @Date: 2021-04-13 17:29:51
- * @LastEditTime: 2021-04-13 18:44:24
+ * @Date: 2021-04-14 14:25:28
+ * @LastEditTime: 2021-04-14 14:25:28
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
-import njsj from './schemas/njsj.js'
+import getSchema from './schemas/njsj.js'
 
 const { Model } = Sequelize
 
@@ -16,12 +16,12 @@ class NJSJ extends Model {
    *
    * @static
    * @param {*} sequelize
-   * @param {*} DataTypes
+   * @param {*} XXDM 学校代码
    * @return {*} 
    * @memberof User
    */
-   static init(sequelize) {
-    return super.init(njsj, {
+   static init(sequelize, XXDM) {
+    return super.init(getSchema(XXDM), {
       tableName: "njsj",
       sequelize,
       comment: '年级数据',
@@ -29,8 +29,7 @@ class NJSJ extends Model {
   }
 
   static associate(models) {
-    // 年级数据 - 班级数据， 一对多
-    models.NJSJ.hasMany(models.BJSJ)
+    //No asociations
   }
 
   static getById(id) {

@@ -2,7 +2,7 @@
  * @description: 学年学期
  * @author: zpl
  * @Date: 2021-04-13 16:55:03
- * @LastEditTime: 2021-04-13 19:27:50
+ * @LastEditTime: 2021-04-14 14:16:39
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
@@ -10,13 +10,14 @@ import S from 'fluent-json-schema'
 
 const { DataTypes } = Sequelize
 
-export default {
-  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+export default (XXDM) => ({
+  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true, },
+  XXDM: { type: DataTypes.STRING(32), defaultValue: XXDM, comment: '学校代码' },
   XN: { type: DataTypes.STRING(10), allowNull: false, comment: '学年' },
   XQ: { type: DataTypes.STRING(10), allowNull: false, comment: '学期' },
   KSRQ: { type: DataTypes.STRING(8), allowNull: false, comment: '开始日期' },
   JSRQ: { type: DataTypes.STRING(8), allowNull: false, comment: '结束日期' },
-}
+})
 
 export const InfoSchema = S.object()
   .id('XNXQ')

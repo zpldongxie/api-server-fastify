@@ -1,12 +1,12 @@
 /*
  * @description: 校历
  * @author: zpl
- * @Date: 2021-04-13 19:50:8
- * @LastEditTime: 2021-04-13 19:50:8
+ * @Date: 2021-04-14 14:25:28
+ * @LastEditTime: 2021-04-14 14:25:28
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
-import xl from './schemas/xl.js'
+import getSchema from './schemas/xl.js'
 
 const { Model } = Sequelize
 
@@ -16,12 +16,12 @@ class XL extends Model {
    *
    * @static
    * @param {*} sequelize
-   * @param {*} DataTypes
+   * @param {*} XXDM 学校代码
    * @return {*} 
    * @memberof User
    */
-   static init(sequelize) {
-    return super.init(xl, {
+   static init(sequelize, XXDM) {
+    return super.init(getSchema(XXDM), {
       tableName: "xl",
       sequelize,
       comment: '校历',

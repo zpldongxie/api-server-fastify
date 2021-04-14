@@ -2,33 +2,41 @@
  * @description: 统一加载所有model
  * @author: zpl
  * @Date: 2021-04-10 16:02:59
- * @LastEditTime: 2021-04-13 20:06:37
+ * @LastEditTime: 2021-04-14 14:27:21
  * @LastEditors: zpl
  * 
  */
 import BJSJ from './bjsj.js'
 import JCXX from './jcxx.js'
 import NJSJ from './njsj.js'
+import User from './user.js'
 import XL from './xl.js'
 import XNJGSJ from './xnjgsj.js'
-import User from './user.js'
 import XNXQ from './xnxq.js'
 import XXJBSJ from './xxjbsj.js'
 import ZXFA from './zxfa.js'
 import ZXSJ from './zxsj.js'
 
-export default (sequelize, resetTable) => {
+
+/**
+ * 注册models
+ *
+ * @param {*} sequelize 数据库映射对象
+ * @param {*} XXDM 学校代码
+ * @param {*} resetTable 是否重置所有数据库表
+ */
+const registerModels = (sequelize, XXDM, resetTable) => {
   const models = {
-    BJSJ: BJSJ.init(sequelize),
-    JCXX: JCXX.init(sequelize),
-    NJSJ: NJSJ.init(sequelize),
-    XL: XL.init(sequelize),
-    XNJGSJ: XNJGSJ.init(sequelize),
-    User: User.init(sequelize),
-    XNXQ: XNXQ.init(sequelize),
-    XXJBSJ: XXJBSJ.init(sequelize),
-    ZXFA: ZXFA.init(sequelize),
-    ZXSJ: ZXSJ.init(sequelize),
+    BJSJ: BJSJ.init(sequelize, XXDM),
+    JCXX: JCXX.init(sequelize, XXDM),
+    NJSJ: NJSJ.init(sequelize, XXDM),
+    User: User.init(sequelize, XXDM),
+    XL: XL.init(sequelize, XXDM),
+    XNJGSJ: XNJGSJ.init(sequelize, XXDM),
+    XNXQ: XNXQ.init(sequelize, XXDM),
+    XXJBSJ: XXJBSJ.init(sequelize, XXDM),
+    ZXFA: ZXFA.init(sequelize, XXDM),
+    ZXSJ: ZXSJ.init(sequelize, XXDM),
   }
   console.log("Importing business_basis models...")
   Object.values(models)
@@ -43,3 +51,5 @@ export default (sequelize, resetTable) => {
       console.log(` - ${model.name}`)
     });
 }
+
+export default registerModels;

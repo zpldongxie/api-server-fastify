@@ -10,14 +10,15 @@ import S from 'fluent-json-schema'
 
 const { DataTypes } = Sequelize
 
-export default {
+export default (XXDM) => ({
   id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true, },
+  XXDM: { type: DataTypes.STRING(32), defaultValue: XXDM, comment: '学校代码' },
   JGH: {	type: DataTypes.STRING(10), allowNull: false, comment: '机构号' },
   LSJGH: {	type: DataTypes.STRING(10), allowNull: false, comment: '隶属机构号' },
   JGMC: {	type: DataTypes.STRING(60), allowNull: false, comment: '机构名称' },
   JGJC: {	type: DataTypes.STRING(10), allowNull: false, comment: '机构简称' },
   FZRGH: {	type: DataTypes.STRING(36), comment: '负责人工号' },
-}
+})
 
 export const InfoSchema = S.object()
   .id('XNJGSJ')
