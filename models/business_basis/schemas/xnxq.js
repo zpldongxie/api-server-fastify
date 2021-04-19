@@ -2,7 +2,7 @@
  * @description: 学年学期
  * @author: zpl
  * @Date: 2021-04-13 16:55:03
- * @LastEditTime: 2021-04-14 14:16:39
+ * @LastEditTime: 2021-04-17 19:32:10
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
@@ -23,6 +23,7 @@ export const InfoSchema = S.object()
   .id('XNXQ')
   .description('学年学期')
   .prop('id', S.string().format('uuid').required())
+  .prop('XXDM', S.string().maxLength(32).description('学校代码').required())
   .prop('XN', S.string().maxLength(10).description('学年').required())
   .prop('XQ', S.string().maxLength(10).description('学期').required())
   .prop('KSRQ', S.string().maxLength(8).description('开始日期').required())
@@ -31,6 +32,7 @@ export const InfoSchema = S.object()
 export const CreateSchema = S.object()
   .id('CreateXNXQ')
   .description('创建学年学期')
+  .prop('XXDM', S.string().maxLength(32).description('学校代码').required())
   .prop('XN', S.string().maxLength(10).description('学年').required())
   .prop('XQ', S.string().maxLength(10).description('学期').required())
   .prop('KSRQ', S.string().maxLength(8).description('开始日期').required())

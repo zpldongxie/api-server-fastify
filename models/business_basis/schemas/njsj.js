@@ -2,7 +2,7 @@
  * @description: 年级数据
  * @author: zpl
  * @Date: 2021-04-13 16:55:03
- * @LastEditTime: 2021-04-13 19:25:44
+ * @LastEditTime: 2021-04-17 19:30:33
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
@@ -21,11 +21,13 @@ export const InfoSchema = S.object()
   .id('NJSJ')
   .description('年级数据')
   .prop('id', S.string().format('uuid').required())
+  .prop('XXDM', S.string().maxLength(32).description('学校代码').required())
   .prop('NJ', S.number().description('年级').required())
   .prop('NJMC', S.string().maxLength(30).description('年级名称').required())
 
 export const CreateSchema = S.object()
   .id('CreateNJSJ')
   .description('创建年级数据')
+  .prop('XXDM', S.string().maxLength(32).description('学校代码').required())
   .prop('NJ', S.number().description('年级').required())
   .prop('NJMC', S.string().maxLength(30).description('年级名称').required())

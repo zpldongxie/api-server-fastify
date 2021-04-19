@@ -2,7 +2,7 @@
  * @description: 校历
  * @author: zpl
  * @Date: 2021-04-13 16:55:03
- * @LastEditTime: 2021-04-13 19:45:34
+ * @LastEditTime: 2021-04-17 19:31:48
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
@@ -22,6 +22,7 @@ export const InfoSchema = S.object()
   .id('XL')
   .description('校历')
   .prop('id', S.string().format('uuid').required())
+  .prop('XXDM', S.string().maxLength(32).description('学校代码').required())
   .prop('BT', S.string().maxLength(32).description('标题'))
   .prop('KSRQ', S.string().maxLength(8).description('开始日期'))
   .prop('JSRQ', S.string().maxLength(8).description('结束日期'))
@@ -29,6 +30,7 @@ export const InfoSchema = S.object()
 export const CreateSchema = S.object()
   .id('CreateXL')
   .description('创建校历')
+  .prop('XXDM', S.string().maxLength(32).description('学校代码').required())
   .prop('BT', S.string().maxLength(32).description('标题'))
   .prop('KSRQ', S.string().maxLength(8).description('开始日期'))
   .prop('JSRQ', S.string().maxLength(8).description('结束日期'))

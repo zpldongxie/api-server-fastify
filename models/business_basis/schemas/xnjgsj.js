@@ -2,7 +2,7 @@
  * @description: 校内机构数据
  * @author: zpl
  * @Date: 2021-04-13 16:55:03
- * @LastEditTime: 2021-04-13 19:26:30
+ * @LastEditTime: 2021-04-17 19:32:01
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
@@ -24,6 +24,7 @@ export const InfoSchema = S.object()
   .id('XNJGSJ')
   .description('校内机构数据')
   .prop('id', S.string().format('uuid').required())
+  .prop('XXDM', S.string().maxLength(32).description('学校代码').required())
   .prop('JGH', S.string().maxLength(10).description('机构号').required())
   .prop('LSJGH', S.string().maxLength(10).description('隶属机构号').required())
   .prop('JGMC', S.string().maxLength(60).description('机构名称').required())
@@ -33,6 +34,7 @@ export const InfoSchema = S.object()
 export const CreateSchema = S.object()
   .id('CreateXNJGSJ')
   .description('创建校内机构数据')
+  .prop('XXDM', S.string().maxLength(32).description('学校代码').required())
   .prop('JGH', S.string().maxLength(10).description('机构号').required())
   .prop('LSJGH', S.string().maxLength(10).description('隶属机构号').required())
   .prop('JGMC', S.string().maxLength(60).description('机构名称').required())

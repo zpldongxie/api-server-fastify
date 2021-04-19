@@ -2,7 +2,7 @@
  * @description: 班级数据
  * @author: zpl
  * @Date: 2021-04-13 16:55:03
- * @LastEditTime: 2021-04-14 14:16:23
+ * @LastEditTime: 2021-04-17 19:29:59
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
@@ -31,6 +31,7 @@ export const InfoSchema = S.object()
   .id('BJSJ')
   .description('班级数据')
   .prop('id', S.string().format('uuid').required())
+  .prop('XXDM', S.string().maxLength(32).description('学校代码').required())
   .prop('BH', S.string().maxLength(10).description('班号').required())
   .prop('BJ', S.string().maxLength(20).description('班级').required())
   .prop('JBNY', S.string().maxLength(6).description('建班年月').required())
@@ -47,6 +48,7 @@ export const InfoSchema = S.object()
 export const CreateSchema = S.object()
   .id('CreateBJSJ')
   .description('创建班级数据')
+  .prop('XXDM', S.string().maxLength(32).description('学校代码').required())
   .prop('BH', S.string().maxLength(10).description('班号').required())
   .prop('BJ', S.string().maxLength(20).description('班级').required())
   .prop('JBNY', S.string().maxLength(6).description('建班年月').required())

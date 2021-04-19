@@ -2,7 +2,7 @@
  * @description: 节次信息
  * @author: zpl
  * @Date: 2021-04-13 16:55:03
- * @LastEditTime: 2021-04-13 19:40:11
+ * @LastEditTime: 2021-04-17 19:30:08
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
@@ -23,6 +23,7 @@ export const InfoSchema = S.object()
   .id('JCXX')
   .description('节次信息')
   .prop('id', S.string().format('uuid').required())
+  .prop('XXDM', S.string().maxLength(32).description('学校代码').required())
   .prop('MC', S.string().maxLength(20).description('名称').required())
   .prop('YWMC', S.string().maxLength(32).description('英文名称'))
   .prop('SC', S.number().description('时长').required())
@@ -31,6 +32,7 @@ export const InfoSchema = S.object()
 export const CreateSchema = S.object()
   .id('CreateJCXX')
   .description('创建节次信息')
+  .prop('XXDM', S.string().maxLength(32).description('学校代码').required())
   .prop('MC', S.string().maxLength(20).description('名称').required())
   .prop('YWMC', S.string().maxLength(32).description('英文名称'))
   .prop('SC', S.number().description('时长').required())

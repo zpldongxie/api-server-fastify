@@ -2,7 +2,7 @@
  * @description: 学校基本数据
  * @author: zpl
  * @Date: 2021-04-13 14:12:07
- * @LastEditTime: 2021-04-13 19:25:52
+ * @LastEditTime: 2021-04-17 19:32:51
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
@@ -90,7 +90,7 @@ export const InfoSchema = S.object()
 export const CreateSchema = S.object()
   .id('CreateXXJBSJ')
   .description('创建学校基本数据')
-
+  .prop('XXDM', S.string().maxLength(32).description('学校代码').required())
   .prop('XXMC', S.string().maxLength(64).description('学校名称').required())
   .prop('XXYWMC', S.string().maxLength(64).description('学校英文名称'))
   .prop('XXDZ', S.string().maxLength(128).description('学校地址').required())

@@ -2,7 +2,7 @@
  * @description: 作息方案
  * @author: zpl
  * @Date: 2021-04-13 16:55:03
- * @LastEditTime: 2021-04-14 14:16:30
+ * @LastEditTime: 2021-04-17 19:33:02
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
@@ -24,6 +24,7 @@ export const InfoSchema = S.object()
   .id('ZXFA')
   .description('作息方案')
   .prop('id', S.string().format('uuid').required())
+  .prop('XXDM', S.string().maxLength(32).description('学校代码').required())
   .prop('FAMC', S.string().maxLength(10).description('方案名称').required())
   .prop('KSRQ', S.string().maxLength(8).description('开始日期').required())
   .prop('JSRQ', S.string().maxLength(8).description('结束日期').required())
@@ -33,6 +34,7 @@ export const InfoSchema = S.object()
 export const CreateSchema = S.object()
   .id('CreateZXFA')
   .description('创建作息方案')
+  .prop('XXDM', S.string().maxLength(32).description('学校代码').required())
   .prop('FAMC', S.string().maxLength(10).description('方案名称').required())
   .prop('KSRQ', S.string().maxLength(8).description('开始日期').required())
   .prop('JSRQ', S.string().maxLength(8).description('结束日期').required())

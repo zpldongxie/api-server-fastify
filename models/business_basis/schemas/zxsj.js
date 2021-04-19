@@ -2,7 +2,7 @@
  * @description: 作息时间
  * @author: zpl
  * @Date: 2021-04-13 16:55:03
- * @LastEditTime: 2021-04-13 20:02:23
+ * @LastEditTime: 2021-04-17 19:33:18
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
@@ -24,6 +24,7 @@ export const InfoSchema = S.object()
   .id('ZXSJ')
   .description('作息时间')
   .prop('id', S.string().format('uuid').required())
+  .prop('XXDM', S.string().maxLength(32).description('学校代码').required())
   .prop('SD', S.string().maxLength(10).description('上课时段').required())
   .prop('SX', S.string().maxLength(10).description('上课属性').required())
   .prop('KSSJ', S.string().maxLength(6).description('开始时间').required())
@@ -33,6 +34,7 @@ export const InfoSchema = S.object()
 export const CreateSchema = S.object()
   .id('CreateZXSJ')
   .description('创建作息时间')
+  .prop('XXDM', S.string().maxLength(32).description('学校代码').required())
   .prop('SD', S.string().maxLength(10).description('上课时段').required())
   .prop('SX', S.string().maxLength(10).description('上课属性').required())
   .prop('SYXQ', S.string().maxLength(30).description('适用星期').required())
@@ -41,6 +43,7 @@ export const UpdateSchema = S.object()
   .id('UpdateZXSJ')
   .description('更新作息时间')
   .prop('id', S.string().format('uuid').required())
+  .prop('XXDM', S.string().maxLength(32).description('学校代码').required())
   .prop('SD', S.string().maxLength(10).description('上课时段').required())
   .prop('SX', S.string().maxLength(10).description('上课属性').required())
   .prop('SYXQ', S.string().maxLength(30).description('适用星期').required())
