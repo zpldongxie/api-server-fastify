@@ -2,11 +2,11 @@
  * @description: 
  * @author: zpl
  * @Date: 2021-04-12 15:31:57
- * @LastEditTime: 2021-04-14 14:42:11
+ * @LastEditTime: 2021-04-21 11:07:51
  * @LastEditors: zpl
  */
 import S from 'fluent-json-schema'
-import { privateSchema, publicSchema, CreateSchema } from '../../models/business_basis/schemas/user.js'
+import { publicSchema, CreateSchema } from '../../models/edu_platform/schemas/user.js'
 
 export default class {
   constructor(fastify) {
@@ -20,7 +20,6 @@ export default class {
    */
   regSchema() {
     this.fastify.addSchema(publicSchema)
-    this.fastify.addSchema(privateSchema)
     this.fastify.addSchema(CreateSchema)
   }
 

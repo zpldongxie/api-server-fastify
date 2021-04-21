@@ -2,7 +2,7 @@
 * @description: 用户路由
 * @author: zpl
 * @Date: 2021-04-10 13:45:03
- * @LastEditTime: 2021-04-14 14:58:37
+ * @LastEditTime: 2021-04-21 11:48:04
  * @LastEditors: zpl
 */
 import S from 'fluent-json-schema'
@@ -59,7 +59,7 @@ export default async function user(fastify, opts) {
     },
     handler: async (req, res) => {
       /**@type {User}*/
-      const user = fastify.mysql_basis.models.User;
+      const user = fastify.mysql_edu_platform.models.User;
       /**@type {User[]}*/
       let usrs = await user.findAll();
       usrs = usrs.map((usr) => {
@@ -83,7 +83,7 @@ export default async function user(fastify, opts) {
     schema: schema.currentUser,
     handler: async (req, res) => {
       console.log(req.user);
-      const {User} = fastify.mysql_basis.models;
+      const {User} = fastify.mysql_edu_platform.models;
       const user = await User.getById(req.user.userId);
       if (!user) {
         throw httpErrors.internalServerError('用户信息查询失败')
@@ -98,7 +98,7 @@ export default async function user(fastify, opts) {
     path: '/create',
     schema: schema.CreateUser,
     handler: async (req, res) => {
-      const {User} = fastify.mysql_basis.models;
+      const {User} = fastify.mysql_edu_platform.models;
       const user = await User.create(req.body);
       if (!user) {
         throw httpErrors.internalServerError('用户创建失败')

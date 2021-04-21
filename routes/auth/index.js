@@ -2,10 +2,10 @@
  * @description: 
  * @author: zpl
  * @Date: 2020-01-02 21:18:30
- * @LastEditTime: 2021-04-12 17:22:46
+ * @LastEditTime: 2021-04-21 11:46:20
  * @LastEditors: zpl
  */
-import User from '../../models/business_basis/user.js'
+import User from '../../models/edu_platform/user.js'
 import Schema from './schema.js'
 
 // 设置路由前缀
@@ -17,7 +17,8 @@ export default async function auth(fastify, opts) {
     elastic,
     indices,
     jwt,
-    csrfProtection
+    csrfProtection,
+    config,
   } = fastify
 
   const schema = new Schema(fastify);
@@ -33,9 +34,10 @@ export default async function auth(fastify, opts) {
       }
 
       /**@type {User}*/
-      const user = fastify.mysql_basis.models.User;
+      const user = fastify.mysql_edu_platform.models.User;
       /**@type {User}*/
-      let usr = await user.getUsernameAndPassword(req.body.username, req.body.password)
+      let usr = await user.getUsernameAndPassword(req.body.username, req.body.password, config.HMAC_KEY)
+      console.log(usr);
       if (usr != null) {
         const token = jwt.sign({ userId: usr.id, userName: usr.username })
         res.setCookie('edu_platform', token, { path: '/' });

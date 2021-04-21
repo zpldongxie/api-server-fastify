@@ -29,9 +29,11 @@ root
   |     |    ├─ schemas             # 模型定义
   |     |    ├─ index.js            # 统一加载所有model
   |     |    ├─ README.md           # 说明文档
-  |     |    ├─ user.js             # 模型方法实现-用户，其他依此类推
+  |     |    ├─ xxjbsj.js           # 模型方法实现-学校基本数据，其他依此类推
   |     |
-  |     └─ dictionary               # 字典数据库，结构同上
+  |     ├─ dictionary               # 字典数据库，结构同上
+  |     |
+  |     └─ edu_platform             # 平台业务数据库，结构同上
   |
   ├─ plugins       # 插件
   |     ├─ authorization.js         # OAthor2认证配置，暂未生效

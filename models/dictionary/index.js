@@ -2,18 +2,22 @@
  * @description: 统一加载所有model
  * @author: zpl
  * @Date: 2021-04-10 16:02:59
- * @LastEditTime: 2020-01-03 20:07:20
+ * @LastEditTime: 2021-04-21 11:53:13
  * @LastEditors: zpl
  * 
  */
-import Sequelize from 'sequelize'
 import Xzqhdm from './xzqhdm.js'
 
-const { DataTypes } = Sequelize
-
-export default async (sequelize, resetTable) => {
+/**
+ * 注册models
+ *
+ * @param {*} sequelize 数据库映射对象
+ * @param {*} config 配置信息
+ */
+ const registerModels = async (sequelize, config) => {
+    const { resetTable } = config;
     const models = {
-        Xzqhdm: Xzqhdm.init(sequelize, DataTypes)
+        Xzqhdm: Xzqhdm.init(sequelize)
     }
     console.log("Importing dictionary models...")
     const modelList = Object.values(models)
@@ -26,9 +30,11 @@ export default async (sequelize, resetTable) => {
             // alter: process.env.NODE_ENV != 'production',
             force: resetTable
         });
-        if (resetTable && typeof model.initData === 'function') {
-            model.initData()
-        }
         console.log(` - ${model.name}`)
+        if (resetTable && typeof model.initData === 'function') {
+            await model.initData()
+        }
     }
 }
+
+export default registerModels;

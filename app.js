@@ -56,6 +56,5 @@ export default async function (fastify, opts) {
     options: Object.assign({}, opts)
   })
 }
-// TODO 统一参数验证
 // TODO 全局异常处理
 

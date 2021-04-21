@@ -2,26 +2,17 @@
  * @description: 中华人民共和国行政区划代码
  * @author: zpl
  * @Date: 2021-04-10 16:05:25
- * @LastEditTime: 2020-01-03 01:27:09
+ * @LastEditTime: 2021-04-20 16:54:07
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
 import { loadSchema } from './schemas/xzqhdm.js'
 import data from './initData/xzqhdm.js'
 
-const { Model } = Sequelize;
+const { Model, DataTypes } = Sequelize
 
 class Xzqhdm extends Model {
-    static associate(models) {
-        //No asociations
-    }
-    static getId(where) {
-        return this.findOne({
-            where,
-            attributes: ["id"],
-        });
-    }
-    static init(sequelize, DataTypes) {
+    static init(sequelize) {
         return super.init(loadSchema(DataTypes), {
             tableName: "xzqhdm",
             sequelize,
@@ -29,6 +20,18 @@ class Xzqhdm extends Model {
             comment: '中华人民共和国行政区划代码',
         })
     }
+
+    static associate(models) {
+        //No asociations
+    }
+
+    static getId(where) {
+        return this.findOne({
+            where,
+            attributes: ["id"],
+        });
+    }
+
     static async initData() {
         await this.destroy({ where: {} })
         const list = data.map(d => ({
@@ -38,6 +41,7 @@ class Xzqhdm extends Model {
         }))
         await this.bulkCreate(list)
     }
+    
     toJSON() {
         return {
             id: this.id,
