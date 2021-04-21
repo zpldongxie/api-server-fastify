@@ -2,7 +2,7 @@
  * @description: 统一加载所有model
  * @author: zpl
  * @Date: 2021-04-10 16:02:59
- * @LastEditTime: 2021-04-21 11:32:13
+ * @LastEditTime: 2021-04-21 14:38:18
  * @LastEditors: zpl
  * 
  */
@@ -30,7 +30,6 @@ const registerModels = async (sequelize, config) => {
       // alter: process.env.NODE_ENV != 'production',
       force: resetTable
     });
-    console.log(` - ${model.name}`)
     if (resetTable && typeof model.initData === 'function') {
       await model.initData()
     }
@@ -41,6 +40,7 @@ const registerModels = async (sequelize, config) => {
     await models.User.initAdmin()
     console.log('创建完成');
   }
+  console.log('edu_platform models imported.');
 }
 
 export default registerModels;

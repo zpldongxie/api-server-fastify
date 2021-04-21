@@ -2,7 +2,7 @@
  * @description: 统一加载所有model
  * @author: zpl
  * @Date: 2021-04-10 16:02:59
- * @LastEditTime: 2021-04-21 11:52:41
+ * @LastEditTime: 2021-04-21 14:39:10
  * @LastEditors: zpl
  * 
  */
@@ -49,11 +49,11 @@ import ZXSJ from './zxsj.js'
       // alter: process.env.NODE_ENV != 'production',
       force: resetTable
     });
-    console.log(` - ${model.name}`)
     if (resetTable && typeof model.initData === 'function') {
       await model.initData()
     }
   }
+  console.log('business_basis models imported.');
 }
 
 export default registerModels;

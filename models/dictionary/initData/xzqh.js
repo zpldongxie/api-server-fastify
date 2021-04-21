@@ -1,3 +1,10 @@
+/*
+ * @description: 中华人民共和国行政区划代码
+ * @author: zpl
+ * @Date: 2021-04-14 11:52:49
+ * @LastEditTime: 2021-04-21 16:13:16
+ * @LastEditors: zpl
+ */
 export default [
   ['B.1', '110000', '北京市'],
   ['B.1', '110100', '市辖区'],
