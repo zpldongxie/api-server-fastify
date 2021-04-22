@@ -2,10 +2,9 @@
  * @description: 
  * @author: zpl
  * @Date: 2020-01-02 21:18:30
- * @LastEditTime: 2021-04-21 11:46:20
+ * @LastEditTime: 2021-04-22 17:47:12
  * @LastEditors: zpl
  */
-import User from '../../models/edu_platform/user.js'
 import Schema from './schema.js'
 
 // 设置路由前缀
@@ -14,10 +13,7 @@ export const autoPrefix = '/auth'
 export default async function auth(fastify, opts) {
   const {
     httpErrors,
-    elastic,
-    indices,
     jwt,
-    csrfProtection,
     config,
   } = fastify
 
@@ -33,9 +29,7 @@ export default async function auth(fastify, opts) {
         res.clearCookie('edu_platform', { path: '/' })
       }
 
-      /**@type {User}*/
       const user = fastify.mysql_edu_platform.models.User;
-      /**@type {User}*/
       let usr = await user.getUsernameAndPassword(req.body.username, req.body.password, config.HMAC_KEY)
       console.log(usr);
       if (usr != null) {

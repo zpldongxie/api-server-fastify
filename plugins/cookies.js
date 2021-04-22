@@ -2,7 +2,7 @@
  * @description: cookies
  * @author: zpl
  * @Date: 2021-04-12 12:25:52
- * @LastEditTime: 2021-04-12 13:50:10
+ * @LastEditTime: 2021-04-22 15:50:42
  * @LastEditors: zpl
  */
 import fp from 'fastify-plugin'
@@ -22,7 +22,10 @@ async function cookiesPlugin (fastify, opts) {
   // Don't know what CSRF is? Take a look at https://github.com/pillarjs/understanding-csrf.
   fastify.register(Csrf, {
     sessionPlugin: 'fastify-cookie',
-    cookieOpts: { signed: true }
+    cookieOpts: { 
+      signed: true,
+      httpOnly: true,
+    }
   })
 }
 

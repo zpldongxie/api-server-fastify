@@ -2,7 +2,7 @@
 * @description: 用户路由
 * @author: zpl
 * @Date: 2021-04-10 13:45:03
- * @LastEditTime: 2021-04-21 11:48:04
+ * @LastEditTime: 2021-04-22 16:15:16
  * @LastEditors: zpl
 */
 import S from 'fluent-json-schema'
@@ -14,8 +14,6 @@ export default async function user(fastify, opts) {
   const schema = new Schema(fastify);
   const {
     httpErrors,
-    elastic,
-    indices,
     jwt_auth,
     csrfProtection
   } = fastify
@@ -88,8 +86,9 @@ export default async function user(fastify, opts) {
       if (!user) {
         throw httpErrors.internalServerError('用户信息查询失败')
       }
+      const csrfToken = await res.generateCsrf()
       const usr = user.toJSON();
-      return { ...usr, name: usr.username }
+      return { ...usr, csrfToken }
     }
   })
 
