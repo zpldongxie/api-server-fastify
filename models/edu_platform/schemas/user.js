@@ -2,7 +2,7 @@
  * @description: 用户表定义
  * @author: zpl
  * @Date: 2021-04-10 16:15:52
- * @LastEditTime: 2021-04-21 11:28:53
+ * @LastEditTime: 2021-04-22 18:16:36
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
@@ -48,7 +48,6 @@ export const InfoSchema = S.object()
       .prop('id', S.string().format('uuid').required())
       .prop('name', S.string().maxLength(20).required())
       .description('用户类型')
-      // .required()
   )
 
 export const publicSchema = S.object()
@@ -67,8 +66,8 @@ export const publicSchema = S.object()
       .prop('id', S.string().format('uuid').required())
       .prop('name', S.string().maxLength(20).required())
       .description('用户类型')
-      // .required()
   )
+  .prop('csrfToken', S.string().description('csrf令牌').required())
 
 export const CreateSchema = S.object()
   .id('CreateUser')
@@ -86,5 +85,5 @@ export const CreateSchema = S.object()
       .prop('id', S.string().format('uuid'))
       .prop('name', S.string().maxLength(20).required())
       .description('用户类型')
-      // .required()
+    // .required()
   )
