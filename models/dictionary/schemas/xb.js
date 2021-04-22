@@ -2,7 +2,7 @@
  * @description: 人的性别代码
  * @author: zpl
  * @Date: 2021-04-21 13:57:45
- * @LastEditTime: 2021-04-21 17:18:23
+ * @LastEditTime: 2021-04-22 10:12:21
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
@@ -26,14 +26,6 @@ export const InfoSchema = S.object()
   .id('XB')
   .description('人的性别代码')
   .prop('id', S.string().format('uuid').required())
-  .prop('dmlb', S.string().maxLength(10).description('代码类别').required())
-  .prop('dm', S.string().maxLength(4).description('代码').required())
-  .prop('mchy', S.string().maxLength(20).description('代码含义').required())
-  .prop('mcsm', S.string().maxLength(20).description('代码说明'))
-
-export const CreateSchema = S.object()
-  .id('CreateXB')
-  .description('创建人的性别代码')
   .prop('dmlb', S.string().maxLength(10).description('代码类别').required())
   .prop('dm', S.string().maxLength(4).description('代码').required())
   .prop('mchy', S.string().maxLength(20).description('代码含义').required())

@@ -2,7 +2,7 @@
  * @description: 世界各国和地区名称代码
  * @author: zpl
  * @Date: 2021-04-21 13:57:45
- * @LastEditTime: 2021-04-22 09:01:47
+ * @LastEditTime: 2021-04-22 10:11:03
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
@@ -25,19 +25,9 @@ export default () => {
   }
 };
 export const InfoSchema = S.object()
-  .id('XB')
+  .id('GJDQ')
   .description('国家地区代码')
   .prop('id', S.string().format('uuid').required())
-  .prop('dmlb', S.string().maxLength(10).description('代码类别').required())
-  .prop('dm', S.string().maxLength(4).description('代码').required())
-  .prop('jc', S.string().maxLength(20).description('国家/地区名称简称').required())
-  .prop('dm_2', S.string().maxLength(2).description('二字母代码').required())
-  .prop('dm_3', S.string().maxLength(3).description('三字母代码').required())
-  .prop('mcsm', S.string().maxLength(20).description('代码说明'))
-
-export const CreateSchema = S.object()
-  .id('CreateXB')
-  .description('创建国家地区代码')
   .prop('dmlb', S.string().maxLength(10).description('代码类别').required())
   .prop('dm', S.string().maxLength(4).description('代码').required())
   .prop('jc', S.string().maxLength(20).description('国家/地区名称简称').required())

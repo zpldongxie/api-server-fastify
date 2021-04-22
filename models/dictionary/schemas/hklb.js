@@ -1,8 +1,8 @@
 /*
- * @description: 中小学班级类型
+ * @description: 户口类别代码
  * @author: zpl
- * @Date: 2021-04-21 14:59:01
- * @LastEditTime: 2021-04-22 10:13:09
+ * @Date: 2021-04-22 13:14:47
+ * @LastEditTime: 2021-04-22 13:16:01
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
@@ -16,15 +16,15 @@ export default () => {
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    dmlb: { type: DataTypes.STRING(10), allowNull: false, defaultValue: 'ZXXBJLX', comment: '代码类别' },
+    dmlb: { type: DataTypes.STRING(10), allowNull: false, defaultValue: 'C.3', comment: '代码类别' },
     dm: { type: DataTypes.STRING(4), allowNull: false, unique: true, comment: '代码' },
     dmhy: { type: DataTypes.STRING(20), allowNull: false, comment: '代码含义' },
     dmsm: { type: DataTypes.STRING(20), comment: '代码说明' }
   }
-}
+};
 export const InfoSchema = S.object()
-  .id('ZXXBJLX')
-  .description('中小学班级类型')
+  .id('HKLB')
+  .description('户口类别代码')
   .prop('id', S.string().format('uuid').required())
   .prop('dmlb', S.string().maxLength(10).description('代码类别').required())
   .prop('dm', S.string().maxLength(4).description('代码').required())

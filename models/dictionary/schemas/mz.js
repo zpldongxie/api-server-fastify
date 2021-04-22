@@ -2,7 +2,7 @@
  * @description: 中国各民族名称的罗马字母拼写法和代码
  * @author: zpl
  * @Date: 2021-04-21 13:57:45
- * @LastEditTime: 2021-04-21 17:37:29
+ * @LastEditTime: 2021-04-22 10:10:38
  * @LastEditors: zpl
  */
 import Sequelize from 'sequelize'
@@ -23,7 +23,7 @@ export default () => {
   }
 };
 export const InfoSchema = S.object()
-  .id('XB')
+  .id('MZ')
   .description('民族代码')
   .prop('id', S.string().format('uuid').required())
   .prop('dmlb', S.string().maxLength(10).description('代码类别').required())
