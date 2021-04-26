@@ -5,8 +5,12 @@
  * @LastEditTime: 2021-01-25 15:55:37
  * @LastEditors: zpl
  */
+const crypto = require('crypto');
+const config = require('config');
 const fp = require('fastify-plugin');
 const Method = require('./method');
+
+const HMAC_KEY = config.get('HMAC_KEY');
 
 const routerBaseInfo = {
   modelName_U: 'User',
@@ -67,8 +71,9 @@ module.exports = fp(async (server, opts, next) => {
         }
 
         const { userName, pwd } = request.body;
+        const password = crypto.createHmac('sha1', HMAC_KEY).update(pwd).digest('hex');
         const res = await method.dbMethod.findOne({
-          where: { loginName: userName, password: pwd },
+          where: { loginName: userName, password },
           include: [{ model: UserGroup }],
         });
         const { status, data } = res;

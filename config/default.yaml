@@ -21,3 +21,6 @@ mysql:
 
 # fs.mkdir不能一次创建多级目录，必须确保上一级目录已经存在
 uploadRootPath: "/project/nginx/html/uploads/"
+
+# 加密key
+HMAC_KEY: "+JLrGABkuDsz2HPriUGNdtNnP/TBlAX8THiQF7eYoH"

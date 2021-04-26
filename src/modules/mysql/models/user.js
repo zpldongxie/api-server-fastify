@@ -3,10 +3,14 @@
  * @description: 用户
  * @author: zpl
  * @Date: 2020-07-25 15:10:09
- * @LastEditTime: 2021-01-31 19:37:15
+ * @LastEditTime: 2021-04-26 10:12:28
  * @LastEditors: zpl
  */
+const crypto = require('crypto');
+const config = require('config');
 const { Model, DataTypes } = require('sequelize');
+
+const HMAC_KEY = config.get('HMAC_KEY');
 
 /**
  * 用户
@@ -39,6 +43,9 @@ class User extends Model {
         type: DataTypes.STRING(64),
         is: /^[0-9a-f]{64}$/i,
         comment: '密码',
+        set(value) {
+          this.setDataValue('password', crypto.createHmac('sha1', HMAC_KEY).update(value).digest('hex'));
+        },
       },
       name: {
         type: DataTypes.STRING(64),

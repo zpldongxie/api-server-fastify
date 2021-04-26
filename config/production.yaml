@@ -17,3 +17,6 @@ mysql:
   needCreatTable: false
 
 uploadRootPath: "/usr/share/nginx/html/uploads/"
+
+# 加密key
+HMAC_KEY: "+JLrGABkuDsz2HPriUGNdtNnP/TBlAX8THiQF7eYoH"
