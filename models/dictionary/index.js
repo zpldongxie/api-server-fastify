@@ -2,7 +2,7 @@
  * @description: 统一加载所有model
  * @author: zpl
  * @Date: 2021-04-10 16:02:59
- * @LastEditTime: 2021-04-22 14:07:21
+ * @LastEditTime: 2021-04-23 11:00:31
  * @LastEditors: zpl
  * 
  */
@@ -13,7 +13,7 @@ import GWZY from './gwzy.js'
 import HKLB from './hklb.js'
 import HYZK from './hyzk.js'
 import JKZK1 from './jkzk1.js'
-import JKZK2 from './jkzk1.js'
+import JKZK2 from './jkzk2.js'
 import MZ from './mz.js'
 import NJ from './nj.js'
 import RKXD from './rkxd.js'
