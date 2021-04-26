@@ -2,7 +2,7 @@
  * @description: 路由用到的方法
  * @author: zpl
  * @Date: 2021-01-12 09:47:22
- * @LastEditTime: 2021-03-03 12:20:17
+ * @LastEditTime: 2021-04-25 11:12:59
  * @LastEditors: zpl
  */
 const { Op } = require('sequelize');
@@ -325,7 +325,12 @@ class Method extends CommonMethod {
             let startOrderIndex = after.orderIndex;
             let endOrderIndex;
             if (sorterMode === '嵌套模式') {
-              // 嵌套移动
+            // 嵌套移动
+              if (current.parentId === after.id) {
+                return {
+                  status: 1,
+                };
+              }
               current.parentId = after.id;
 
               // 查找相邻记录的排序值

@@ -2,7 +2,7 @@
  * @description rest接口，不做身份验证，其他系统使用的路由要加验证
  * @author: zpl
  * @Date: 2020-07-30 11:26:02
- * @LastEditTime: 2021-03-03 12:23:30
+ * @LastEditTime: 2021-04-26 11:13:41
  * @LastEditors: zpl
  */
 const fp = require('fastify-plugin');
@@ -14,6 +14,7 @@ const TrainingRegMethod = require('../trainingreg/method');
 const MemberCompanyMethod = require('../membercompany/method');
 const MemberIndivicMethod = require('../memberindivic/method');
 const ServiceRequestMethod = require('../servicerequest/method');
+const EntryMethod = require('../entry/method');
 
 module.exports = fp(async (server, opts, next) => {
   const mysqlModel = server.mysql.models;
@@ -25,6 +26,7 @@ module.exports = fp(async (server, opts, next) => {
   const memberCompanyMethod = new MemberCompanyMethod(mysqlModel.MemberCompany, ajv);
   const memberIndivicMethod = new MemberIndivicMethod(mysqlModel.MemberIndivic, ajv);
   const serviceRequestMethod = new ServiceRequestMethod(mysqlModel.ServiceRequest, ajv);
+  const entryMethod = new EntryMethod(mysqlModel.Entry, ajv);
 
 
   const querySchema = require('./query-content-list-schema');
@@ -346,6 +348,16 @@ module.exports = fp(async (server, opts, next) => {
         config: { MemberTypeModel: mysqlModel.MemberType },
       },
       (request, reply) => memberIndivicMethod.create(request, reply),
+  );
+
+  const entryRegSchema = require('../entry/update-schema');
+  server.put(
+      '/rest/entry',
+      {
+        schema: { ...entryRegSchema, tags: ['rest'], summary: '产品、厂商入驻申请' },
+        config: { ChannelModel: mysqlModel.Channel, channelDBMethod: channelMethod.dbMethod },
+      },
+      (request, reply) => entryMethod.upsert(request, reply),
   );
 
   server.put(
