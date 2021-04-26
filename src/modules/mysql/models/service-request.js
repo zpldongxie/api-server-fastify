@@ -3,7 +3,7 @@
  * @description: 服务申请表
  * @author: zpl
  * @Date: 2021-01-03 10:14:28
- * @LastEditTime: 2021-01-30 17:12:09
+ * @LastEditTime: 2021-03-05 15:09:39
  * @LastEditors: zpl
  */
 const { Model, DataTypes } = require('sequelize');
@@ -58,7 +58,7 @@ class ServiceRequest extends Model {
         comment: '单位网站',
       },
       contacts: {
-        type: DataTypes.STRING(4),
+        type: DataTypes.STRING(20),
         allowNull: false,
         comment: '联系人',
       },
